@@ -1,0 +1,96 @@
+Screen {
+    background: transparent;
+}
+
+/* 1. Style the main box (the Vertical container) */
+.info-box {
+    border: solid white;
+    margin: 0 0;
+    height: 100%; 
+}
+
+/* ADD THIS: Forces the rows to snap together vertically, removing the gap between TO-DO and your task */
+.info-box Horizontal {
+    height: auto;
+}
+
+/* 2. Style the Static widgets INSIDE the box */
+.info-box Static {
+    width: auto;
+    margin-left: 4;
+    text-align: left;
+}
+
+.tasks Static {
+    margin-top: 1;
+    margin-left: 4; /* Change this from 2 to 3 so it perfectly matches the TO-DO label above it */
+}
+
+#TODO-label {
+    margin-right: 8;
+    margin-left: 5;
+}
+
+#task {
+    margin-top: 1;
+    margin-left: 1; /* Change this from 2 to 3 so it perfectly matches the TO-DO label above it */
+}
+
+#planned-start {
+    margin-top: 1;
+    margin-left: 7;
+}
+
+#actual-start,
+#planned-end {
+    margin-top: 1;
+    margin-left: 11;
+}
+
+#actual-end {
+    margin-top: 1;
+    margin-left: 10;
+}
+
+#elapsed {
+    margin-top: 1;
+    margin-left: 6;
+}
+
+/* NEW TAKS POPUP */
+NewTaskPopup {
+    background: transparent;
+    align: center middle;
+}
+
+#dialog {
+    width: 70;
+    height: auto;
+    border: white;
+    padding: 0 0;
+}
+
+#dialog-title {
+    content-align: center middle;
+    width: 100%;
+    margin-bottom: 1;
+    text-style: bold;
+}
+
+#dialog-buttons {
+    margin-top: 1;
+    height: auto;
+    align: center middle;
+}
+
+#dialog-buttons Button {
+    margin: 0 2;
+    border: white;
+}
+
+#new-task-planned-start,
+#new-task-planned-end,
+#task-name {
+    margin: 1;
+    border: tall white;
+}
