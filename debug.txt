@@ -1,3 +1,0 @@
-CRASH DEBUG -> taskdata: {'name': '', 'new-task-planned-start': '', 'new-task-planned-end': ''}
-CRASH DEBUG -> taskdata: {'name': '', 'new-task-planned-start': '', 'new-task-planned-end': ''}
-CRASH DEBUG -> taskdata: {'name': '', 'new-task-planned-start': '', 'new-task-planned-end': ''}
