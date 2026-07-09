@@ -74,7 +74,7 @@ class Duetime(App):
 
             # 3. The Task Row (Horizontal, inside the same Vertical box)
             with Horizontal(classes="tasks"):
-                yield Static("My first task", classes="task") 
+                yield Static("My first task", classes="task-name") 
                 yield Static("PENDING", classes="status") 
                 yield Static("14:00", classes="planned-start") 
                 yield Static("16:00", classes="planned-end") 
@@ -98,8 +98,14 @@ class Duetime(App):
     def handle_new_task(self, task_data: dict | None):
         if task_data is not None:
             # 1. Build the new horizontal row with the provided data
+            if task_data["new-task-planned-start"] == "":
+                task_data["new-task-planned-start"] = "--:--"
+
+            if task_data["new-task-planned-end"] == "":
+                task_data["new-task-planned-end"] = "--:--"
+
             new_task_row = Horizontal(
-                Static(task_data["name"], classes="task"),
+                Static(task_data["name"], classes="task-name"),
                 Static("PENDING", classes="status"),
                 Static(task_data["new-task-planned-start"], classes="planned-start"),
                 Static(task_data["new-task-planned-end"], classes="planned-end"),
