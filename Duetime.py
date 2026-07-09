@@ -74,13 +74,13 @@ class Duetime(App):
 
             # 3. The Task Row (Horizontal, inside the same Vertical box)
             with Horizontal(classes="tasks"):
-                yield Static("My first task", id="task") 
-                yield Static("PENDING") 
-                yield Static("14:00", id="planned-start") 
-                yield Static("16:00", id="planned-end") 
-                yield Static("14:01", id="actual-start") 
-                yield Static("16:05", id="actual-end") 
-                yield Static("02:04:00", id="elapsed") 
+                yield Static("My first task", classes="task") 
+                yield Static("PENDING", classes="status") 
+                yield Static("14:00", classes="planned-start") 
+                yield Static("16:00", classes="planned-end") 
+                yield Static("14:01", classes="actual-start") 
+                yield Static("16:05", classes="actual-end") 
+                yield Static("02:04:00", classes="elapsed") 
 
 
     def on_key(self, event):
@@ -99,13 +99,13 @@ class Duetime(App):
         if task_data is not None:
             # 1. Build the new horizontal row with the provided data
             new_task_row = Horizontal(
-                Static(task_data["name"], id="task"),
-                Static("PENDING"),
-                Static(task_data["new-task-planned-start"], id="planned-start"),
-                Static(task_data["new-task-planned-end"], id="planned-end"),
-                Static("--:--", id="actual-start"),   # Placeholder
-                Static("--:--", id="actual-end"),     # Placeholder
-                Static("--:--", id="elapsed"),        # Placeholder
+                Static(task_data["name"], classes="task"),
+                Static("PENDING", classes="status"),
+                Static(task_data["new-task-planned-start"], classes="planned-start"),
+                Static(task_data["new-task-planned-end"], classes="planned-end"),
+                Static("--:--", classes="actual-start"),   # Placeholder
+                Static("--:--", classes="actual-end"),     # Placeholder
+                Static("--:--:--", classes="elapsed"),        # Placeholder
                 classes="tasks"
             )
             
