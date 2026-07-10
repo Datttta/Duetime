@@ -26,18 +26,22 @@ Screen {
     margin-bottom: 0; 
 }
 
+.tasks.selected {
+    background: white 30%; /* color */
+}
+
 #TODO-label {
     margin-right: 8;
     margin-left: 5;
 }
 
 .tasks .task-name {
-    width: 15;
+    width: 16;
     margin-left: 1; 
 }
 
 .tasks .status {
-    margin-left: 2;
+    margin-left: 1;
 }
 
 .tasks .planned-start {
