@@ -1,19 +1,33 @@
 use ratatui::{
     layout::Rect,
+    style::{Color, Style},
+    text::{Line, Span},
     widgets::{Block, Paragraph},
     Frame,
 };
 
 use crate::text_input::InputState;
+use crate::theme::placeholder_color;
 
 pub fn draw(
     frame: &mut Frame,
     area: Rect,
     input: &InputState,
-    title: &str,
+    placeholder: &str,
 ) {
-    let paragraph = Paragraph::new(input.text.as_str())
-        .block(Block::bordered().title(title));
+    let line = if input.text.is_empty() {
+        Line::from(
+            Span::styled(
+                placeholder,
+                Style::default().fg(placeholder_color()),
+            )
+        )
+    } else {
+        Line::from(input.text.as_str())
+    };
+
+    let paragraph = Paragraph::new(line)
+        .block(Block::bordered());
 
     frame.render_widget(paragraph, area);
 

@@ -31,7 +31,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         frame,
         chunks[1],
         &app.task_name,
-        "",
+        "Task name",
     );
 }
 
