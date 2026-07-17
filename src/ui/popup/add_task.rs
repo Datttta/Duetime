@@ -1,4 +1,9 @@
-use crate::app::App;
+use crossterm::event::{KeyCode, KeyEvent};
+
+use crate::{
+    app::{App, Popup},
+    ui::widgets::input,
+};
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect},
@@ -16,8 +21,18 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     frame.render_widget(block, area);
 
-    let text = Paragraph::new("Task name:");
-    frame.render_widget(text, inner);
+    let chunks = Layout::vertical([
+        Constraint::Length(0),
+        Constraint::Length(3),
+    ])
+    .split(inner);
+
+    input::draw(
+        frame,
+        chunks[1],
+        &app.task_name,
+        "",
+    );
 }
 
 fn centered_rect(frame: &Frame) -> Rect {
@@ -34,4 +49,36 @@ fn centered_rect(frame: &Frame) -> Rect {
     .split(vertical[0]);
 
     horizontal[0]
+}
+
+pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    match key.code {
+
+        KeyCode::Enter => {
+            create_task(app);
+        }
+
+        KeyCode::Esc => {
+            close(app);
+        }
+
+        _ => {
+            app.task_name.handle_key(key);
+        }
+    }
+}
+
+
+fn create_task(app: &mut App) {
+    println!("Task created: {}", app.task_name.text);
+
+    app.task_name.clear();
+
+    app.popup = Popup::None;
+}
+
+fn close(app: &mut App) {
+    app.task_name.clear();
+
+    app.popup = Popup::None;
 }

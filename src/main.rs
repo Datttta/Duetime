@@ -1,6 +1,7 @@
 mod app;
 mod events;
 mod ui;
+mod text_input;
 
 use std::io;
 use app::App;

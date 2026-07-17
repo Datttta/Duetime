@@ -1,6 +1,7 @@
-mod header;
-mod popup;
-mod tasks;
+pub mod header;
+pub mod popup;
+pub mod tasks;
+pub mod widgets;
 
 use crate::app::{App, Popup};
 
