@@ -28,11 +28,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
     .split(inner);
 
     let inputs = Layout::horizontal([
-        Constraint::Length(43), // task name chunk
+        Constraint::Length(23), // task name chunk
         Constraint::Length(2),
         Constraint::Length(30), // planned start chunk
     ])
-    .flex(Flex::Center)
+    .flex(Flex::Start)
     .split(vertical[1]);
 
 
