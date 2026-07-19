@@ -5,13 +5,20 @@ pub enum Popup {
     AddTask,
 }
 
+pub enum SelectedInput {
+    TaskName,
+    PlannedStart,
+}
+
 pub struct App {
     pub popup: Popup,
     pub waiting_for_t: bool,
     pub running: bool,
 
     pub task_name: InputState,
-    pub description: InputState,
+    pub planned_start: InputState,
+
+    pub selected_input: SelectedInput,
 }
 
 impl App {
@@ -22,7 +29,9 @@ impl App {
             running: true,
 
             task_name: InputState::default(),
-            description: InputState::default(),
+            planned_start: InputState::default(),
+
+            selected_input: SelectedInput::TaskName,
         }
     }
 }

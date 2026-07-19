@@ -2,7 +2,7 @@ use ratatui::{
     layout::Rect,
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{Block, Paragraph},
+    widgets::{Block, Paragraph, Padding},
     Frame,
 };
 
@@ -26,8 +26,14 @@ pub fn draw(
         Line::from(input.text.as_str())
     };
 
-    let paragraph = Paragraph::new(line)
-        .block(Block::bordered());
+    let paragraph = Paragraph::new(line).block(
+        Block::bordered().padding(Padding {
+            left: 1,
+            right: 0,
+            top: 0,
+            bottom: 0,
+        })
+    );
 
     frame.render_widget(paragraph, area);
 
