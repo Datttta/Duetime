@@ -22,22 +22,18 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.render_widget(block, area);
 
     let vertical = Layout::vertical([
-        Constraint::Length(1), // top spacing
+        Constraint::Length(1), // height of chuck for space
         Constraint::Length(3), // input height
     ])
     .split(inner);
 
-    let margins = Layout::horizontal([
-        Constraint::Length(0), // add_task box left padding 
-        Constraint::Length(60), // add_task box right padding
-    ])
-    .split(vertical[1]);
-
     let inputs = Layout::horizontal([
-        Constraint::Length(30), // task_name input inner margin
-        Constraint::Length(30), // planned start input inner margin
+        Constraint::Length(43), // task name chunk
+        Constraint::Length(2),
+        Constraint::Length(30), // planned start chunk
     ])
-    .split(margins[1]);
+    .flex(Flex::Center)
+    .split(vertical[1]);
 
 
     input::draw(
@@ -50,7 +46,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     input::draw(
         frame,
-        inputs[1],
+        inputs[2],
         &app.planned_start,
         "planned start (e.g. 14:00)",
     );

@@ -38,7 +38,7 @@ pub fn draw(
     frame.render_widget(paragraph, area);
 
     frame.set_cursor_position((
-        area.x + 1 + input.cursor as u16,
+        area.x + 2 + input.cursor as u16,
         area.y + 1,
     ));
 }
