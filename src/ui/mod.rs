@@ -1,9 +1,10 @@
 pub mod header;
 pub mod popup;
-pub mod tasks;
 pub mod widgets;
+pub mod theme;
 
 use crate::app::{App, Popup};
+use crate::tasks;
 
 use ratatui::{
     layout::{Constraint, Layout, Rect},

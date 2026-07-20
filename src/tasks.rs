@@ -6,7 +6,17 @@ use ratatui::{
     Frame,
 };
 
-pub fn draw(frame: &mut Frame, area: Rect, _app: &App) {
+pub struct TaskInfo {
+    pub name: String,
+    pub status: String,
+    pub planned_start: String,
+    pub planned_end: String,
+    pub actual_start: String,
+    pub actual_end: String,
+    pub elapsed: String,
+}
+
+pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
     let widths = [
         Constraint::Length(22),
         Constraint::Length(12),
@@ -28,13 +38,13 @@ pub fn draw(frame: &mut Frame, area: Rect, _app: &App) {
             "--:--:--",
         ]),
         Row::new(vec![
-            "Second task",
-            "DONE",
-            "09:00",
-            "10:00",
-            "09:00",
-            "09:45",
-            "00:45:00",
+            name.clone(),
+            status.clone(),
+            planned_start.clone(),
+            planned_end.clone(),
+            actual_start.clone(),
+            actual_end.clone(),
+            elapsed.clone(),
         ]),
     ];
 

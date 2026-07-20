@@ -1,19 +1,20 @@
 use ratatui::{
     layout::Rect,
-    style::{Color, Style},
+    style::{Style},
     text::{Line, Span},
     widgets::{Block, Paragraph, Padding},
     Frame,
 };
 
 use crate::text_input::InputState;
-use crate::theme::placeholder_color;
+use crate::ui::theme::placeholder_color;
 
 pub fn draw(
     frame: &mut Frame,
     area: Rect,
     input: &InputState,
     placeholder: &str,
+    is_selected: bool,
 ) {
     let line = if input.text.is_empty() {
         Line::from(
@@ -36,9 +37,11 @@ pub fn draw(
     );
 
     frame.render_widget(paragraph, area);
-
-    frame.set_cursor_position((
-        area.x + 2 + input.cursor as u16,
-        area.y + 1,
-    ));
+    
+    if is_selected {
+        frame.set_cursor_position((
+            area.x + 2 + input.cursor as u16,
+            area.y + 1,
+        ));
+    }
 }
