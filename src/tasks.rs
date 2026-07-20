@@ -27,7 +27,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
         Constraint::Length(8),
     ];
 
-    let rows = vec![
+    let example_task = vec![
         Row::new(vec![
             "My first task",
             "PENDING",
@@ -37,16 +37,21 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
             "--:--",
             "--:--:--",
         ]),
-        Row::new(vec![
-            name.clone(),
-            status.clone(),
-            planned_start.clone(),
-            planned_end.clone(),
-            actual_start.clone(),
-            actual_end.clone(),
-            elapsed.clone(),
-        ]),
     ];
+
+    let task_rows = app.tasks.iter().map(|task| {
+        Row::new(vec![
+            task.name.clone(),
+            task.status.clone(),
+            task.planned_start.clone(),
+            task.planned_end.clone(),
+            task.actual_start.clone(),
+            task.actual_end.clone(),
+            task.elapsed.clone(),
+        ])
+    });
+
+    let rows = example_task.into_iter().chain(task_rows);
 
     let table = Table::new(rows, widths);
 
