@@ -36,7 +36,7 @@ impl App {
             waiting_for_t: false,
             running: true,
 
-            mode: InputMode::Normal,
+            mode: InputMode::Insert,
 
             task_name: InputState::default(),
             planned_start: InputState::default(),

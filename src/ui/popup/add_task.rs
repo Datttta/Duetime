@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
+use crate::vim::{handle_escape};
 use crate::tasks::TaskInfo;
-use crate::vim::InputState;
 
 use crate::{
     app::{App, Popup, SelectedInput},
@@ -71,6 +71,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         &app.task_name,
         "Task name",
         app.selected_input == SelectedInput::TaskName,
+        app.mode,
     );
 
     input::draw(
@@ -79,6 +80,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         &app.planned_start,
         "planned start (e.g. 14:00)",
         app.selected_input == SelectedInput::PlannedStart,
+        app.mode,
     );
 
     frame.render_widget(separator, inputs[3]);
@@ -89,6 +91,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         &app.planned_end,
         "planned end (e.g. 15:00)",
         app.selected_input == SelectedInput::PlannedEnd,
+        app.mode,
     );
 }
 
@@ -100,7 +103,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            if InputState::handle_escape(app) {
+            if handle_escape(app) {
                 close(app);
             }
         }

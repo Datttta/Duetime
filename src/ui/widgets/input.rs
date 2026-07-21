@@ -1,3 +1,10 @@
+use crossterm::cursor::SetCursorStyle;
+use crossterm::execute;
+
+use crate::vim::InputState;
+use crate::vim::InputMode;
+use crate::ui::theme::placeholder_color;
+
 use ratatui::{
     layout::Rect,
     style::{Style},
@@ -6,15 +13,13 @@ use ratatui::{
     Frame,
 };
 
-use crate::vim::InputState;
-use crate::ui::theme::placeholder_color;
-
 pub fn draw(
     frame: &mut Frame,
     area: Rect,
     input: &InputState,
     placeholder: &str,
     is_selected: bool,
+    mode: InputMode
 ) {
     let line = if input.text.is_empty() {
         Line::from(
@@ -43,5 +48,28 @@ pub fn draw(
             area.x + 2 + input.cursor as u16,
             area.y + 1,
         ));
+
+        match mode {
+            InputMode::Insert => {
+                execute!(
+                    std::io::stdout(),
+                    SetCursorStyle::BlinkingBar
+                ).unwrap();
+            }
+
+            InputMode::Normal => {
+                execute!(
+                    std::io::stdout(),
+                    SetCursorStyle::SteadyBlock
+                ).unwrap();
+            }
+
+            InputMode::Visual => {
+                execute!(
+                    std::io::stdout(),
+                    SetCursorStyle::SteadyBlock
+                ).unwrap();
+            }
+        }
     }
 }
