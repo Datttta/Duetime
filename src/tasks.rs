@@ -3,6 +3,7 @@ use crate::app::App;
 use ratatui::{
     layout::{Constraint, Rect},
     widgets::{Row, Table},
+    style::Style,
     Frame,
 };
 
@@ -39,8 +40,8 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
         ]),
     ];
 
-    let task_rows = app.tasks.iter().map(|task| {
-        Row::new(vec![
+    let task_rows = app.tasks.iter().enumerate().map(|(index, task)| {
+        let row = Row::new(vec![
             task.name.clone(),
             task.status.clone(),
             task.planned_start.clone(),
@@ -48,7 +49,13 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
             task.actual_start.clone(),
             task.actual_end.clone(),
             task.elapsed.clone(),
-        ])
+        ]);
+
+        if index == app.selected_task {
+            row.style(Style::default().reversed())
+        } else {
+            row
+        }
     });
 
     let rows = example_task.into_iter().chain(task_rows);

@@ -18,15 +18,17 @@ pub struct App {
     pub waiting_for_t: bool,
     pub running: bool,
 
-    pub mode: InputMode,
-
     pub task_name: InputState,
     pub planned_start: InputState,
     pub planned_end: InputState,
 
+    pub mode: InputMode,
+
     pub selected_input: SelectedInput,
 
     pub tasks: Vec<TaskInfo>,
+    
+    pub selected_task: usize,
 }
 
 impl App {
@@ -44,6 +46,8 @@ impl App {
 
             selected_input: SelectedInput::TaskName,
             tasks: Vec::new(),
+
+            selected_task: 0,
         }
     }
 }

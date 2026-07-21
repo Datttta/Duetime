@@ -48,6 +48,18 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             app.running = false;
         }
 
+        KeyCode::Char('j') => {
+            if app.selected_task + 1 < app.tasks.len() {
+                app.selected_task += 1;
+            }
+        }
+
+        KeyCode::Char('k') => {
+            if app.selected_task > 0 {
+                app.selected_task -= 1;
+            }
+        }
+
         _ => {
             app.waiting_for_t = false;
         }
