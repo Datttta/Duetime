@@ -12,6 +12,10 @@ use ratatui::{
     Frame,
 };
 
+const TASK_NAME_WIDTH: u16 = 26;
+const PLAN_START_WIDTH: u16 = 30;
+const PLAN_END_WIDTH: u16 = 28;
+
 pub fn draw(frame: &mut Frame, app: &App) {
     let area = centered_rect(frame);
 
@@ -33,7 +37,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(90), // task_box Length
+            Constraint::Length(93), // task_box Length
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -47,11 +51,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
     .split(inner);
 
     let inputs = Layout::horizontal([
-        Constraint::Length(23), // task name chunk
+        Constraint::Length(TASK_NAME_WIDTH), // task name chunk
         Constraint::Length(2),
-        Constraint::Length(30), // planned start chunk
+        Constraint::Length(PLAN_START_WIDTH), // planned start chunk
         Constraint::Length(3), 
-        Constraint::Length(28), // planned end chunk
+        Constraint::Length(PLAN_END_WIDTH), // planned end chunk
     ])
     .flex(Flex::Start)
     .split(vertical[0]);
@@ -108,9 +112,20 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         _ => {
             match app.selected_input {
-                SelectedInput::TaskName => app.task_name.handle_key(key),
-                SelectedInput::PlannedStart => app.planned_start.handle_key(key),
-                SelectedInput::PlannedEnd => app.planned_end.handle_key(key),
+                SelectedInput::TaskName => {
+                    let max_chars = (TASK_NAME_WIDTH - 5) as usize;
+                    app.task_name.handle_key(key, max_chars)
+                }
+
+                SelectedInput::PlannedStart => {
+                    let max_chars = (PLAN_START_WIDTH - 5) as usize;
+                    app.planned_start.handle_key(key, max_chars)
+                }
+
+                SelectedInput::PlannedEnd => {
+                    let max_chars = (PLAN_END_WIDTH - 5) as usize;
+                    app.planned_end.handle_key(key, max_chars)
+                }
             }
         }
     }

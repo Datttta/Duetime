@@ -7,11 +7,13 @@ pub struct InputState {
 }
 
 impl InputState {
-    pub fn handle_key(&mut self, key: KeyEvent) {
+    pub fn handle_key(&mut self, key: KeyEvent, max_len: usize) {
         match key.code {
             KeyCode::Char(c) => {
-                self.text.insert(self.cursor, c);
-                self.cursor += 1;
+                if self.text.len() < max_len {
+                    self.text.insert(self.cursor, c);
+                    self.cursor += 1;
+                }
             }
 
             KeyCode::Backspace => {
