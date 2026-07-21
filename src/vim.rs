@@ -129,14 +129,4 @@ impl InputState {
     }
 }
 
-pub fn handle_escape(app: &mut App) -> bool {
-    match app.mode {
-        InputMode::Normal => true, // close popup
-                                   
-        _ => {
-            app.mode = InputMode::Normal;
-            false // do not close
-        }
-    }
-}
 

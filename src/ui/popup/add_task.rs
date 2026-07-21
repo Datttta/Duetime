@@ -1,5 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use crate::vim::{handle_escape};
+use crate::events::{handle_escape};
 use crate::tasks::TaskInfo;
 
 use crate::{

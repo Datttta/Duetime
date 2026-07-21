@@ -65,3 +65,15 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
     }
 }
+
+pub fn handle_escape(app: &mut App) -> bool {
+    match app.mode {
+        InputMode::Normal => true, // close popup
+                                   
+        _ => {
+            app.mode = InputMode::Normal;
+            false // do not close
+        }
+    }
+}
+
