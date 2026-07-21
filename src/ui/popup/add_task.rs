@@ -110,6 +110,14 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
+        KeyCode::BackTab => {
+            app.selected_input = match app.selected_input {
+                SelectedInput::TaskName => SelectedInput::PlannedEnd,
+                SelectedInput::PlannedEnd => SelectedInput::PlannedStart,
+                SelectedInput::PlannedStart => SelectedInput::TaskName
+            }
+        }
+
         _ => {
             match app.selected_input {
                 SelectedInput::TaskName => {
