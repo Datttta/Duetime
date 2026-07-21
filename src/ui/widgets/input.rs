@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::text_input::InputState;
+use crate::vim::InputState;
 use crate::ui::theme::placeholder_color;
 
 pub fn draw(

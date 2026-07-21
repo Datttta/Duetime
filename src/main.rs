@@ -1,7 +1,7 @@
 mod app;
 mod events;
 mod ui;
-mod text_input;
+mod vim;
 mod tasks;
 
 use std::io;

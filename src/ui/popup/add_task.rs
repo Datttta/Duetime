@@ -1,5 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use crate::tasks::TaskInfo;
+use crate::vim::InputState;
 
 use crate::{
     app::{App, Popup, SelectedInput},
@@ -99,7 +100,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            close(app);
+            if InputState::handle_escape(app) {
+                close(app);
+            }
         }
 
         KeyCode::Tab => {
@@ -122,17 +125,17 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             match app.selected_input {
                 SelectedInput::TaskName => {
                     let max_chars = (TASK_NAME_WIDTH - 5) as usize;
-                    app.task_name.handle_key(key, max_chars)
+                    app.task_name.handle_key(key, &mut app.mode, max_chars)
                 }
 
                 SelectedInput::PlannedStart => {
                     let max_chars = (PLAN_START_WIDTH - 5) as usize;
-                    app.planned_start.handle_key(key, max_chars)
+                    app.planned_start.handle_key(key, &mut app.mode, max_chars)
                 }
 
                 SelectedInput::PlannedEnd => {
                     let max_chars = (PLAN_END_WIDTH - 5) as usize;
-                    app.planned_end.handle_key(key, max_chars)
+                    app.planned_end.handle_key(key, &mut app.mode, max_chars)
                 }
             }
         }

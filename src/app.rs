@@ -1,4 +1,4 @@
-use crate::text_input::InputState;
+use crate::vim::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 
 pub enum Popup {
@@ -18,6 +18,8 @@ pub struct App {
     pub waiting_for_t: bool,
     pub running: bool,
 
+    pub mode: InputMode,
+
     pub task_name: InputState,
     pub planned_start: InputState,
     pub planned_end: InputState,
@@ -34,12 +36,13 @@ impl App {
             waiting_for_t: false,
             running: true,
 
+            mode: InputMode::Normal,
+
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
 
             selected_input: SelectedInput::TaskName,
-
             tasks: Vec::new(),
         }
     }
