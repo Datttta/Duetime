@@ -2,9 +2,9 @@ use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent};
 
-use crate::app::{App, Popup};
+use crate::app::{App, Popup, SelectedInput};
 use crate::ui::popup;
-
+use crate::vim::InputMode;
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
@@ -37,6 +37,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('t') => {
             if app.waiting_for_t {
                 app.popup = Popup::AddTask;
+                app.selected_input = SelectedInput::TaskName;
+                app.mode = InputMode::Insert;
             }
 
             app.waiting_for_t = false;

@@ -166,6 +166,8 @@ fn create_task(app: &mut App) {
 
 fn close(app: &mut App) {
     app.task_name.clear();
+    app.planned_start.clear();
+    app.planned_end.clear();
 
     app.popup = Popup::None;
 }
