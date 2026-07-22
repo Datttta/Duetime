@@ -6,6 +6,7 @@ use ratatui::widgets::TableState;
 pub enum Popup {
     None,
     AddTask,
+    EditTask(usize),
 }
 
 #[derive(PartialEq)]

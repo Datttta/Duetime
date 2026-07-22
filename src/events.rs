@@ -11,15 +11,18 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
         if let Event::Key(key) = event::read()? {
 
             match app.popup {
+                Popup::None => {
+                    handle_normal_keys(app, key);
+                }
+
                 Popup::AddTask => {
                     popup::add_task::handle_keys(app, key);
                 }
 
-                Popup::None => {
-                    handle_normal_keys(app, key);
+                Popup::EditTask(_) => {
+                    popup::add_task::handle_keys(app, key);
                 }
             }
-
         }
     }
 
@@ -40,6 +43,26 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.waiting_for_d = false
             } else {
                 app.waiting_for_d = true
+            }
+        }
+
+        KeyCode::Char('e') => {
+            if !app.tasks.is_empty() {
+                app.popup = Popup::EditTask(app.selected_task);
+
+                let task = &app.tasks[app.selected_task];
+                
+                //load task data into the inputs
+                app.task_name.text = task.name.clone();
+                app.planned_start.text = task.planned_start.clone();
+                app.planned_end.text = task.planned_end.clone();
+
+                app.task_name.cursor = app.task_name.text.len();
+                app.planned_start.cursor = app.planned_start.text.len();
+                app.planned_end.cursor = app.planned_end.text.len();
+
+                app.mode = InputMode::Insert;
+                app.selected_input = SelectedInput::TaskName;
             }
         }
 

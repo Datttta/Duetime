@@ -1,4 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
+
 use crate::events::{handle_escape};
 use crate::tasks::TaskInfo;
 
@@ -99,7 +100,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
 
         KeyCode::Enter => {
-            create_task(app);
+            save_task(app);
         }
 
         KeyCode::Esc => {
@@ -146,16 +147,30 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 }
 
 
-fn create_task(app: &mut App) {
-    app.tasks.push(TaskInfo {
-        name: app.task_name.text.clone(),
-        status: "PENDING".into(),
-        planned_start: app.planned_start.text.clone(),
-        planned_end: app.planned_end.text.clone(),
-        actual_start: "--:--".into(),
-        actual_end: "--:--".into(),
-        elapsed: "--:--:--".into(),
-    });
+fn save_task(app: &mut App) {
+    match app.popup {
+        Popup::AddTask => {
+            app.tasks.push(TaskInfo {
+                name: app.task_name.text.clone(),
+                status: "PENDING".into(),
+                planned_start: app.planned_start.text.clone(),
+                planned_end: app.planned_end.text.clone(),
+                actual_start: "--:--".into(),
+                actual_end: "--:--".into(),
+                elapsed: "--:--:--".into(),
+            });
+        }
+
+        Popup::EditTask(index) => {
+            if let Some(task) = app.tasks.get_mut(index) {
+                task.name = app.task_name.text.clone();
+                task.planned_start = app.planned_start.text.clone();
+                task.planned_end = app.planned_end.text.clone();
+            }
+        }
+
+        Popup::None => {}
+    }
 
     app.task_name.clear();
     app.planned_start.clear();
