@@ -8,8 +8,8 @@ use ratatui::{
 
 pub fn draw(frame: &mut Frame, area: Rect) {
     let columns = Layout::horizontal([
-        Constraint::Length(8), // extra
-        Constraint::Length(15), // TO-DO: 5    
+        Constraint::Length(11), // extra
+        Constraint::Length(16), // TO-DO: 5    
         Constraint::Length(11), // Status: 6 
         Constraint::Length(15), // Plan start: 10 
         Constraint::Length(13), // Plan end: 8 

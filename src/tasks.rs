@@ -19,7 +19,7 @@ pub struct TaskInfo {
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let columns = [
-        Constraint::Length(22), // task name
+        Constraint::Length(26), // task name
         Constraint::Length(12), // status
         Constraint::Length(13), // planned start
         Constraint::Length(13), // planned end
