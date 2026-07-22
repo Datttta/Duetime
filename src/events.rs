@@ -1,10 +1,10 @@
-use std::io;
-
-use crossterm::event::{self, Event, KeyCode, KeyEvent};
-
 use crate::app::{App, Popup, SelectedInput};
 use crate::ui::popup;
 use crate::vim::InputMode;
+
+use std::io;
+
+use crossterm::event::{self, Event, KeyCode, KeyEvent};
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
@@ -32,6 +32,15 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('a') => {
             app.waiting_for_t = true;
+        }
+
+        KeyCode::Char('d') => {
+            if app.waiting_for_d {
+                delete_task(app);
+                app.waiting_for_d = false
+            } else {
+                app.waiting_for_d = true
+            }
         }
 
         KeyCode::Char('t') => {
@@ -81,3 +90,17 @@ pub fn handle_escape(app: &mut App) -> bool {
     }
 }
 
+fn delete_task(app: &mut App) {
+    if app.tasks.is_empty() {
+        return;
+    }
+
+    if app.selected_task < app.tasks.len() {
+        app.tasks.remove(app.selected_task);
+
+        // keep selection valid
+        if app.selected_task >= app.tasks.len() && app.selected_task > 0 {
+            app.selected_task -= 1;
+        }
+    }
+}
