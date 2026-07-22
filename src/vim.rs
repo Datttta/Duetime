@@ -46,7 +46,7 @@ impl InputState {
             }
 
             KeyCode::Char('a') => {
-                if self.cursor < self.text.len() {
+                if self.cursor < self.text.chars().count() {
                     self.cursor += 1;
                 } 
                 *mode = InputMode::Insert;
@@ -69,7 +69,7 @@ impl InputState {
             }
 
             KeyCode::Char('$') => {
-                self.cursor = self.text.len();
+                self.cursor = self.text.chars().count();
             }
             
             _ => {}
@@ -80,7 +80,14 @@ impl InputState {
         match key.code {
             KeyCode::Char(c) => {
                 if self.text.len() < max_len {
-                    self.text.insert(self.cursor, c);
+                    let byte_index = self
+                        .text
+                        .char_indices()
+                        .nth(self.cursor)
+                        .map(|(i, _)| i)
+                        .unwrap_or(self.text.len());
+
+                    self.text.insert(byte_index, c);
                     self.cursor += 1;
                 }
             }
@@ -92,7 +99,15 @@ impl InputState {
             KeyCode::Backspace => {
                 if self.cursor > 0 {
                     self.cursor -= 1;
-                    self.text.remove(self.cursor);
+
+                    let byte_index = self
+                        .text
+                        .char_indices()
+                        .nth(self.cursor)
+                        .map(|(i, _)| i)
+                        .unwrap_or(self.text.len());
+
+                    self.text.remove(byte_index);
                 }
             }
 
@@ -113,7 +128,7 @@ impl InputState {
             }
 
             KeyCode::Char('l') => {
-                if self.cursor < self.text.len(){
+                if self.cursor < self.text.chars().count() {
                     self.cursor += 1;
                 }
             }

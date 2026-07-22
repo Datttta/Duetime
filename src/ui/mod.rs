@@ -20,7 +20,7 @@ struct MainLayout {
 fn draw_layout(frame: &mut Frame) -> MainLayout {
     let border = Block::bordered()
         .title(" Duetime ")
-        .padding(Padding::new(2, 4, 1, 1));
+        .padding(Padding::new(0, 0, 1, 1));
 
     let inner = border.inner(frame.area());
 

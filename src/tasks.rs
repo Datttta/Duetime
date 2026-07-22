@@ -18,19 +18,19 @@ pub struct TaskInfo {
 }
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
-    let widths = [
-        Constraint::Length(22),
-        Constraint::Length(12),
-        Constraint::Length(13),
-        Constraint::Length(13),
-        Constraint::Length(11),
-        Constraint::Length(9),
-        Constraint::Length(8),
+    let columns = [
+        Constraint::Length(22), // task name
+        Constraint::Length(12), // status
+        Constraint::Length(13), // planned start
+        Constraint::Length(13), // planned end
+        Constraint::Length(11), // actual start
+        Constraint::Length(9), // actual end
+        Constraint::Length(8), // elapsed
     ];
 
     let example_task = vec![
         Row::new(vec![
-            "My first task",
+            "  My first task",
             "PENDING",
             "14:00",
             "16:00",
@@ -42,7 +42,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let task_rows = app.tasks.iter().map(|task| {
         Row::new(vec![
-            task.name.clone(),
+            format!("  {}", task.name),
             task.status.clone(),
             task.planned_start.clone(),
             task.planned_end.clone(),
@@ -54,7 +54,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let rows = example_task.into_iter().chain(task_rows);
 
-    let table = Table::new(rows, widths)
+    let table = Table::new(rows, columns)
         .row_highlight_style(Style::default().reversed());
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
