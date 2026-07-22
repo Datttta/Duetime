@@ -13,7 +13,7 @@ use ratatui::{
     Frame,
 };
 
-const TASK_NAME_WIDTH: u16 = 26;
+const TASK_NAME_WIDTH: u16 = 28;
 const PLAN_START_WIDTH: u16 = 30;
 const PLAN_END_WIDTH: u16 = 28;
 
@@ -51,7 +51,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     ])
     .split(inner);
 
-    let inputs = Layout::horizontal([
+    let tasks_colums = Layout::horizontal([
         Constraint::Length(TASK_NAME_WIDTH), // task name chunk
         Constraint::Length(2),
         Constraint::Length(PLAN_START_WIDTH), // planned start chunk
@@ -67,7 +67,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     input::draw(
         frame,
-        inputs[0],
+        tasks_colums[0],
         &app.task_name,
         "Task name",
         app.selected_input == SelectedInput::TaskName,
@@ -76,18 +76,18 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     input::draw(
         frame,
-        inputs[2],
+        tasks_colums[2],
         &app.planned_start,
         "planned start (e.g. 14:00)",
         app.selected_input == SelectedInput::PlannedStart,
         app.mode,
     );
 
-    frame.render_widget(separator, inputs[3]);
+    frame.render_widget(separator, tasks_colums[3]);
 
     input::draw(
         frame,
-        inputs[4],
+        tasks_colums[4],
         &app.planned_end,
         "planned end (e.g. 15:00)",
         app.selected_input == SelectedInput::PlannedEnd,

@@ -48,15 +48,19 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             app.running = false;
         }
 
-        KeyCode::Char('j') => {
-            if app.selected_task + 1 < app.tasks.len() {
-                app.selected_task += 1;
+        KeyCode::Char('k') => {
+            let selected = app.table_state.selected().unwrap_or(0);
+
+            if selected > 0 {
+                app.table_state.select(Some(selected - 1));
             }
         }
 
-        KeyCode::Char('k') => {
-            if app.selected_task > 0 {
-                app.selected_task -= 1;
+        KeyCode::Char('j') => {
+            let selected = app.table_state.selected().unwrap_or(0);
+
+            if selected + 1 <= app.tasks.len() {
+                app.table_state.select(Some(selected + 1));
             }
         }
 

@@ -1,5 +1,4 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use crate::App;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InputMode {

@@ -1,6 +1,8 @@
 use crate::vim::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 
+use ratatui::widgets::TableState;
+
 pub enum Popup {
     None,
     AddTask,
@@ -23,16 +25,18 @@ pub struct App {
     pub planned_end: InputState,
 
     pub mode: InputMode,
-
     pub selected_input: SelectedInput,
 
     pub tasks: Vec<TaskInfo>,
-    
-    pub selected_task: usize,
+
+    pub table_state: TableState,
 }
 
 impl App {
     pub fn new() -> Self {
+        let mut table_state = TableState::default();
+        table_state.select(Some(0));
+
         Self {
             popup: Popup::None,
             waiting_for_t: false,
@@ -47,7 +51,7 @@ impl App {
             selected_input: SelectedInput::TaskName,
             tasks: Vec::new(),
 
-            selected_task: 0,
+            table_state,
         }
     }
 }

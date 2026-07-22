@@ -17,7 +17,7 @@ pub struct TaskInfo {
     pub elapsed: String,
 }
 
-pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
+pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let widths = [
         Constraint::Length(22),
         Constraint::Length(12),
@@ -40,8 +40,8 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
         ]),
     ];
 
-    let task_rows = app.tasks.iter().enumerate().map(|(index, task)| {
-        let row = Row::new(vec![
+    let task_rows = app.tasks.iter().map(|task| {
+        Row::new(vec![
             task.name.clone(),
             task.status.clone(),
             task.planned_start.clone(),
@@ -49,18 +49,13 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &App) {
             task.actual_start.clone(),
             task.actual_end.clone(),
             task.elapsed.clone(),
-        ]);
-
-        if index == app.selected_task {
-            row.style(Style::default().reversed())
-        } else {
-            row
-        }
+        ])
     });
 
     let rows = example_task.into_iter().chain(task_rows);
 
-    let table = Table::new(rows, widths);
+    let table = Table::new(rows, widths)
+        .row_highlight_style(Style::default().reversed());
 
-    frame.render_widget(table, area);
+    frame.render_stateful_widget(table, area, &mut app.table_state);
 }

@@ -39,7 +39,7 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     }
 }
 
-pub fn draw(frame: &mut Frame, app: &App) {
+pub fn draw(frame: &mut Frame, app: &mut App) {
     let layout = draw_layout(frame);
 
     header::draw(frame, layout.header);

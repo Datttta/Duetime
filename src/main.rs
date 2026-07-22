@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
     let mut app = App::new();
 
     while app.running {
-        terminal.draw(|frame| ui::draw(frame, &app))?;
+        terminal.draw(|frame| ui::draw(frame, &mut app))?;
 
         events::handle_events(&mut app)?;
     }
