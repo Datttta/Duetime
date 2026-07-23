@@ -47,10 +47,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('e') => {
-            if !app.tasks.is_empty() {
-                app.popup = Popup::EditTask(app.selected_task);
+            if let Some(index) = app.table_state.selected() {
+                app.popup = Popup::EditTask(index);
 
-                let task = &app.tasks[app.selected_task];
+                let task = &app.tasks[index];
                 
                 //load task data into the inputs
                 app.task_name.text = task.name.clone();
@@ -91,7 +91,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('j') => {
             let selected = app.table_state.selected().unwrap_or(0);
 
-            if selected + 1 <= app.tasks.len() {
+            if selected + 1 < app.tasks.len() {
                 app.table_state.select(Some(selected + 1));
             }
         }
@@ -114,16 +114,14 @@ pub fn handle_escape(app: &mut App) -> bool {
 }
 
 fn delete_task(app: &mut App) {
-    if app.tasks.is_empty() {
-        return;
-    }
+    if let Some(index) = app.table_state.selected() {
+        app.tasks.remove(index);
 
-    if app.selected_task < app.tasks.len() {
-        app.tasks.remove(app.selected_task);
-
-        // keep selection valid
-        if app.selected_task >= app.tasks.len() && app.selected_task > 0 {
-            app.selected_task -= 1;
+        if app.tasks.is_empty() {
+            app.table_state.select(None);
+        } else {
+            let new_index = index.min(app.tasks.len() - 1);
+            app.table_state.select(Some(new_index));
         }
     }
 }

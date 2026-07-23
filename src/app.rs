@@ -30,7 +30,6 @@ pub struct App {
     pub selected_input: SelectedInput,
 
     pub tasks: Vec<TaskInfo>,
-    pub selected_task: usize,
 
     pub table_state: TableState,
 }
@@ -53,7 +52,6 @@ impl App {
             planned_end: InputState::default(),
 
             selected_input: SelectedInput::TaskName,
-            selected_task: 0,
             tasks: Vec::new(),
 
             table_state,

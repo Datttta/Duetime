@@ -40,7 +40,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         ]),
     ];
 
-    let task_rows = app.tasks.iter().map(|task| {
+    let rows = app.tasks.iter().map(|task| {
         Row::new(vec![
             format!("  {}", task.name),
             task.status.clone(),
@@ -52,7 +52,6 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         ])
     });
 
-    let rows = example_task.into_iter().chain(task_rows);
 
     let table = Table::new(rows, columns)
         .row_highlight_style(Style::default().reversed());
