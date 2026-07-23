@@ -1,5 +1,6 @@
 use std::time::{Duration, Instant};
 
+#[derive(Default)]
 pub struct Stopwatch {
     started_at: Option<Instant>,
     stopwatch: Duration,
