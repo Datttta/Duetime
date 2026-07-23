@@ -1,4 +1,4 @@
-use crate::vim::{InputState, InputMode};
+use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 
 use ratatui::widgets::TableState;

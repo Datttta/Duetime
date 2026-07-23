@@ -44,11 +44,21 @@ impl InputState {
             KeyCode::Char('i') => {
                 *mode = InputMode::Insert;
             }
+            
+            KeyCode::Char('I') => {
+                self.cursor = 0;
+                *mode = InputMode::Insert;
+            }
 
             KeyCode::Char('a') => {
                 if self.cursor < self.text.chars().count() {
                     self.cursor += 1;
                 } 
+                *mode = InputMode::Insert;
+            }
+            
+            KeyCode::Char('A') => {
+                self.cursor = self.text.len();
                 *mode = InputMode::Insert;
             }
 
@@ -99,6 +109,21 @@ impl InputState {
             KeyCode::Backspace => {
                 if self.cursor > 0 {
                     self.cursor -= 1;
+
+                    let byte_index = self
+                        .text
+                        .char_indices()
+                        .nth(self.cursor)
+                        .map(|(i, _)| i)
+                        .unwrap_or(self.text.len());
+
+                    self.text.remove(byte_index);
+                }
+            }
+            
+            KeyCode::Delete => {
+                if self.cursor > 0 {
+                    self.cursor += 1;
 
                     let byte_index = self
                         .text

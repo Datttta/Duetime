@@ -28,18 +28,6 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         Constraint::Length(8), // elapsed
     ];
 
-    let example_task = vec![
-        Row::new(vec![
-            "  My first task",
-            "PENDING",
-            "14:00",
-            "16:00",
-            "",
-            "",
-            "",
-        ]),
-    ];
-
     let rows = app.tasks.iter().map(|task| {
         Row::new(vec![
             format!("  {}", task.name),

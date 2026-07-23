@@ -1,6 +1,6 @@
 use crate::app::{App, Popup, SelectedInput};
 use crate::ui::popup;
-use crate::vim::InputMode;
+use crate::vim_text::InputMode;
 
 use std::io;
 
