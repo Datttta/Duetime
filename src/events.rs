@@ -2,6 +2,7 @@ use crate::app::{App, Popup, SelectedInput};
 use crate::ui::popup;
 use crate::vim_text::InputMode;
 
+use std::time::SystemTime;
 use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent};
@@ -43,6 +44,20 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.waiting_for_d = false
             } else {
                 app.waiting_for_d = true
+            }
+        }
+
+        KeyCode::Char('s') => {
+            if let Some(index) = app.table_state.selected() {
+                let task = &mut app.tasks[index];
+
+                if task.stopwatch.running() {
+                    task.stopwatch.stop();
+                    task.actual_end = Some(SystemTime::now());
+                } else {
+                    task.stopwatch.start();
+                    task.actual_start = Some(SystemTime::now());
+                }
             }
         }
 

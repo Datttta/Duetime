@@ -3,6 +3,7 @@ mod events;
 mod ui;
 mod vim_text;
 mod tasks;
+mod stopwatch;
 
 use std::io;
 use app::App;
