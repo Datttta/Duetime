@@ -63,6 +63,16 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
+        KeyCode::Char('r') => {
+            if let Some(index) = app.table_state.selected() {
+                let task = &mut app.tasks[index];
+
+                task.stopwatch.reset();
+                task.actual_start = None;
+                task.actual_end = None;
+            }
+        }
+
         KeyCode::Char('p') => {
             if let Some(index) = app.table_state.selected(){
                 let task = &mut app.tasks[index];
