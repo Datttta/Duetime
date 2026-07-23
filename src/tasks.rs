@@ -30,7 +30,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         Constraint::Length(11), // status
         Constraint::Length(3), // gap
         Constraint::Length(13), // planned start
-        Constraint::Length(13), // planned end
+        Constraint::Length(12), // planned end
         Constraint::Length(11), // actual start
         Constraint::Length(9), // actual end
         Constraint::Length(8), // stopwatch/elapsed
