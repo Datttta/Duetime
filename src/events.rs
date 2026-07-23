@@ -54,10 +54,23 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 if task.stopwatch.running() {
                     task.stopwatch.stop();
                     task.actual_end = Some(SystemTime::now());
+                    task.status = "COMPLETED".into();
                 } else {
                     task.stopwatch.start();
                     task.actual_start = Some(SystemTime::now());
                     task.status = "IN PROGRESS".into();
+                }
+            }
+        }
+
+        KeyCode::Char('p') => {
+            if let Some(index) = app.table_state.selected(){
+                let task = &mut app.tasks[index];
+
+                if task.stopwatch.running() {
+                    task.stopwatch.stop();
+                    task.actual_end = Some(SystemTime::now());
+                    task.status = "STOPPED".into();
                 }
             }
         }

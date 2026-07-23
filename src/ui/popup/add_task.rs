@@ -14,7 +14,7 @@ use ratatui::{
     Frame,
 };
 
-const TASK_NAME_WIDTH: u16 = 28;
+const TASK_NAME_WIDTH: u16 = 27;
 const PLAN_START_WIDTH: u16 = 30;
 const PLAN_END_WIDTH: u16 = 28;
 
