@@ -57,6 +57,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 } else {
                     task.stopwatch.start();
                     task.actual_start = Some(SystemTime::now());
+                    task.status = "IN PROGRESS".into();
                 }
             }
         }

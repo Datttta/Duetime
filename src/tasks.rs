@@ -6,9 +6,10 @@ use chrono::{DateTime, Local};
 use std::time::SystemTime;
 
 use ratatui::{
-    layout::{Constraint, Rect},
-    widgets::{Row, Table},
+    layout::{Constraint, Rect, Alignment},
+    widgets::{Row, Table, Cell},
     style::Style,
+    text::Line,
     Frame,
 };
 
@@ -25,8 +26,9 @@ pub struct TaskInfo {
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let columns = [
-        Constraint::Length(26), // task name
-        Constraint::Length(12), // status
+        Constraint::Length(24), // task name
+        Constraint::Length(11), // status
+        Constraint::Length(3), // gap
         Constraint::Length(13), // planned start
         Constraint::Length(13), // planned end
         Constraint::Length(11), // actual start
@@ -36,13 +38,14 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let rows = app.tasks.iter().map(|task| {
         Row::new(vec![
-            format!("  {}", task.name),
-            task.status.clone(),
-            task.planned_start.clone(),
-            task.planned_end.clone(),
-            format_time(task.actual_start),
-            format_time(task.actual_end),
-            task.stopwatch.formatted()
+            Cell::from(format!("  {}", task.name)),
+            Cell::from(Line::from(task.status.as_str()).alignment(Alignment::Center)),
+            Cell::from(String::new()),
+            Cell::from(task.planned_start.clone()),
+            Cell::from(task.planned_end.clone()),
+            Cell::from(format_time(task.actual_start)),
+            Cell::from(format_time(task.actual_end)),
+            Cell::from(task.stopwatch.formatted()),
         ])
     });
 
