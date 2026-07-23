@@ -6,7 +6,7 @@ use ratatui::{
     style::Style,
     Frame,
 };
-
+#[derive(Default)]
 pub struct TaskInfo {
     pub name: String,
     pub status: String,
@@ -34,9 +34,9 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
             "PENDING",
             "14:00",
             "16:00",
-            "--:--",
-            "--:--",
-            "--:--:--",
+            "",
+            "",
+            "",
         ]),
     ];
 

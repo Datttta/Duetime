@@ -155,9 +155,7 @@ fn save_task(app: &mut App) {
                 status: "PENDING".into(),
                 planned_start: app.planned_start.text.clone(),
                 planned_end: app.planned_end.text.clone(),
-                actual_start: "--:--".into(),
-                actual_end: "--:--".into(),
-                elapsed: "--:--:--".into(),
+                ..Default::default()
             });
         }
 
