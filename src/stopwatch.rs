@@ -7,6 +7,10 @@ pub struct Stopwatch {
 }
 
 impl Stopwatch {
+    pub fn started(&self) -> bool {
+        self.started_at.is_some() || self.stopwatch != Duration::ZERO
+    }
+
     pub fn new() -> Self {
         Self {
             started_at: None,
@@ -43,6 +47,10 @@ impl Stopwatch {
     }
 
     pub fn formatted(&self) -> String {
+        if !self.started() {
+            return String::new();
+        }
+
         let secs = self.elapsed().as_secs();
 
         let hours = secs / 3600;
