@@ -36,8 +36,7 @@ pub struct App {
 
 impl App {
     pub fn new() -> Self {
-        let mut table_state = TableState::default();
-        table_state.select(Some(0));
+        let table_state = TableState::default();
 
         Self {
             popup: Popup::None,

@@ -122,8 +122,7 @@ impl InputState {
             }
             
             KeyCode::Delete => {
-                if self.cursor > 0 {
-                    self.cursor += 1;
+                if self.cursor < self.text.len() {
 
                     let byte_index = self
                         .text

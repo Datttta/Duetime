@@ -61,7 +61,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.planned_start.cursor = app.planned_start.text.len();
                 app.planned_end.cursor = app.planned_end.text.len();
 
-                app.mode = InputMode::Insert;
+                app.mode = InputMode::Normal;
                 app.selected_input = SelectedInput::TaskName;
             }
         }

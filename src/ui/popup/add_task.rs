@@ -157,6 +157,9 @@ fn save_task(app: &mut App) {
                 planned_end: app.planned_end.text.clone(),
                 ..Default::default()
             });
+
+            let selected = app.table_state.selected().unwrap_or(0);
+            app.table_state.select(Some(selected + 1));
         }
 
         Popup::EditTask(index) => {
