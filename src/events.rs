@@ -70,6 +70,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 task.stopwatch.reset();
                 task.actual_start = None;
                 task.actual_end = None;
+                task.status = "PENDING".into();
             }
         }
 

@@ -26,6 +26,10 @@ pub struct App {
     pub planned_start: InputState,
     pub planned_end: InputState,
 
+    pub log: Vec<String>,
+    pub templates: Vec<TaskTemplate>,
+    pub presets: Vec<Preset>,
+
     pub mode: InputMode,
     pub selected_input: SelectedInput,
 
@@ -49,6 +53,10 @@ impl App {
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
+            
+            log: vec::new(),
+            templates: vec::new(),
+            presets: vec::new(),
 
             selected_input: SelectedInput::TaskName,
             tasks: Vec::new(),
