@@ -170,7 +170,7 @@ fn save_task(app: &mut App) {
             }
         }
 
-        Popup::None => {}
+        _ => {}
     }
 
     app.task_name.clear();

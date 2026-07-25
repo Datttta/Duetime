@@ -1,11 +1,13 @@
 use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
+use crate::ui::popup::presets::{TaskTemplate, Preset};
 
 use ratatui::widgets::TableState;
 
 pub enum Popup {
     None,
     AddTask,
+    Presets,
     EditTask(usize),
 }
 
@@ -18,15 +20,13 @@ pub enum SelectedInput {
 
 pub struct App {
     pub popup: Popup,
-    pub waiting_for_t: bool,
-    pub waiting_for_d: bool,
+    pub pending_command: Option<char>,
     pub running: bool,
 
     pub task_name: InputState,
     pub planned_start: InputState,
     pub planned_end: InputState,
 
-    pub log: Vec<String>,
     pub templates: Vec<TaskTemplate>,
     pub presets: Vec<Preset>,
 
@@ -43,9 +43,9 @@ impl App {
         let table_state = TableState::default();
 
         Self {
+            pending_command: None,
+
             popup: Popup::None,
-            waiting_for_t: false,
-            waiting_for_d: false,
             running: true,
 
             mode: InputMode::Insert,
@@ -54,9 +54,8 @@ impl App {
             planned_start: InputState::default(),
             planned_end: InputState::default(),
             
-            log: vec::new(),
-            templates: vec::new(),
-            presets: vec::new(),
+            templates: Vec::new(),
+            presets: Vec::new(),
 
             selected_input: SelectedInput::TaskName,
             tasks: Vec::new(),

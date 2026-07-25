@@ -23,6 +23,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 Popup::EditTask(_) => {
                     popup::add_task::handle_keys(app, key);
                 }
+
+                Popup::Presets => {
+                    popup::add_task::handle_keys(app, key);
+                }
             }
         }
     }
@@ -35,15 +39,29 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
     match key.code {
 
         KeyCode::Char('a') => {
-            app.waiting_for_t = true;
+            app.pending_command = Some('a');
+        }
+
+        KeyCode::Char('t') => {
+            if app.pending_command == Some('a') {
+                app.popup = Popup::AddTask;
+                app.selected_input = SelectedInput::TaskName;
+                app.mode = InputMode::Insert;
+            }
+
+            app.pending_command = None;
+        }
+
+        KeyCode::Char('P') => {
+            app.popup = Popup::Presets;
         }
 
         KeyCode::Char('d') => {
-            if app.waiting_for_d {
+            if app.pending_command == Some('d') {
                 delete_task(app);
-                app.waiting_for_d = false
+                app.pending_command = None;
             } else {
-                app.waiting_for_d = true
+                app.pending_command = Some('d')
             }
         }
 
@@ -104,16 +122,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.mode = InputMode::Normal;
                 app.selected_input = SelectedInput::TaskName;
             }
-        }
 
-        KeyCode::Char('t') => {
-            if app.waiting_for_t {
-                app.popup = Popup::AddTask;
-                app.selected_input = SelectedInput::TaskName;
-                app.mode = InputMode::Insert;
-            }
-
-            app.waiting_for_t = false;
         }
 
         KeyCode::Char('q') => {
@@ -137,7 +146,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         _ => {
-            app.waiting_for_t = false;
+            app.pending_command = None;
         }
     }
 }
