@@ -35,7 +35,7 @@ pub fn draw(frame: &mut Frame, _app: &App) {
 
     fn centered_rect(frame: &Frame) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(5),
+            Constraint::Length(15),
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -44,7 +44,7 @@ pub fn draw(frame: &mut Frame, _app: &App) {
             Constraint::Length(40)
         ])
         .flex(Flex::Center)
-        .split(frame.area());
+        .split(vertical[0]);
         
         horizontal[0]
     }

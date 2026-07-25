@@ -52,4 +52,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::EditTask(_) = app.popup {
         popup::add_task::draw(frame, app);
     }
+
+    if let Popup::Presets = app.popup {
+        popup::presets::draw(frame, app);
+    }
 }
