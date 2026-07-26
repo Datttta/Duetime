@@ -9,6 +9,15 @@ pub enum Popup {
     AddTask,
     Presets,
     EditTask(usize),
+    Presets,
+    NewPreset,
+}
+
+pub enum TaskDestination {
+    AddTask,
+    Preset,
+    EditTask(usize),
+    EditPresetTask(usize),
 }
 
 #[derive(PartialEq)]
@@ -36,6 +45,13 @@ pub struct App {
     pub tasks: Vec<TaskInfo>,
 
     pub table_state: TableState,
+
+    pub presets: Vec<Preset>,
+    pub edit_preset: Option<usize>,
+    pub preset_name: InputState,
+    pub preset_tasks: Vec<TaskTemplate>,
+    pub selected_preset_task: usize,
+    pub task_destination: TaskDestination,
 }
 
 impl App {
@@ -61,6 +77,13 @@ impl App {
             tasks: Vec::new(),
 
             table_state,
+
+            presets: Vec::new(),
+            preset_tasks: Vec::new(),
+            preset_name: InputState::default(),
+            edit_preset: None,
+            selected_preset_task: 0,
+            task_destination: TaskDestination::Tasks,
         }
     }
 }

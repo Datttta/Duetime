@@ -148,8 +148,20 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
 
 fn save_task(app: &mut App) {
-    match app.popup {
-        Popup::AddTask => {
+    match app.task_destination {
+
+        TaskDestination::Preset => {
+            app.preset_tasks.push(TaskTemplate {
+                id: ...,
+                name: app.task_name.text.clone(),
+                planned_start: Some(app.planned_start.text.clone()),
+                planned_end: Some(app.planned_end.text.clone()),
+            });
+
+            app.popup = Popup::NewPreset;
+        }
+
+        TaskDestination::AddTask(index) => {
             app.tasks.push(TaskInfo {
                 name: app.task_name.text.clone(),
                 status: "PENDING".into(),
@@ -162,12 +174,18 @@ fn save_task(app: &mut App) {
             app.table_state.select(Some(selected + 1));
         }
 
-        Popup::EditTask(index) => {
+        TaskDestination::EditTask(index) => {
             if let Some(task) = app.tasks.get_mut(index) {
                 task.name = app.task_name.text.clone();
                 task.planned_start = app.planned_start.text.clone();
                 task.planned_end = app.planned_end.text.clone();
             }
+        }
+
+        TaskDestination::EditPresetTask(index) => {
+            task.name = app.task_name.text.clone();
+            task.planned_start = Some(app.planned_start.text.clone());
+            task.planned_end = Some(app.planned_end.text.clone());
         }
 
         _ => {}

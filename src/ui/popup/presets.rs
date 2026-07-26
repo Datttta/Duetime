@@ -35,7 +35,7 @@ pub fn draw(frame: &mut Frame, _app: &App) {
 
     fn centered_rect(frame: &Frame) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(15),
+            Constraint::Length(18),
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -52,6 +52,10 @@ pub fn draw(frame: &mut Frame, _app: &App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
+
+        KeyCode::'n' => {
+            // add new presets
+        }
 
         KeyCode::Esc => {
             app.popup = Popup::None
