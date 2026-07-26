@@ -1,9 +1,8 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
-    app::{App, Popup, TaskDestination, SelectedInput},
+    app::{App, Popup},
 };
-use crate::vim_text::InputMode;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
@@ -11,26 +10,13 @@ use ratatui::{
     Frame
 };
 
-pub struct Preset {
-    pub id: u64,
-    pub name: String,
-    pub tasks: Vec<TaskTemplate>,
-}
-
-pub struct TaskTemplate {
-    pub id: u64,
-    pub name: String,
-    pub planned_start: Option<String>,
-    pub planned_end: Option<String>,
-}
-
 pub fn draw(frame: &mut Frame, _app: &App) {
     let area = centered_rect(frame);
 
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
-        .title("Presets");
+        .title("New Preset");
 
     frame.render_widget(block, area);
 
@@ -42,7 +28,7 @@ pub fn draw(frame: &mut Frame, _app: &App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(40)
+            Constraint::Length(50)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -53,20 +39,7 @@ pub fn draw(frame: &mut Frame, _app: &App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
-
-        KeyCode::Char('n') => {
-            app.popup = Popup::NewPreset;
-
-            app.task_destination = TaskDestination::Preset;
-
-            app.task_name.clear();
-            app.planned_start.clear();
-            app.planned_end.clear();
-
-            app.selected_input = SelectedInput::TaskName;
-            app.mode = InputMode::Insert;
-        }
-
+        
         KeyCode::Esc => {
             app.popup = Popup::None
         }
@@ -74,3 +47,4 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         _ => {}
     }
 }
+

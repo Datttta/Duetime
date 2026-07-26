@@ -2,9 +2,9 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::events::{handle_escape};
 use crate::tasks::TaskInfo;
-
+use crate::ui::popup::presets::TaskTemplate;
 use crate::{
-    app::{App, Popup, SelectedInput},
+    app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,
 };
 
@@ -151,8 +151,11 @@ fn save_task(app: &mut App) {
     match app.task_destination {
 
         TaskDestination::Preset => {
+            let id = app.next_id;
+            app.next_id += 1;
+
             app.preset_tasks.push(TaskTemplate {
-                id: ...,
+                id,
                 name: app.task_name.text.clone(),
                 planned_start: Some(app.planned_start.text.clone()),
                 planned_end: Some(app.planned_end.text.clone()),
@@ -161,7 +164,7 @@ fn save_task(app: &mut App) {
             app.popup = Popup::NewPreset;
         }
 
-        TaskDestination::AddTask(index) => {
+        TaskDestination::AddTask => {
             app.tasks.push(TaskInfo {
                 name: app.task_name.text.clone(),
                 status: "PENDING".into(),
@@ -183,19 +186,18 @@ fn save_task(app: &mut App) {
         }
 
         TaskDestination::EditPresetTask(index) => {
-            task.name = app.task_name.text.clone();
-            task.planned_start = Some(app.planned_start.text.clone());
-            task.planned_end = Some(app.planned_end.text.clone());
+            if let Some(task) = app.preset_tasks.get_mut(index) {
+                task.name = app.task_name.text.clone();
+                task.planned_start = Some(app.planned_start.text.clone());
+                task.planned_end = Some(app.planned_end.text.clone());
+            }
         }
-
-        _ => {}
     }
 
     app.task_name.clear();
     app.planned_start.clear();
     app.planned_end.clear();
 
-    app.popup = Popup::None;
 }
 
 fn close(app: &mut App) {

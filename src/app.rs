@@ -9,7 +9,6 @@ pub enum Popup {
     AddTask,
     Presets,
     EditTask(usize),
-    Presets,
     NewPreset,
 }
 
@@ -36,9 +35,6 @@ pub struct App {
     pub planned_start: InputState,
     pub planned_end: InputState,
 
-    pub templates: Vec<TaskTemplate>,
-    pub presets: Vec<Preset>,
-
     pub mode: InputMode,
     pub selected_input: SelectedInput,
 
@@ -46,12 +42,15 @@ pub struct App {
 
     pub table_state: TableState,
 
+    pub templates: Vec<TaskTemplate>,
+
     pub presets: Vec<Preset>,
     pub edit_preset: Option<usize>,
     pub preset_name: InputState,
     pub preset_tasks: Vec<TaskTemplate>,
     pub selected_preset_task: usize,
     pub task_destination: TaskDestination,
+    pub next_id: u64,
 }
 
 impl App {
@@ -70,20 +69,20 @@ impl App {
             planned_start: InputState::default(),
             planned_end: InputState::default(),
             
-            templates: Vec::new(),
-            presets: Vec::new(),
-
             selected_input: SelectedInput::TaskName,
             tasks: Vec::new(),
 
             table_state,
+            
+            templates: Vec::new(),
 
             presets: Vec::new(),
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),
             edit_preset: None,
             selected_preset_task: 0,
-            task_destination: TaskDestination::Tasks,
+            task_destination: TaskDestination::AddTask,
+            next_id: 1,
         }
     }
 }

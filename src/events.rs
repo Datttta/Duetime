@@ -25,7 +25,11 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 }
 
                 Popup::Presets => {
-                    popup::add_task::handle_keys(app, key);
+                    popup::presets::handle_keys(app, key);
+                }
+                
+                Popup::NewPreset => {
+                    popup::new_preset::handle_keys(app, key);
                 }
             }
         }
