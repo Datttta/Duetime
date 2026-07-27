@@ -1,4 +1,4 @@
-use ratatui::widgets::TableStable;
+use ratatui::widgets::TableState;
 
 use crossterm::event::{KeyCode, KeyEvent};
 
@@ -10,10 +10,10 @@ pub enum Navigation {
 pub fn handle (
     Key: KeyEvent,
     pending: &mut Option<char>,
-    state: &mut TableStable,
+    state: &mut TableState,
     len: usize,
-) -> Navigation {
-    match key.code {
+) -> bool {
+    match Key.code {
         KeyCode::Char('k') => {
             let selected = state.selected().unwrap_or(0);
                 if selected > 0 {
@@ -47,6 +47,6 @@ pub fn handle (
             true
         }
 
-        _ => False
+        _ => false
     }
 }

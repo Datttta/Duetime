@@ -41,17 +41,16 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
 
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
+    if vim_navigation::handle(
+        key,
+        &mut app.pending_command,
+        &mut app.table_state,
+        app.tasks.len(),
+    ) {
+        return;
+    }
+
     match key.code {
-
-        if vim_navigation::handle(
-            key,
-            &mut app.pending_command,
-            &mut app.table_state,
-            app.tasks.len(),
-        ) {
-            return
-        }
-
         KeyCode::Char('a') => {
             app.pending_command = Some('a');
         }
@@ -137,6 +136,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.selected_input = SelectedInput::TaskName;
             }
 
+        }
+        
+        KeyCode::Char('q') => {
+            app.running = false;
         }
 
         _ => {
