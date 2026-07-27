@@ -5,6 +5,7 @@ use crate::{
 };
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
+use crate::ui::popup::presets::Preset;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
@@ -70,11 +71,28 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let list = List::new(tasks);
 
-    frame.render_widget(list, chunks[1])
+    frame.render_widget(list, chunks[1]);
+}
+
+fn save_preset(app: &mut App) {
+    let preset = Preset {
+        id: app.next_id,
+        name: app.preset_name.text.clone(),
+        tasks: std::mem::take(&mut app.preset_tasks),
+    };
+
+    app.next_id += 1;
+    app.presets.push(preset);
+    app.preset_name.clear();
+    app.popup = Popup::Presets;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
+
+        KeyCode::Enter => {
+            save_preset(app);
+        }
 
         KeyCode::Char('a') if app.mode == InputMode::Normal => {
             app.popup = Popup::AddTask;
@@ -86,7 +104,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.planned_end.clear();
 
             app.selected_input = SelectedInput::TaskName;
-            app.mode = InputMode::Insert;
+            app.mode = InputMode::Normal;
         }
         
         KeyCode::Esc if app.mode == InputMode::Normal => {

@@ -2,6 +2,7 @@ mod app;
 mod events;
 mod ui;
 mod vim_text;
+mod vim_navigation;
 mod tasks;
 mod stopwatch;
 

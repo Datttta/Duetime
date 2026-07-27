@@ -1,6 +1,7 @@
 use crate::app::{App, Popup, SelectedInput};
 use crate::ui::popup;
 use crate::vim_text::InputMode;
+use crate::vim_navigation;
 
 use std::time::SystemTime;
 use std::io;
@@ -41,6 +42,15 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
     match key.code {
+
+        if vim_navigation::handle(
+            key,
+            &mut app.pending_command,
+            &mut app.table_state,
+            app.tasks.len(),
+        ) {
+            return
+        }
 
         KeyCode::Char('a') => {
             app.pending_command = Some('a');
@@ -127,26 +137,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.selected_input = SelectedInput::TaskName;
             }
 
-        }
-
-        KeyCode::Char('q') => {
-            app.running = false;
-        }
-
-        KeyCode::Char('k') => {
-            let selected = app.table_state.selected().unwrap_or(0);
-
-            if selected > 0 {
-                app.table_state.select(Some(selected - 1));
-            }
-        }
-
-        KeyCode::Char('j') => {
-            let selected = app.table_state.selected().unwrap_or(0);
-
-            if selected + 1 < app.tasks.len() {
-                app.table_state.select(Some(selected + 1));
-            }
         }
 
         _ => {
