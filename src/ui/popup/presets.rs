@@ -1,9 +1,8 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
-    app::{App, Popup, TaskDestination, SelectedInput},
+    app::{App, Popup},
 };
-use crate::vim_text::InputMode;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
@@ -56,15 +55,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('n') => {
             app.popup = Popup::NewPreset;
-
-            app.task_destination = TaskDestination::Preset;
-
-            app.task_name.clear();
-            app.planned_start.clear();
-            app.planned_end.clear();
-
-            app.selected_input = SelectedInput::TaskName;
-            app.mode = InputMode::Insert;
         }
 
         KeyCode::Esc => {
