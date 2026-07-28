@@ -1,8 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::{
-    app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus},
-};
+use crate::app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus};
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::ui::popup::presets::Preset;
@@ -11,6 +9,7 @@ use crate::vim_navigation;
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
     widgets::{Clear, Block, List, ListItem, Padding},
+    style::{Style, Stylize},
     text::Line,
     Frame
 };
@@ -70,7 +69,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         app.mode,
     );
 
-    let list = List::new(tasks);
+    let list = List::new(tasks.clone())
+        .highlight_symbol("> ");
 
     frame.render_stateful_widget(list, chunks[1], &mut app.preset_task_state);
 }

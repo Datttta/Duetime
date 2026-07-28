@@ -161,6 +161,10 @@ fn save_task(app: &mut App) {
                 planned_end: Some(app.planned_end.text.clone()),
             });
 
+            if app.preset_task_state.selected().is_none() && !app.preset_tasks.is_empty() {
+                app.preset_task_state.select(Some(0));
+            }
+
             app.popup = Popup::NewPreset;
         }
 

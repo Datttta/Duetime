@@ -50,6 +50,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     });
 
     let table = Table::new(rows, columns)
+        //.highlight_symbol("> ");
         .row_highlight_style(Style::default().reversed());
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
