@@ -89,31 +89,12 @@ fn save_preset(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-
     match key.code {
-
-        KeyCode::Char('a') if app.mode == InputMode::Normal => {
-            app.popup = Popup::AddTask;
-
-            app.task_destination = TaskDestination::Preset;
-
-            app.task_name.clear();
-            app.planned_start.clear();
-            app.planned_end.clear();
-
-            app.selected_input = SelectedInput::TaskName;
-            app.mode = InputMode::Normal;
-        }
-
         KeyCode::Tab => {
             app.new_preset_focus = match app.new_preset_focus {
                 NewPresetFocus::Name => NewPresetFocus::Tasks,
                 NewPresetFocus::Tasks => NewPresetFocus::Name,
             };
-        }
-
-        KeyCode::Esc if app.mode == InputMode::Normal => {
-            app.popup = Popup::None;
         }
 
         KeyCode::Enter => {
@@ -123,11 +104,56 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         _ => {
             match app.new_preset_focus {
 
+
                 NewPresetFocus::Name => {
+                    if app.mode == InputMode::Normal {
+                        match key.code {
+                            KeyCode::Char('a') => {
+                                app.popup = Popup::AddTask;
+
+                                app.task_destination = TaskDestination::Preset;
+
+                                app.task_name.clear();
+                                app.planned_start.clear();
+                                app.planned_end.clear();
+
+                                app.selected_input = SelectedInput::TaskName;
+                                app.mode = InputMode::Insert;
+
+                                return;
+                            }
+
+                            KeyCode::Esc => {
+                                app.popup = Popup::None;
+                            }
+
+                            _ => {}
+                        }
+                    }
+
                     app.preset_name.handle_key(key, &mut app.mode, 40);
                 }
 
                 NewPresetFocus::Tasks => {
+
+                    match key.code {
+                        KeyCode::Char('a') => {
+                            app.popup = Popup::AddTask;
+
+                            app.task_destination = TaskDestination::Preset;
+
+                            app.task_name.clear();
+                            app.planned_start.clear();
+                            app.planned_end.clear();
+
+                            app.selected_input = SelectedInput::TaskName;
+                            app.mode = InputMode::Insert;
+
+                            return;
+                        }
+
+                        _ => {}
+                    }
 
                     let mut selected = app.preset_task_state.selected();
 
