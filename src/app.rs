@@ -2,7 +2,13 @@ use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 use crate::ui::popup::presets::{TaskTemplate, Preset};
 
-use ratatui::widgets::TableState;
+use ratatui::widgets::{TableState, ListState};
+
+#[derive(PartialEq)]
+pub enum NewPresetFocus {
+    Name,
+    Tasks,
+}
 
 pub enum Popup {
     None,
@@ -41,6 +47,7 @@ pub struct App {
     pub tasks: Vec<TaskInfo>,
 
     pub table_state: TableState,
+    pub preset_task_state: ListState,
 
     pub templates: Vec<TaskTemplate>,
 
@@ -48,14 +55,17 @@ pub struct App {
     pub edit_preset: Option<usize>,
     pub preset_name: InputState,
     pub preset_tasks: Vec<TaskTemplate>,
-    pub selected_preset_task: usize,
     pub task_destination: TaskDestination,
     pub next_id: u64,
+    pub new_preset_focus: NewPresetFocus,
 }
 
 impl App {
     pub fn new() -> Self {
         let table_state = TableState::default();
+
+        let mut preset_task_state = ListState::default();
+        preset_task_state.select(Some(0));
 
         Self {
             pending_command: None,
@@ -73,6 +83,7 @@ impl App {
             tasks: Vec::new(),
 
             table_state,
+            preset_task_state,
             
             templates: Vec::new(),
 
@@ -80,9 +91,9 @@ impl App {
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),
             edit_preset: None,
-            selected_preset_task: 0,
             task_destination: TaskDestination::AddTask,
             next_id: 1,
+            new_preset_focus: NewPresetFocus::Name,
         }
     }
 }

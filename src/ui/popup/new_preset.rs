@@ -1,11 +1,12 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
-    app::{App, Popup, TaskDestination, SelectedInput},
+    app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus},
 };
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::ui::popup::presets::Preset;
+use crate::vim_navigation;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
@@ -14,7 +15,9 @@ use ratatui::{
     Frame
 };
 
-pub fn draw(frame: &mut Frame, app: &App) {
+pub fn draw(frame: &mut Frame, app: &mut App) {
+    app.preset_task_state.select(Some(0));
+
     let area = centered_rect(frame);
 
     frame.render_widget(Clear, area);
@@ -65,13 +68,13 @@ pub fn draw(frame: &mut Frame, app: &App) {
         chunks[0],
         &app.preset_name,
         "Preset name",
-        true, // or compare against a SelectedPresetInput enum later
+        app.new_preset_focus == NewPresetFocus::Name,
         app.mode,
     );
 
     let list = List::new(tasks);
 
-    frame.render_widget(list, chunks[1]);
+    frame.render_stateful_widget(list, chunks[1], &mut app.preset_task_state);
 }
 
 fn save_preset(app: &mut App) {
@@ -88,32 +91,67 @@ fn save_preset(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+
     match key.code {
+
+        KeyCode::Tab => {
+            app.new_preset_focus = match app.new_preset_focus {
+                NewPresetFocus::Name => NewPresetFocus::Tasks,
+                NewPresetFocus::Tasks => NewPresetFocus::Name,
+            };
+        }
+
+        KeyCode::Esc if app.mode == InputMode::Normal => {
+            app.popup = Popup::None;
+        }
 
         KeyCode::Enter => {
             save_preset(app);
         }
 
-        KeyCode::Char('a') if app.mode == InputMode::Normal => {
-            app.popup = Popup::AddTask;
-
-            app.task_destination = TaskDestination::Preset;
-
-            app.task_name.clear();
-            app.planned_start.clear();
-            app.planned_end.clear();
-
-            app.selected_input = SelectedInput::TaskName;
-            app.mode = InputMode::Normal;
-        }
-        
-        KeyCode::Esc if app.mode == InputMode::Normal => {
-            app.popup = Popup::None
-        }
-
         _ => {
-            app.preset_name.handle_key(key, &mut app.mode, 40);
+            match app.new_preset_focus {
+
+                NewPresetFocus::Name => {
+                    app.preset_name.handle_key(key, &mut app.mode, 40);
+                }
+
+                NewPresetFocus::Tasks => {
+
+                    let mut selected = app.preset_task_state.selected();
+
+                    let handled = vim_navigation::handle(
+                        key,
+                        &mut app.pending_command,
+                        &mut selected,
+                        app.preset_tasks.len(),
+                    );
+
+                    app.preset_task_state.select(selected);
+
+                    if handled {
+                        return;
+                    }
+
+                    match key.code {
+
+                        KeyCode::Char('a') if app.mode == InputMode::Normal => {
+                            app.popup = Popup::AddTask;
+
+                            app.task_destination = TaskDestination::Preset;
+
+                            app.task_name.clear();
+                            app.planned_start.clear();
+                            app.planned_end.clear();
+
+                            app.selected_input = SelectedInput::TaskName;
+                            app.mode = InputMode::Insert;
+                        }
+
+                        _ => {}
+                    }
+                }
+            }
         }
     }
 }
-

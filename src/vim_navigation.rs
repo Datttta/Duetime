@@ -10,43 +10,46 @@ pub enum Navigation {
 pub fn handle (
     Key: KeyEvent,
     pending: &mut Option<char>,
-    state: &mut TableState,
+    selected: &mut TableState,
     len: usize,
 ) -> bool {
+    let current = selected.unwrap_or(0);
+
     match Key.code {
-        KeyCode::Char('k') => {
-            let selected = state.selected().unwrap_or(0);
-                if selected > 0 {
-                    state.select(Some(selected - 1));
-                }
-                true
+        KeyCode::Char('j') => {
+            if current + 1 < len {
+                *selected = Some(current + 1);
+            }
+            true
         }
 
-        KeyCode::Char('j') => {
-            let selected = state.selected().unwrap_or(0);
-                if selected + 1 < len {
-                    state.select(Some(selected + 1));
-                }
-                true
+        KeyCode::Char('k') => {
+            if current > 0 {
+                *selected = Some(current - 1);
+            }
+            true
         }
 
         KeyCode::Char('G') => {
             if len > 0 {
-                state.select(Some(len - 1));
+                *selected = Some(len - 1);
             }
             true
         }
 
         KeyCode::Char('g') => {
             if *pending == Some('g') {
-                state.select(Some(0));
+                if len > 0 {
+                    *selected = Some(0);
+                }
                 *pending = None;
+                true
             } else {
                 *pending = Some('g');
+                true
             }
-            true
         }
 
-        _ => false
+        _ => false,
     }
 }
