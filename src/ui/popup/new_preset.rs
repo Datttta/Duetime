@@ -9,7 +9,6 @@ use crate::vim_navigation;
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
     widgets::{Clear, Block, List, ListItem, Padding},
-    style::{Style, Stylize},
     text::Line,
     Frame
 };
@@ -99,6 +98,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Enter => {
             save_preset(app);
+            if app.preset_state.selected().is_none() && !app.presets.is_empty() {
+                app.preset_state.select(Some(0));
+            }
         }
 
         _ => {

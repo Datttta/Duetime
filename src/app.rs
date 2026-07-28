@@ -58,6 +58,7 @@ pub struct App {
     pub task_destination: TaskDestination,
     pub next_id: u64,
     pub new_preset_focus: NewPresetFocus,
+    pub preset_state: ListState,
 }
 
 impl App {
@@ -66,6 +67,9 @@ impl App {
 
         let mut preset_task_state = ListState::default();
         preset_task_state.select(Some(0));
+
+        let mut preset_state = ListState::default();
+        preset_state.select(Some(0));
 
         Self {
             pending_command: None,
@@ -94,6 +98,7 @@ impl App {
             task_destination: TaskDestination::AddTask,
             next_id: 1,
             new_preset_focus: NewPresetFocus::Name,
+            preset_state,
         }
     }
 }
