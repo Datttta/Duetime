@@ -143,7 +143,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.mode = InputMode::Normal;
                 app.selected_input = SelectedInput::TaskName;
             }
-
         }
         
         KeyCode::Char('q') => {

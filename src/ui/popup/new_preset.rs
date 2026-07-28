@@ -107,6 +107,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Enter => {
             save_preset(app);
 
+            app.task_name.clear();
+            app.planned_start.clear();
+            app.planned_end.clear();
+
             if app.preset_state.selected().is_none() && !app.presets.is_empty() {
                 app.preset_state.select(Some(0));
             }
@@ -135,7 +139,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             }
 
                             KeyCode::Esc => {
-                                app.popup = Popup::None;
+                                app.popup = Popup::Presets;
                             }
 
                             _ => {}
@@ -181,11 +185,13 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                                 app.mode = InputMode::Normal;
                                 app.selected_input = SelectedInput::TaskName;
+
+                                return;
                             }
                         }
 
                         KeyCode::Esc => {
-                            app.popup = Popup::None;
+                            app.popup = Popup::Presets;
                         }
 
                         _ => {}

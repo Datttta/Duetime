@@ -186,7 +186,7 @@ fn save_task(app: &mut App) {
                 task.name = app.task_name.text.clone();
                 task.planned_start = app.planned_start.text.clone();
                 task.planned_end = app.planned_end.text.clone();
-                app.popup = Popup::None;
+                app.popup = Popup::Presets;
             }
         }
 
@@ -195,6 +195,7 @@ fn save_task(app: &mut App) {
                 task.name = app.task_name.text.clone();
                 task.planned_start = Some(app.planned_start.text.clone());
                 task.planned_end = Some(app.planned_end.text.clone());
+                app.popup = Popup::NewPreset;
             }
         }
     }
@@ -202,7 +203,6 @@ fn save_task(app: &mut App) {
     app.task_name.clear();
     app.planned_start.clear();
     app.planned_end.clear();
-
 }
 
 fn close(app: &mut App) {
