@@ -13,6 +13,8 @@ use ratatui::{
     Frame
 };
 
+const PRESET_NAME_WIDTH: u16 = 30;
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame);
 
@@ -32,7 +34,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(48)
+            Constraint::Length(50)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -40,11 +42,17 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
-    let chunks = Layout::vertical([
+    let vertical_inner = Layout::vertical([
         Constraint::Length(3), // preset name
         Constraint::Min(0),    // task list
     ])
     .split(block.inner(area));
+
+    let horizontal_inner = Layout::horizontal([
+        Constraint::Length(PRESET_NAME_WIDTH)
+    ])
+    .flex(Flex::Center)
+    .split(vertical_inner[0]);
 
     let tasks: Vec<ListItem> = app
         .preset_tasks
@@ -61,7 +69,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     input::draw(
         frame,
-        chunks[0],
+        horizontal_inner[0],
         &app.preset_name,
         "Preset name",
         app.new_preset_focus == NewPresetFocus::Name,
@@ -71,7 +79,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let list = List::new(tasks.clone())
         .highlight_symbol("> ");
 
-    frame.render_stateful_widget(list, chunks[1], &mut app.preset_task_state);
+    frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
 }
 
 fn save_preset(app: &mut App) {
@@ -98,6 +106,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Enter => {
             save_preset(app);
+
             if app.preset_state.selected().is_none() && !app.presets.is_empty() {
                 app.preset_state.select(Some(0));
             }
@@ -133,7 +142,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
                     }
 
-                    app.preset_name.handle_key(key, &mut app.mode, 40);
+                    app.preset_name.handle_key(key, &mut app.mode, (PRESET_NAME_WIDTH - 4).into());
                 }
 
                 NewPresetFocus::Tasks => {
@@ -152,6 +161,27 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             app.mode = InputMode::Insert;
 
                             return;
+                        }
+
+                        KeyCode::Char('e') => {
+                            if let Some(index) = app.preset_task_state.selected() {
+                                app.popup = Popup::AddTask;
+
+                                app.task_destination = TaskDestination::EditPresetTask(index);
+
+                                let preset = &app.preset_tasks[index];
+
+                                app.task_name.text = preset.name.clone();
+                                app.planned_start.text = preset.planned_start.clone().unwrap_or_default();
+                                app.planned_end.text = preset.planned_end.clone().unwrap_or_default();
+
+                                app.task_name.cursor = app.task_name.text.len();
+                                app.planned_start.cursor = app.planned_start.text.len();
+                                app.planned_end.cursor = app.planned_end.text.len();
+
+                                app.mode = InputMode::Normal;
+                                app.selected_input = SelectedInput::TaskName;
+                            }
                         }
 
                         KeyCode::Esc => {

@@ -1,6 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::vim_navigation;
+use crate::vim_text::InputMode;
 use crate::{
     app::{App, Popup},
 };
@@ -86,6 +87,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
 
         KeyCode::Char('n') => {
+            app.preset_name.clear();
+            app.mode = InputMode::Insert;
+            
             app.popup = Popup::NewPreset;
         }
 
