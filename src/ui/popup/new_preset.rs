@@ -22,7 +22,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     let block = Block::bordered()
         .title("New Preset")
-        .padding(Padding::new(1,0,0,0));
+        .padding(Padding::new(1,1,0,0));
 
     frame.render_widget(&block, area);
 
@@ -150,6 +150,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             app.mode = InputMode::Insert;
 
                             return;
+                        }
+
+                        KeyCode::Esc => {
+                            app.popup = Popup::None;
                         }
 
                         _ => {}

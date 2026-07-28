@@ -25,7 +25,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let block = Block::bordered()
         .title("Add Task")
-        .padding(Padding::new(1,0,0,0));
+        .padding(Padding::new(1,1,0,0));
 
     let inner = block.inner(area);
 
