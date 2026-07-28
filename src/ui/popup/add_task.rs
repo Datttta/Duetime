@@ -182,6 +182,7 @@ fn save_task(app: &mut App) {
                 task.name = app.task_name.text.clone();
                 task.planned_start = app.planned_start.text.clone();
                 task.planned_end = app.planned_end.text.clone();
+                app.popup = Popup::None;
             }
         }
 

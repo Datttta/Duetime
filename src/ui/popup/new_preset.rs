@@ -16,8 +16,6 @@ use ratatui::{
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    app.preset_task_state.select(Some(0));
-
     let area = centered_rect(frame);
 
     frame.render_widget(Clear, area);
@@ -94,6 +92,19 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
 
+        KeyCode::Char('a') if app.mode == InputMode::Normal => {
+            app.popup = Popup::AddTask;
+
+            app.task_destination = TaskDestination::Preset;
+
+            app.task_name.clear();
+            app.planned_start.clear();
+            app.planned_end.clear();
+
+            app.selected_input = SelectedInput::TaskName;
+            app.mode = InputMode::Normal;
+        }
+
         KeyCode::Tab => {
             app.new_preset_focus = match app.new_preset_focus {
                 NewPresetFocus::Name => NewPresetFocus::Tasks,
@@ -131,24 +142,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                     if handled {
                         return;
-                    }
-
-                    match key.code {
-
-                        KeyCode::Char('a') if app.mode == InputMode::Normal => {
-                            app.popup = Popup::AddTask;
-
-                            app.task_destination = TaskDestination::Preset;
-
-                            app.task_name.clear();
-                            app.planned_start.clear();
-                            app.planned_end.clear();
-
-                            app.selected_input = SelectedInput::TaskName;
-                            app.mode = InputMode::Insert;
-                        }
-
-                        _ => {}
                     }
                 }
             }

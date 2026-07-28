@@ -1,5 +1,3 @@
-use ratatui::widgets::TableState;
-
 use crossterm::event::{KeyCode, KeyEvent};
 
 pub enum Navigation {
@@ -10,7 +8,7 @@ pub enum Navigation {
 pub fn handle (
     Key: KeyEvent,
     pending: &mut Option<char>,
-    selected: &mut TableState,
+    selected: &mut Option<usize>,
     len: usize,
 ) -> bool {
     let current = selected.unwrap_or(0);

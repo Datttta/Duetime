@@ -1,4 +1,4 @@
-use crate::app::{App, Popup, SelectedInput};
+use crate::app::{App, Popup, SelectedInput, TaskDestination};
 use crate::ui::popup;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
@@ -41,12 +41,18 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
 
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
-    if vim_navigation::handle(
+    let mut selected = app.table_state.selected();
+
+    let handled = vim_navigation::handle(
         key,
         &mut app.pending_command,
-        &mut app.table_state,
+        &mut selected,
         app.tasks.len(),
-    ) {
+    );
+
+    app.table_state.select(selected);
+
+    if handled {
         return;
     }
 
@@ -120,6 +126,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             if let Some(index) = app.table_state.selected() {
                 app.popup = Popup::EditTask(index);
+
+                app.task_destination = TaskDestination::EditTask(index);
 
                 let task = &app.tasks[index];
                 
