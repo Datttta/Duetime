@@ -190,6 +190,26 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             }
                         }
 
+                        KeyCode::Char('d') => {
+                            if app.pending_command == Some('d') {
+                                if let Some(index) = app.preset_task_state.selected() {
+                                    app.preset_tasks.remove(index);
+
+                                    // Keep the selection valid
+                                    if app.preset_tasks.is_empty() {
+                                        app.preset_task_state.select(None);
+                                    } else {
+                                        let new_index = index.min(app.preset_tasks.len() - 1);
+                                        app.preset_task_state.select(Some(new_index));
+                                    }
+                                }
+
+                                app.pending_command = None;
+                            } else {
+                                app.pending_command = Some('d');
+                            }
+                        }
+
                         KeyCode::Esc => {
                             app.popup = Popup::Presets;
                         }

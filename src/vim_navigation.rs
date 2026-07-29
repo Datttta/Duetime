@@ -3,6 +3,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 pub enum Navigation {
     None,
     Consumed,
+    Delete,
 }
 
 pub fn handle (
