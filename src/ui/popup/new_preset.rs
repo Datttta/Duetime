@@ -21,7 +21,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
-        .title("New Preset")
+        .title("Config Preset")
         .padding(Padding::new(1,1,0,0));
 
     frame.render_widget(&block, area);
@@ -83,14 +83,22 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 }
 
 fn save_preset(app: &mut App) {
-    let preset = Preset {
-        id: app.next_id,
-        name: app.preset_name.text.clone(),
-        tasks: std::mem::take(&mut app.preset_tasks),
-    };
+    if let Some(index) = app.edit_preset {
+        app.presets[index].name = app.preset_name.text.clone();
+        app.presets[index].tasks = std::mem::take(&mut app.preset_tasks);
 
-    app.next_id += 1;
-    app.presets.push(preset);
+        app.edit_preset = None;
+    } else {
+        let preset = Preset {
+            id: app.next_id,
+            name: app.preset_name.text.clone(),
+            tasks: std::mem::take(&mut app.preset_tasks),
+        };
+
+        app.next_id += 1;
+        app.presets.push(preset);
+    }
+
     app.preset_name.clear();
     app.popup = Popup::Presets;
 }

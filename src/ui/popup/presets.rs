@@ -19,6 +19,7 @@ pub struct Preset {
     pub tasks: Vec<TaskTemplate>,
 }
 
+#[derive(Clone)]
 pub struct TaskTemplate {
     pub id: u64,
     pub name: String,
@@ -88,9 +89,28 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('n') => {
             app.preset_name.clear();
+            app.preset_tasks.clear();
+
             app.mode = InputMode::Insert;
             
             app.popup = Popup::NewPreset;
+        }
+
+        KeyCode::Char('e') => {
+            // edit preset
+            if let Some(index) = app.preset_state.selected() {
+                let preset = &app.presets[index];
+
+                app.edit_preset = Some(index);
+
+                app.preset_name.text = preset.name.clone();
+                app.preset_name.cursor = app.preset_name.text.len();
+
+                app.preset_tasks = preset.tasks.clone();
+
+                app.popup = Popup::NewPreset;
+                app.mode = InputMode::Normal;
+            }
         }
 
         KeyCode::Esc => {
