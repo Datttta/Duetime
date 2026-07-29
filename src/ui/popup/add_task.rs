@@ -104,9 +104,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            if handle_escape(app) {
-                close(app);
-            }
+            close_popup(app);
         }
 
         KeyCode::Tab => {
@@ -146,6 +144,17 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     }
 }
 
+fn close_popup(app: &mut App) {
+    match app.task_destination {
+        TaskDestination::AddTask | TaskDestination::EditTask(_) => {
+            app.popup = Popup::None;
+        }
+
+        TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
+            app.popup = Popup::NewPreset;
+        }
+    }
+}
 
 fn save_task(app: &mut App) {
     match app.task_destination {
