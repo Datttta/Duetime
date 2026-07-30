@@ -100,6 +100,28 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
+        KeyCode::Char('d') => {
+            if app.pending_command == Some('d') {
+                if let Some(index) = app.preset_state.selected() {
+                    app.presets.remove(index);
+                    
+                    if app.presets.is_empty() {
+                        app.preset_state.select(None);
+                    } else {
+                        let new_index = index.min(app.presets.len() - 1);
+                        app.preset_state.select(Some(new_index));
+                    }
+
+                    if let Err(err) = crate::preset_storage::save_preset(&app.presets) {
+                        eprintln!("Failed to save presets: {err}");
+                    }
+                }
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('d')
+            }
+        }
+
         KeyCode::Enter => {
             if let Some(index) = app.preset_state.selected() {
                 // Set preset to main task table
