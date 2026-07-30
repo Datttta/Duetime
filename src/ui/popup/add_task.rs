@@ -185,9 +185,10 @@ fn save_task(app: &mut App) {
                 ..Default::default()
             });
 
-            if app.preset_state.selected().is_none() && !app.presets.is_empty() {
-                app.preset_state.select(Some(0));
+            if app.table_state.selected().is_none() && !app.tasks.is_empty() {
+                app.table_state.select(Some(0));
             }
+
         }
 
         TaskDestination::EditTask(index) => {
