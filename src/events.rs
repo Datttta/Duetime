@@ -71,6 +71,28 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             app.pending_command = None;
         }
 
+        KeyCode::Char('e') => {
+            if let Some(index) = app.table_state.selected() {
+                app.popup = Popup::EditTask(index);
+
+                app.task_destination = TaskDestination::EditTask(index);
+
+                let task = &app.tasks[index];
+                
+                //load task data into the inputs
+                app.task_name.text = task.name.clone();
+                app.planned_start.text = task.planned_start.clone();
+                app.planned_end.text = task.planned_end.clone();
+
+                app.task_name.cursor = app.task_name.text.len();
+                app.planned_start.cursor = app.planned_start.text.len();
+                app.planned_end.cursor = app.planned_end.text.len();
+
+                app.mode = InputMode::Normal;
+                app.selected_input = SelectedInput::TaskName;
+            }
+        }
+
         KeyCode::Char('P') => {
             app.popup = Popup::Presets;
         }
@@ -123,28 +145,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        KeyCode::Char('e') => {
-            if let Some(index) = app.table_state.selected() {
-                app.popup = Popup::EditTask(index);
-
-                app.task_destination = TaskDestination::EditTask(index);
-
-                let task = &app.tasks[index];
-                
-                //load task data into the inputs
-                app.task_name.text = task.name.clone();
-                app.planned_start.text = task.planned_start.clone();
-                app.planned_end.text = task.planned_end.clone();
-
-                app.task_name.cursor = app.task_name.text.len();
-                app.planned_start.cursor = app.planned_start.text.len();
-                app.planned_end.cursor = app.planned_end.text.len();
-
-                app.mode = InputMode::Normal;
-                app.selected_input = SelectedInput::TaskName;
-            }
-        }
-        
         KeyCode::Char('q') => {
             app.running = false;
         }

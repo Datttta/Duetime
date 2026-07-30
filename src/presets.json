@@ -1,0 +1,26 @@
+[
+  {
+    "id": 4,
+    "name": "test",
+    "tasks": [
+      {
+        "id": 1,
+        "name": "1",
+        "planned_start": "",
+        "planned_end": ""
+      },
+      {
+        "id": 2,
+        "name": "2",
+        "planned_start": "",
+        "planned_end": ""
+      },
+      {
+        "id": 3,
+        "name": "3",
+        "planned_start": "",
+        "planned_end": ""
+      }
+    ]
+  }
+]

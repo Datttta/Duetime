@@ -1,11 +1,11 @@
 use std::fs;
 use std::path::Path;
 
-use crate::ui::popup::presets::Preset;
+use crate::presets::Preset;
 
 const FILE_NAME: &str = "presets.json";
 
-pub fn save_presets(presets: &[Preset]) -> Result<(), Box<dyn std::error::Error>> {
+pub fn save_preset(presets: &[Preset]) -> Result<(), Box<dyn std::error::Error>> {
     let json = serde_json::to_string_pretty(presets)?;
 
     fs::write(FILE_NAME, json)?;

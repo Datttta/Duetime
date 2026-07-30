@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::tasks::TaskInfo;
-use crate::ui::popup::presets::TaskTemplate;
+use crate::presets::TaskTemplate;
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,
@@ -38,7 +38,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(93), // task_box Length
+            Constraint::Length(94), // task_box Length
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -147,6 +147,7 @@ fn close_popup(app: &mut App) {
     match app.task_destination {
         TaskDestination::AddTask | TaskDestination::EditTask(_) => {
             app.popup = Popup::None;
+
         }
 
         TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
