@@ -1,20 +1,14 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
-pub enum Navigation {
-    None,
-    Consumed,
-    Delete,
-}
-
 pub fn handle (
-    Key: KeyEvent,
+    key: KeyEvent,
     pending: &mut Option<char>,
     selected: &mut Option<usize>,
     len: usize,
 ) -> bool {
     let current = selected.unwrap_or(0);
 
-    match Key.code {
+    match key.code {
         KeyCode::Char('j') => {
             if current + 1 < len {
                 *selected = Some(current + 1);

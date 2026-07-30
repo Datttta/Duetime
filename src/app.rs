@@ -1,8 +1,9 @@
+use ratatui::widgets::{TableState, ListState};
+
 use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
-use crate::ui::popup::presets::{TaskTemplate, Preset};
-
-use ratatui::widgets::{TableState, ListState};
+use crate::presets::{TaskTemplate, Preset};
+use crate::preset_storage;
 
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
@@ -91,7 +92,7 @@ impl App {
             
             templates: Vec::new(),
 
-            presets: Vec::new(),
+            presets: preset_storage::load_presets(),
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),
             edit_preset: None,

@@ -114,6 +114,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Enter => {
             save_preset(app);
+            preset_storage::save_preset(&app.presets)?;
 
             app.task_name.clear();
             app.planned_start.clear();

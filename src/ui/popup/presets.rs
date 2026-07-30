@@ -1,32 +1,18 @@
-use crossterm::event::{KeyCode, KeyEvent};
-
-use crate::vim_navigation;
-use crate::vim_text::InputMode;
-use crate::tasks::TaskInfo;
-use crate::{
-    app::{App, Popup},
-};
-
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
     widgets::{Clear, Block, List, ListItem, Padding},
     text::Line,
     Frame
 };
+use serde::{Deserialize, Serialize};
 
-pub struct Preset {
-    pub id: u64,
-    pub name: String,
-    pub tasks: Vec<TaskTemplate>,
-}
+use crossterm::event::{KeyCode, KeyEvent};
 
-#[derive(Clone)]
-pub struct TaskTemplate {
-    pub id: u64,
-    pub name: String,
-    pub planned_start: Option<String>,
-    pub planned_end: Option<String>,
-}
+use crate::vim_navigation;
+use crate::vim_text::InputMode;
+use crate::tasks::TaskInfo;
+use crate::app::{App, Popup};
+use crate::presets::{Preset, TaskTemplate};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame);

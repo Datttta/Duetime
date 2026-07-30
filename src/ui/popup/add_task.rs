@@ -1,6 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::events::{handle_escape};
 use crate::tasks::TaskInfo;
 use crate::ui::popup::presets::TaskTemplate;
 use crate::{
@@ -212,12 +211,4 @@ fn save_task(app: &mut App) {
     app.task_name.clear();
     app.planned_start.clear();
     app.planned_end.clear();
-}
-
-fn close(app: &mut App) {
-    app.task_name.clear();
-    app.planned_start.clear();
-    app.planned_end.clear();
-
-    app.popup = Popup::None;
 }

@@ -5,6 +5,9 @@ mod vim_text;
 mod vim_navigation;
 mod tasks;
 mod stopwatch;
+mod preset_storage;
+mod presets;
+mod task_template;
 
 use std::io;
 use app::App;
