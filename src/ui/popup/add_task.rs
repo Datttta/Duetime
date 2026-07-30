@@ -147,7 +147,6 @@ fn close_popup(app: &mut App) {
     match app.task_destination {
         TaskDestination::AddTask | TaskDestination::EditTask(_) => {
             app.popup = Popup::None;
-
         }
 
         TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
@@ -186,8 +185,9 @@ fn save_task(app: &mut App) {
                 ..Default::default()
             });
 
-            let selected = app.table_state.selected().unwrap_or(0);
-            app.table_state.select(Some(selected + 1));
+            if app.preset_state.selected().is_none() && !app.presets.is_empty() {
+                app.preset_state.select(Some(0));
+            }
         }
 
         TaskDestination::EditTask(index) => {
