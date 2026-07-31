@@ -4,17 +4,19 @@ pub mod widgets;
 pub mod theme;
 
 use crate::app::{App, Popup};
+use crate::keys_help;
 use crate::tasks;
 
 use ratatui::{
     layout::{Constraint, Layout, Rect},
-    widgets::{Block, Padding},
+    widgets::{Block, Padding, Paragraph},
     Frame,
 };
 
 struct MainLayout {
     header: Rect,
     tasks: Rect,
+    footer: Rect,
 }
 
 fn draw_layout(frame: &mut Frame) -> MainLayout {
@@ -30,12 +32,14 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
         Constraint::Length(1),
         Constraint::Length(1),
         Constraint::Min(0),
+        Constraint::Length(1),
     ])
     .split(inner);
 
     MainLayout {
         header: chunks[0],
         tasks: chunks[2],
+        footer: chunks[3],
     }
 }
 
@@ -44,6 +48,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     header::draw(frame, layout.header);
     tasks::draw(frame, layout.tasks, app);
+    
+    if let Popup::None = app.popup {
+        let keys_help = Paragraph::new(keys_help::keys(app));
+        frame.render_widget(keys_help, layout.footer);
+    }
 
     if let Popup::AddTask = app.popup {
         popup::add_task::draw(frame, app);

@@ -8,6 +8,7 @@ mod stopwatch;
 mod preset_storage;
 mod presets;
 mod task_template;
+mod keys_help;
 
 use std::io;
 use app::App;
