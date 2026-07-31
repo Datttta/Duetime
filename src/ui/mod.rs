@@ -8,7 +8,7 @@ use crate::keys_help;
 use crate::tasks;
 
 use ratatui::{
-    layout::{Constraint, Layout, Rect},
+    layout::{Constraint, Layout, Rect, Alignment},
     widgets::{Block, Padding, Paragraph},
     Frame,
 };
@@ -50,7 +50,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     tasks::draw(frame, layout.tasks, app);
     
     if let Popup::None = app.popup {
-        let keys_help = Paragraph::new(keys_help::keys(app));
+        let keys_help = Paragraph::new(keys_help::keys(app))
+            .alignment(Alignment::Center);
+
         frame.render_widget(keys_help, layout.footer);
     }
 

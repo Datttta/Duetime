@@ -58,23 +58,15 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
-            app.pending_command = Some('a');
-        }
+            app.task_destination = TaskDestination::AddTask;
 
-        KeyCode::Char('t') => {
-            if app.pending_command == Some('a') {
-                app.task_destination = TaskDestination::AddTask;
+            app.task_name.clear();
+            app.planned_start.clear();
+            app.planned_end.clear();
 
-                app.task_name.clear();
-                app.planned_start.clear();
-                app.planned_end.clear();
-
-                app.popup = Popup::AddTask;
-                app.selected_input = SelectedInput::TaskName;
-                app.mode = InputMode::Insert;
-            }
-
-            app.pending_command = None;
+            app.popup = Popup::AddTask;
+            app.selected_input = SelectedInput::TaskName;
+            app.mode = InputMode::Insert;
         }
 
         KeyCode::Char('e') => {

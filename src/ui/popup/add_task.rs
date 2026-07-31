@@ -1,6 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::tasks::TaskInfo;
+use crate::keys_help;
 use crate::presets::TaskTemplate;
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
@@ -32,7 +33,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     fn centered_rect(frame: &Frame) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(5), // add_task box height
+            Constraint::Length(6), // add_task box height
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -48,6 +49,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     let vertical = Layout::vertical([
         Constraint::Length(3), // input height
+        Constraint::Length(1), // keys_help
     ])
     .split(inner);
 
@@ -60,6 +62,10 @@ pub fn draw(frame: &mut Frame, app: &App) {
     ])
     .flex(Flex::Start)
     .split(vertical[0]);
+
+    let keys_help = Paragraph::new(keys_help::keys(app))
+            .alignment(Alignment::Center);
+    frame.render_widget(keys_help, vertical[1]);
 
     let separator = Paragraph::new("-")
         .alignment(Alignment::Center)
