@@ -11,6 +11,7 @@ use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
 use crate::keys_help;
+use crate::ui::Popup::NewPreset;
 use crate::app::{App, Popup};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -38,7 +39,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .flex(Flex::Center)
         .split(vertical[0]);
         
-        let keys_help = Paragraph::new(keys_help::keys(NewPreset)) // NewPreset has the keys_help needed
+        let keys_help = Paragraph::new(keys_help::keys(app)) 
             .alignment(Alignment::Center);
         frame.render_widget(keys_help, vertical[1]);
         
@@ -58,19 +59,25 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let mut selected = app.preset_state.selected();
+    let mut selected = app.known_tasks_state.selected();
 
     if vim_navigation::handle(
         key,
         &mut app.pending_command,
         &mut selected,
-        app.presets.len(),
+        app.known_tasks.len(),
     ) {
-        app.preset_state.select(selected);
+        app.known_tasks_state.select(selected);
         return;
     }
 
     match key.code {
+        KeyCode::Char('a') => {
+            app.mode = InputMode::Insert;
+
+            app.popup = Popup::AddKnownTask;
+        }
+
         KeyCode::Esc => {
             app.popup = Popup::None
         }

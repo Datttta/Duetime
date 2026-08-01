@@ -80,7 +80,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         popup::known_tasks_add::draw(frame, app);
     }
 
-    if let Popup::EditKnownTask = app.popup {
+    if let Popup::EditKnownTask(_) = app.popup {
         popup::known_tasks_add::draw(frame, app);
     }
 }

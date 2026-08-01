@@ -9,46 +9,58 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
-use crate::vim_navigation;
+use crate::vim_text;
 use crate::keys_help;
 use crate::app::{App, Popup};
+use crate::models::KnownTask;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
 
     frame.render_widget(Clear, area);
 
-    let block = Block::bordered()
-        .title("Add task name")
-        .padding(Padding::new(1,1,0,0));
-
-    frame.render_widget(&block, area);
-
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(10),
+            Constraint::Length(5),
             Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(27)
+            Constraint::Length(36)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
         
-        let keys_help = Paragraph::new(keys_help::keys(AddTask)) // AddTask has the needed keys
+        let keys_help = Paragraph::new(keys_help::keys(app))
             .alignment(Alignment::Center);
         frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
     }
+
+    let area = centered_rect(frame, app);
+
+    frame.render_widget(Clear, area);
+
+    let block = Block::bordered()
+        .title("Add task name")
+        .padding(Padding::new(1, 1, 0, 0));
+
+    frame.render_widget(&block, area);
     
+    let inner = block.inner(area);
+    let name_input = Layout::horizontal([
+        Constraint::Length(27),
+    ])
+    .flex(Flex::Center)
+    .split(inner);
+
     input::draw(
         frame,
-        vertical[0],
-        &app.task_name,
+        name_input[0],
+        &app.known_task_name,
         "Task name",
         true,
         app.mode,
@@ -58,31 +70,34 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 fn save_known_task(app: &mut App) {
     match app.popup {
         Popup::AddKnownTask => {
-            // somehting
+            let id = app.next_id;
+            app.next_id += 1;
+
+            app.known_tasks.push(KnownTask {
+                id, name: app.known_task_name.text.clone(),
+            })
         }
 
-        Popup::EditKnownTask => {
-            // somehting
+        Popup::EditKnownTask(index) => {
+            if let Some(task) = app.known_tasks.get_mut(index) {
+                task.name = app.known_task_name.text.clone();
+            }
         }
 
-        Popup::None => {}
+        _ => return,
     }
 
-    app.popup = Popup::None;
+    //if let Err(e) = crate::known_task_storage::save_known_tasks(&app.known_tasks) {
+    //    eprintln!("Failed to save known tasks: {e}");
+    //}
+
+    app.known_task_name.clear();
+    app.popup = Popup::KnownTasks;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let mut selected = app.preset_state.selected();
-
-    if vim_navigation::handle(
-        key,
-        &mut app.pending_command,
-        &mut selected,
-        app.presets.len(),
-    ) {
-        app.preset_state.select(selected);
-        return;
-    }
+    let vim_mode = app.mode;
+    app.known_task_name.handle_key(key, &mut app.mode, 22);
 
     match key.code {
         KeyCode::Enter => {
@@ -90,7 +105,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            app.popup = Popup::KnownTasks
+            if vim_mode == InputMode::Normal {
+                app.popup = Popup::KnownTasks
+            }
         }
 
         _ => {}
