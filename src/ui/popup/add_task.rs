@@ -1,4 +1,4 @@
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 use crate::tasks::TaskInfo;
 use crate::keys_help;
@@ -11,7 +11,8 @@ use crate::{
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
-    widgets::{Block, Clear, Paragraph, Padding},
+    style::{Style, Stylize},
+    widgets::{Block, Clear, Paragraph, Padding, List, ListItem},
     Frame,
 };
 
@@ -72,6 +73,31 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .alignment(Alignment::Center)
         .block(Block::default().padding(Padding::top(1)));
 
+    let suggestions_area = Rect {
+        x: tasks_colums[0].x,
+        y: tasks_colums[0].bottom(),
+        width: TASK_NAME_WIDTH,
+        height: app.suggestions.len().min(5) as u16,
+    };
+
+    let task_name_suggestions: Vec<ListItem> = app.suggestions
+        .iter()
+        .enumerate()
+        .map(|(i, &idx)| {
+            let task = &app.known_tasks[idx];
+
+            if i == app.selected_suggestion {
+                ListItem::new(task.name.clone()).style(
+                    Style::default().reversed()
+                )
+            } else {
+                ListItem::new(task.name.clone())
+            }
+        })
+        .collect();
+
+    frame.render_widget(List::new(task_name_suggestions), suggestions_area);
+
     input::draw(
         frame,
         tasks_colums[0],
@@ -102,7 +128,71 @@ pub fn draw(frame: &mut Frame, app: &App) {
     );
 }
 
+fn update_suggestions(app: &mut App) {
+    if app.task_name.text.is_empty() {
+        app.suggestions.clear();
+        return;
+    }
+
+    app.suggestions = app.known_tasks
+        .iter()
+        .enumerate()
+        .filter(|(_, task)| {
+            task.name
+                .to_lowercase()
+                .starts_with(&app.task_name.text.to_lowercase())
+        })
+        .map(|(i, _)| i)
+        .take(8)
+        .collect();
+
+    app.selected_suggestion = 0;
+}
+
+fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
+    if app.selected_input != SelectedInput::TaskName {
+        return false;
+    }
+
+    if app.suggestions.is_empty() {
+        return false;
+    }
+
+    match key.code {
+        KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+            if app.selected_suggestion + 1 < app.suggestions.len() {
+                app.selected_suggestion += 1;
+            }
+            true
+        }
+
+        KeyCode::Char('k') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+            if app.selected_suggestion > 0 {
+                app.selected_suggestion -= 1;
+            }
+            true
+        }
+
+        KeyCode::Tab => {
+            let idx = app.suggestions[app.selected_suggestion];
+            let task = &app.known_tasks[idx];
+
+            app.task_name.text = task.name.clone();
+            app.task_name.cursor = app.task_name.text.len();
+
+            app.suggestions.clear();
+            true
+        }
+
+        _ => false,
+    }    
+}
+
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    if handle_suggestion_keys(app, key) {
+        return;
+    }
+
     let result = match app.selected_input {
         SelectedInput::TaskName => {
             let max_chars = (TASK_NAME_WIDTH - 5) as usize;
@@ -231,4 +321,7 @@ fn save_task(app: &mut App) {
     app.task_name.clear();
     app.planned_start.clear();
     app.planned_end.clear();
+    
+    app.suggestions.clear();
+    app.selected_suggestion = 0;
 }
