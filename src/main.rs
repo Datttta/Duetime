@@ -9,6 +9,7 @@ mod storage_preset;
 mod storage_known_tasks;
 mod models;
 mod keys_help;
+mod suggestions;
 
 use std::io;
 use app::App;

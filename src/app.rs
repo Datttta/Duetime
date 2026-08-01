@@ -67,6 +67,8 @@ pub struct App {
     pub known_tasks: Vec<KnownTask>,
     pub known_task_name: InputState,
     pub known_tasks_state: ListState,
+    pub suggestions: Vec<usize>,
+    pub selected_suggestion: usize,
 }
 
 impl App {
@@ -114,6 +116,8 @@ impl App {
             known_tasks: Vec::new(),
             known_task_name: InputState::default(),
             known_tasks_state,
+            suggestions: Vec::new(),
+            selected_suggestion: 0,
         }
     }
 }
