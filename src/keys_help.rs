@@ -31,14 +31,14 @@ pub fn keys(app: &App) -> Line<'static> {
         ]),
 
         Popup::Presets => Line::from(vec![
-            Span::styled("Enter", bold),
-            Span::raw(" Load  "),
             Span::styled("n", bold),
             Span::raw(" New  "),
             Span::styled("e", bold),
             Span::raw(" Edit  "),
             Span::styled("dd", bold),
             Span::raw(" Delete  "),
+            Span::styled("Enter", bold),
+            Span::raw(" Load  "),
             Span::styled("Esc", bold),
             Span::raw(" Close"),
         ]),

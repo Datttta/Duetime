@@ -5,10 +5,11 @@ use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::presets::Preset;
 use crate::vim_navigation;
+use crate::keys_help;
 
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex},
-    widgets::{Clear, Block, List, ListItem, Padding},
+    layout::{Rect, Constraint, Layout, Flex, Alignment},
+    widgets::{Clear, Block, List, ListItem, Padding, Paragraph},
     text::Line,
     Frame
 };
@@ -16,7 +17,7 @@ use ratatui::{
 const PRESET_NAME_WIDTH: u16 = 30;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = centered_rect(frame);
+    let area = centered_rect(frame, app);
 
     frame.render_widget(Clear, area);
 
@@ -26,9 +27,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(&block, area);
 
-    fn centered_rect(frame: &Frame) -> Rect {
+    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(18),
+            Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -38,6 +40,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
+        
+        let keys_help = Paragraph::new(keys_help::keys(app))
+            .alignment(Alignment::Center);
+        frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
     }

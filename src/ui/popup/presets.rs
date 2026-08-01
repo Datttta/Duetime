@@ -42,7 +42,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         
         let keys_help = Paragraph::new(keys_help::keys(app))
             .alignment(Alignment::Center);
-
         frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
