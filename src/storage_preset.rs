@@ -1,7 +1,7 @@
 use std::fs;
 use directories::ProjectDirs;
 
-use crate::presets::Preset;
+use crate::models::Preset;
 
 const FILE_NAME: &str = "presets.json";
 

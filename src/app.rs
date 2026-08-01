@@ -2,8 +2,8 @@ use ratatui::widgets::{TableState, ListState};
 
 use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
-use crate::presets::{TaskTemplate, Preset};
-use crate::preset_storage;
+use crate::models::{TaskTemplate, Preset, knownTask};
+use crate::storage_preset;
 
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
@@ -60,6 +60,8 @@ pub struct App {
     pub next_id: u64,
     pub new_preset_focus: NewPresetFocus,
     pub preset_state: ListState,
+
+    pub known_tasks: Vec<knownTask>,
 }
 
 impl App {
@@ -92,7 +94,7 @@ impl App {
             
             templates: Vec::new(),
 
-            presets: preset_storage::load_presets(),
+            presets: storage_preset::load_presets(),
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),
             edit_preset: None,
@@ -100,6 +102,8 @@ impl App {
             next_id: 1,
             new_preset_focus: NewPresetFocus::Name,
             preset_state,
+
+            known_tasks: Vec::new(),
         }
     }
 }

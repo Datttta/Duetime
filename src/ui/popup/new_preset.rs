@@ -3,7 +3,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus};
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
-use crate::presets::Preset;
+use crate::models::Preset;
 use crate::vim_navigation;
 use crate::keys_help;
 
@@ -120,7 +120,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Enter => {
             save_preset(app);
-            if let Err(err) = crate::preset_storage::save_preset(&app.presets) {
+            if let Err(err) = crate::storage_preset::save_preset(&app.presets) {
                 eprintln!("Failed to save preset: {err}");
             }
 

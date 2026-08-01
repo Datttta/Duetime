@@ -14,3 +14,10 @@ pub struct TaskTemplate {
     pub planned_start: Option<String>,
     pub planned_end: Option<String>,
 }
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct KnownTask {
+    pub id: u64,
+    pub name: String,
+}
+

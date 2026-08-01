@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::tasks::TaskInfo;
 use crate::keys_help;
-use crate::presets::TaskTemplate;
+use crate::models::TaskTemplate;
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,

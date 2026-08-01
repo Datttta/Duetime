@@ -55,5 +55,18 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::styled("Esc", bold),
             Span::raw(" Cancel"),
         ]),
+
+        Popup::KnownTasks => Line::from(vec![
+            Span::styled("a", bold),
+            Span::raw(" Add Task  "),
+            Span::styled("e", bold),
+            Span::raw(" Edit Task  "),
+            Span::styled("dd", bold),
+            Span::raw(" Delete Task  "),
+            Span::styled("Enter", bold),
+            Span::raw(" Save  "),
+            Span::styled("Esc", bold),
+            Span::raw(" Cancel"),
+        ])
     }
 }

@@ -12,7 +12,7 @@ use crate::vim_navigation;
 use crate::vim_text::InputMode;
 use crate::tasks::TaskInfo;
 use crate::app::{App, Popup};
-use crate::presets::{Preset, TaskTemplate};
+use crate::models::{Preset, TaskTemplate};
 use crate::keys_help;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -118,7 +118,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         app.preset_state.select(Some(new_index));
                     }
 
-                    if let Err(err) = crate::preset_storage::save_preset(&app.presets) {
+                    if let Err(err) = crate::storage_preset::save_preset(&app.presets) {
                         eprintln!("Failed to save presets: {err}");
                     }
                 }
