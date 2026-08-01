@@ -26,7 +26,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(20),
+            Constraint::Length(21),
             Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
@@ -44,6 +44,17 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         
         horizontal[0]
     }
+
+    let known_tasks: Vec<ListItem> = app.known_tasks.iter()
+        .map(|task| {
+            ListItem::new(Line::from(format!("{}", task.name)))
+        })
+        .collect();
+
+    let list = List::new(known_tasks.clone())
+        .highlight_symbol("> ");
+
+    frame.render_stateful_widget(list, block.inner(area), &mut app.known_tasks_state);
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
@@ -63,5 +74,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Esc => {
             app.popup = Popup::None
         }
+
+        _ => {}
     }
 }

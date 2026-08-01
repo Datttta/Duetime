@@ -63,6 +63,7 @@ pub struct App {
     pub preset_state: ListState,
 
     pub known_tasks: Vec<KnownTask>,
+    pub known_tasks_state: ListState,
 }
 
 impl App {
@@ -74,6 +75,9 @@ impl App {
 
         let mut preset_state = ListState::default();
         preset_state.select(Some(0));
+
+        let mut known_tasks_state = ListState::default();
+        known_tasks_state.select(Some(0));
 
         Self {
             pending_command: None,
@@ -105,6 +109,7 @@ impl App {
             preset_state,
 
             known_tasks: Vec::new(),
+            known_tasks_state,
         }
     }
 }
