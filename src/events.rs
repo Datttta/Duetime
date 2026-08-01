@@ -41,7 +41,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     popup::known_tasks_add::handle_keys(app, key);
                 }
 
-                Popup::EditKnownTask => {
+                Popup::EditKnownTask(_) => {
                     popup::known_tasks_add::handle_keys(app, key);
                 }
             }

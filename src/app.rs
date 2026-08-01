@@ -19,7 +19,7 @@ pub enum Popup {
     NewPreset,
     KnownTasks,
     AddKnownTask,
-    EditKnownTask,
+    EditKnownTask(usize),
 }
 
 pub enum TaskDestination {
@@ -65,6 +65,7 @@ pub struct App {
     pub preset_state: ListState,
 
     pub known_tasks: Vec<KnownTask>,
+    pub known_task_name: InputState,
     pub known_tasks_state: ListState,
 }
 
@@ -111,6 +112,7 @@ impl App {
             preset_state,
 
             known_tasks: Vec::new(),
+            known_task_name: InputState::default(),
             known_tasks_state,
         }
     }

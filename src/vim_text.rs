@@ -23,7 +23,7 @@ impl Default for InputState {
 }
 
 impl InputState {
-    pub fn handle_key(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) {
+    pub fn handle_key(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) -> bool {
         match *mode {
             InputMode::Normal => self.handle_normal(key, mode),
             InputMode::Insert => self.handle_insert(key, mode, max_len),
@@ -31,23 +31,22 @@ impl InputState {
         }
     }
 
-    fn handle_normal(&mut self, key: KeyEvent, mode: &mut InputMode) {
+    fn handle_normal(&mut self, key: KeyEvent, mode: &mut InputMode) -> bool {
         match key.code {
-            KeyCode::Esc => {
-                *mode = InputMode::Normal;
-            }
-
             KeyCode::Char('v') => {
                 *mode = InputMode::Visual;
+                true
             }
 
             KeyCode::Char('i') => {
                 *mode = InputMode::Insert;
+                true
             }
             
             KeyCode::Char('I') => {
                 self.cursor = 0;
                 *mode = InputMode::Insert;
+                true
             }
 
             KeyCode::Char('a') => {
@@ -55,38 +54,44 @@ impl InputState {
                     self.cursor += 1;
                 } 
                 *mode = InputMode::Insert;
+                true
             }
             
             KeyCode::Char('A') => {
                 self.cursor = self.text.len();
                 *mode = InputMode::Insert;
+                true
             }
 
             KeyCode::Char('h') => {
                 if self.cursor > 0 {
                     self.cursor -= 1;
                 }
+                true
             }
 
             KeyCode::Char('l') => {
                 if self.cursor < self.text.len(){
                     self.cursor += 1;
                 }
+                true
             }
 
             KeyCode::Char('0') => {
                 self.cursor = 0;
+                true
             }
 
             KeyCode::Char('$') => {
                 self.cursor = self.text.chars().count();
+                true
             }
             
-            _ => {}
+            _ => false
         }
     }
 
-    pub fn handle_insert(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) {
+    pub fn handle_insert(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) -> bool{
         match key.code {
             KeyCode::Char(c) => {
                 if self.text.len() < max_len {
@@ -100,10 +105,12 @@ impl InputState {
                     self.text.insert(byte_index, c);
                     self.cursor += 1;
                 }
+                true
             }
 
             KeyCode::Esc => {
                 *mode = InputMode::Normal;
+                true
             }
 
             KeyCode::Backspace => {
@@ -119,6 +126,7 @@ impl InputState {
 
                     self.text.remove(byte_index);
                 }
+                true
             }
             
             KeyCode::Delete => {
@@ -133,31 +141,35 @@ impl InputState {
 
                     self.text.remove(byte_index);
                 }
+                true
             }
 
-            _ => {}
+            _ => false
         }
     }
 
-    fn handle_visual(&mut self, key: KeyEvent, mode: &mut InputMode) {
+    fn handle_visual(&mut self, key: KeyEvent, mode: &mut InputMode) -> bool {
         match key.code {
             KeyCode::Esc => {
                 *mode = InputMode::Normal;
+                true
             }
 
             KeyCode::Char('h') => {
                 if self.cursor > 0 {
                     self.cursor -= 1;
                 }
+                true
             }
 
             KeyCode::Char('l') => {
                 if self.cursor < self.text.chars().count() {
                     self.cursor += 1;
                 }
+                true
             }
 
-            _ => {}
+            _ => false
         }
     }
 

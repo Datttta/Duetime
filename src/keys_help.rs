@@ -23,7 +23,7 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::raw(" Presets  "),
         ]),
 
-        Popup::AddTask | Popup::EditTask(_) => Line::from(vec![
+        Popup::AddTask | Popup::EditTask(_) | Popup::AddKnownTask | Popup::EditKnownTask(_) => Line::from(vec![
             Span::styled("Enter", bold),
             Span::raw(" Save  "),
             Span::styled("Esc", bold),
@@ -43,7 +43,7 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::raw(" Close"),
         ]),
 
-        Popup::NewPreset => Line::from(vec![
+        Popup::NewPreset | Popup::KnownTasks => Line::from(vec![
             Span::styled("a", bold),
             Span::raw(" Add Task  "),
             Span::styled("e", bold),

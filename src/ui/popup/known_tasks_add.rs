@@ -75,7 +75,11 @@ fn save_known_task(app: &mut App) {
 
             app.known_tasks.push(KnownTask {
                 id, name: app.known_task_name.text.clone(),
-            })
+            });
+            
+            if app.known_tasks_state.selected().is_none() && !app.known_tasks.is_empty() {
+                app.known_tasks_state.select(Some(0));
+            }
         }
 
         Popup::EditKnownTask(index) => {
