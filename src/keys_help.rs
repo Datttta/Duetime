@@ -7,7 +7,7 @@ pub fn keys(app: &App) -> Line<'static> {
 
     match app.popup {
         Popup::None => Line::from(vec![
-            Span::styled("a", bold),
+            Span::styled("at", bold),
             Span::raw(" Add Task   "),
             Span::styled("e", bold),
             Span::raw(" Edit   "),
