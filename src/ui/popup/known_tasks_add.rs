@@ -97,7 +97,9 @@ fn save_known_task(app: &mut App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let vim_mode = app.mode;
-    app.known_task_name.handle_key(key, &mut app.mode, 22);
+    if app.known_task_name.handle_key(key, &mut app.mode, 22) {
+        return;
+    }
 
     match key.code {
         KeyCode::Enter => {
@@ -105,7 +107,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            if vim_mode == InputMode::Normal {
+            print!("app mode: {:?}", app.mode);
+            if app.mode == InputMode::Normal {
                 app.popup = Popup::KnownTasks
             }
         }

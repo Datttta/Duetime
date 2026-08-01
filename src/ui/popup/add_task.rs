@@ -102,8 +102,28 @@ pub fn draw(frame: &mut Frame, app: &App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    match key.code {
+    let consumed = match app.selected_input {
+        SelectedInput::TaskName => {
+            let max_chars = (TASK_NAME_WIDTH - 5) as usize;
+            app.task_name.handle_key(key, &mut app.mode, max_chars)
+        }
 
+        SelectedInput::PlannedStart => {
+            let max_chars = (PLAN_START_WIDTH - 5) as usize;
+            app.planned_start.handle_key(key, &mut app.mode, max_chars)
+        }
+
+        SelectedInput::PlannedEnd => {
+            let max_chars = (PLAN_END_WIDTH - 5) as usize;
+            app.planned_end.handle_key(key, &mut app.mode, max_chars)
+        }
+    };
+
+    if consumed {
+        return;
+    }
+
+    match key.code {
         KeyCode::Enter => {
             save_task(app);
         }
@@ -128,24 +148,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        _ => {
-            match app.selected_input {
-                SelectedInput::TaskName => {
-                    let max_chars = (TASK_NAME_WIDTH - 5) as usize;
-                    app.task_name.handle_key(key, &mut app.mode, max_chars)
-                }
-
-                SelectedInput::PlannedStart => {
-                    let max_chars = (PLAN_START_WIDTH - 5) as usize;
-                    app.planned_start.handle_key(key, &mut app.mode, max_chars)
-                }
-
-                SelectedInput::PlannedEnd => {
-                    let max_chars = (PLAN_END_WIDTH - 5) as usize;
-                    app.planned_end.handle_key(key, &mut app.mode, max_chars)
-                }
-            }
-        }
+        _ => {}
     }
 }
 
