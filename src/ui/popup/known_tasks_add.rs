@@ -9,6 +9,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
+use crate::vim_text::InputResult;
 use crate::vim_text;
 use crate::keys_help;
 use crate::app::{App, Popup};
@@ -100,8 +101,7 @@ fn save_known_task(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let vim_mode = app.mode;
-    if app.known_task_name.handle_key(key, &mut app.mode, 22) {
+    if app.known_task_name.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
         return;
     }
 

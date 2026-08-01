@@ -3,6 +3,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::tasks::TaskInfo;
 use crate::keys_help;
 use crate::models::TaskTemplate;
+use crate::vim_text::InputResult;
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,
@@ -102,7 +103,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let consumed = match app.selected_input {
+    let result = match app.selected_input {
         SelectedInput::TaskName => {
             let max_chars = (TASK_NAME_WIDTH - 5) as usize;
             app.task_name.handle_key(key, &mut app.mode, max_chars)
@@ -119,8 +120,16 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
     };
 
-    if consumed {
-        return;
+    match result {
+        InputResult::TextChanged => {
+            if app.selected_input == SelectedInput::TaskName {
+                update_suggestions(app);
+            }
+            return;
+        }
+
+        InputResult::Consumed => return,
+        InputResult::Ignored => {}
     }
 
     match key.code {
