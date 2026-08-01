@@ -4,6 +4,7 @@ use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 use crate::models::{TaskTemplate, Preset, KnownTask};
 use crate::storage_preset;
+use crate::storage_known_tasks;
 
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
@@ -113,11 +114,12 @@ impl App {
             new_preset_focus: NewPresetFocus::Name,
             preset_state,
 
-            known_tasks: Vec::new(),
             known_task_name: InputState::default(),
             known_tasks_state,
             suggestions: Vec::new(),
             selected_suggestion: 0,
+            known_tasks: storage_known_tasks::load_known_tasks(),
+
         }
     }
 }

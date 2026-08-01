@@ -92,9 +92,9 @@ fn save_known_task(app: &mut App) {
         _ => return,
     }
 
-    //if let Err(e) = crate::known_task_storage::save_known_tasks(&app.known_tasks) {
-    //    eprintln!("Failed to save known tasks: {e}");
-    //}
+    if let Err(e) = crate::storage_known_tasks::save_known_tasks(&app.known_tasks) {
+        eprintln!("Failed to save known tasks: {e}");
+    }
 
     app.known_task_name.clear();
     app.popup = Popup::KnownTasks;
