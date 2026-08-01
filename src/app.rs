@@ -2,7 +2,7 @@ use ratatui::widgets::{TableState, ListState};
 
 use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
-use crate::models::{TaskTemplate, Preset, knownTask};
+use crate::models::{TaskTemplate, Preset, KnownTask};
 use crate::storage_preset;
 
 #[derive(PartialEq)]
@@ -17,6 +17,7 @@ pub enum Popup {
     Presets,
     EditTask(usize),
     NewPreset,
+    KnownTasks,
 }
 
 pub enum TaskDestination {
@@ -61,7 +62,7 @@ pub struct App {
     pub new_preset_focus: NewPresetFocus,
     pub preset_state: ListState,
 
-    pub known_tasks: Vec<knownTask>,
+    pub known_tasks: Vec<KnownTask>,
 }
 
 impl App {

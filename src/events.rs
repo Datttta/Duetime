@@ -6,7 +6,7 @@ use crate::vim_navigation;
 use std::time::SystemTime;
 use std::io;
 
-use crossterm::event::{self, Event, KeyCode, KeyEvent};
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
@@ -31,6 +31,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::NewPreset => {
                     popup::new_preset::handle_keys(app, key);
+                }
+
+                Popup::KnownTasks => {
+                    popup::known_tasks::handle_keys(app, key);
                 }
             }
         }
@@ -98,11 +102,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.selected_input = SelectedInput::TaskName;
             }
         }
-
-        KeyCode::Char('P') => {
-            app.popup = Popup::Presets;
-        }
-
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 delete_task(app);
@@ -149,6 +148,14 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                     task.status = "STOPPED".into();
                 }
             }
+        }
+
+        KeyCode::Char('P') => {
+            app.popup = Popup::Presets;
+        }
+
+        KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+            app.popup = Popup::KnownTasks;
         }
 
         KeyCode::Char('q') => {

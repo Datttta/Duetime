@@ -3,9 +3,9 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus};
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
-use crate::models::Preset;
 use crate::vim_navigation;
 use crate::keys_help;
+use crate::models::Preset;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},

@@ -71,4 +71,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::Presets = app.popup {
         popup::presets::draw(frame, app);
     }
+
+    if let Popup::KnownTasks = app.popup {
+        popup::known_tasks::draw(frame, app);
+    }
 }
