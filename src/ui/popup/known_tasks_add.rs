@@ -38,7 +38,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .flex(Flex::Center)
         .split(vertical[0]);
         
-        let keys_help = Paragraph::new(keys_help::keys(app))
+        let keys_help = Paragraph::new(keys_help::keys(AddTask)) // AddTask has the needed keys
             .alignment(Alignment::Center);
         frame.render_widget(keys_help, vertical[1]);
         
@@ -57,8 +57,18 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
 fn save_known_task(app: &mut App) {
     match app.popup {
-        Popup::
+        Popup::AddKnownTask => {
+            // somehting
+        }
+
+        Popup::EditKnownTask => {
+            // somehting
+        }
+
+        Popup::None => {}
     }
+
+    app.popup = Popup::None;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
@@ -75,7 +85,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     }
 
     match key.code {
-        KeyCode::Enter => {}
+        KeyCode::Enter => {
+            save_known_task(app);
+        }
 
         KeyCode::Esc => {
             app.popup = Popup::KnownTasks

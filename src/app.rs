@@ -18,6 +18,8 @@ pub enum Popup {
     EditTask(usize),
     NewPreset,
     KnownTasks,
+    AddKnownTask,
+    EditKnownTask,
 }
 
 pub enum TaskDestination {

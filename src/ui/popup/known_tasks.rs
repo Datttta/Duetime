@@ -38,7 +38,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .flex(Flex::Center)
         .split(vertical[0]);
         
-        let keys_help = Paragraph::new(keys_help::keys(app))
+        let keys_help = Paragraph::new(keys_help::keys(NewPreset)) // NewPreset has the keys_help needed
             .alignment(Alignment::Center);
         frame.render_widget(keys_help, vertical[1]);
         
