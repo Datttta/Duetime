@@ -1,18 +1,18 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
-use crate::tasks::TaskInfo;
-use crate::keys_help;
-use crate::models::TaskTemplate;
-use crate::vim_text::InputResult;
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,
 };
+use crate::tasks::TaskInfo;
+use crate::keys_help;
+use crate::models::TaskTemplate;
+use crate::vim_text::InputResult;
+use crate::suggestions;
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
-    style::{Style, Stylize},
-    widgets::{Block, Clear, Paragraph, Padding, List, ListItem},
+    widgets::{Block, Clear, Paragraph, Padding, List},
     Frame,
 };
 
@@ -80,23 +80,14 @@ pub fn draw(frame: &mut Frame, app: &App) {
         height: app.suggestions.len().min(5) as u16,
     };
 
-    let task_name_suggestions: Vec<ListItem> = app.suggestions
-        .iter()
-        .enumerate()
-        .map(|(i, &idx)| {
-            let task = &app.known_tasks[idx];
+    let task_name_suggestions = suggestions::task_name_list(
+        &app.known_tasks,
+        &app.presets,
+        &app.task_name.text,
+        app.selected_suggestion,
+    );
 
-            if i == app.selected_suggestion {
-                ListItem::new(task.name.clone()).style(
-                    Style::default().reversed()
-                )
-            } else {
-                ListItem::new(task.name.clone())
-            }
-        })
-        .collect();
-
-    frame.render_widget(List::new(task_name_suggestions), suggestions_area);
+    frame.render_widget(task_name_suggestions, suggestions_area);
 
     input::draw(
         frame,
@@ -129,22 +120,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
 }
 
 fn update_suggestions(app: &mut App) {
-    if app.task_name.text.is_empty() {
-        app.suggestions.clear();
-        return;
-    }
-
-    app.suggestions = app.known_tasks
-        .iter()
-        .enumerate()
-        .filter(|(_, task)| {
-            task.name
-                .to_lowercase()
-                .starts_with(&app.task_name.text.to_lowercase())
-        })
-        .map(|(i, _)| i)
-        .take(8)
-        .collect();
+    app.suggestions = suggestions::task_name_suggestions(
+        &app.known_tasks,
+        &app.presets,
+        &app.task_name.text,
+    );
 
     app.selected_suggestion = 0;
 }
@@ -174,13 +154,11 @@ fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
         }
 
         KeyCode::Tab => {
-            let idx = app.suggestions[app.selected_suggestion];
-            let task = &app.known_tasks[idx];
-
-            app.task_name.text = task.name.clone();
-            app.task_name.cursor = app.task_name.text.len();
-
-            app.suggestions.clear();
+            if let Some(name) = app.suggestions.get(app.selected_suggestion) {
+                app.task_name.text = name.clone();
+                app.task_name.cursor = app.task_name.text.chars().count();
+                app.suggestions.clear();
+            }
             true
         }
 

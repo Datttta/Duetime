@@ -68,7 +68,7 @@ pub struct App {
     pub known_tasks: Vec<KnownTask>,
     pub known_task_name: InputState,
     pub known_tasks_state: ListState,
-    pub suggestions: Vec<usize>,
+    pub suggestions: Vec<String>,
     pub selected_suggestion: usize,
 }
 
