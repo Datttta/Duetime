@@ -80,7 +80,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             if let Some(index) = selected {
                 app.mode = InputMode::Insert;
 
-                app.popup = Popup::AddKnownTask;
+                app.popup = Popup::EditKnownTask(index);
 
                 let suggestion = &app.known_tasks[index];
 

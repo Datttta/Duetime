@@ -109,7 +109,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Esc => {
-            print!("app mode: {:?}", app.mode);
             if app.mode == InputMode::Normal {
                 app.popup = Popup::KnownTasks
             }
