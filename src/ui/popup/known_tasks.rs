@@ -76,6 +76,40 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.popup = Popup::AddKnownTask;
         }
 
+        KeyCode::Char('e') => {
+            if let Some(index) = selected {
+                app.mode = InputMode::Insert;
+
+                app.popup = Popup::AddKnownTask;
+
+                let suggestion = &app.known_tasks[index];
+
+                app.known_task_name.text = suggestion.name.clone();
+
+                return;
+            }
+        }
+
+        KeyCode::Char('d') => {
+            if app.pending_command == Some('d') {
+                if let Some(index) = selected {
+                    app.known_tasks.remove(index);
+
+                    // Keep the selection valid
+                    if app.known_tasks.is_empty() {
+                        app.known_tasks_state.select(None);
+                    } else {
+                        let new_index = index.min(app.known_tasks.len() - 1);
+                        app.known_tasks_state.select(Some(new_index));
+                    }
+                }
+
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('d');
+            }
+        }
+
         KeyCode::Esc => {
             app.popup = Popup::None
         }
