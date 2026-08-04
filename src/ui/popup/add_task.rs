@@ -8,6 +8,7 @@ use crate::tasks::TaskInfo;
 use crate::keys_help;
 use crate::models::TaskTemplate;
 use crate::vim_text::InputResult;
+use crate::vim_text::InputMode;
 use crate::suggestions;
 
 use ratatui::{
@@ -259,6 +260,7 @@ fn save_task(app: &mut App) {
                 app.preset_task_state.select(Some(0));
             }
 
+            app.mode = InputMode::Normal;
             app.popup = Popup::NewPreset;
         }
 
@@ -274,7 +276,6 @@ fn save_task(app: &mut App) {
             if app.table_state.selected().is_none() && !app.tasks.is_empty() {
                 app.table_state.select(Some(0));
             }
-
         }
 
         TaskDestination::EditTask(index) => {

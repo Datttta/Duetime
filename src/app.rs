@@ -12,6 +12,7 @@ pub enum NewPresetFocus {
     Tasks,
 }
 
+#[derive(PartialEq, Debug)]
 pub enum Popup {
     None,
     AddTask,

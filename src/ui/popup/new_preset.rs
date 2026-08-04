@@ -103,6 +103,7 @@ fn save_preset(app: &mut App) {
 
         app.next_id += 1;
         app.presets.push(preset);
+        app.mode = InputMode::Normal;
     }
 
     app.preset_name.clear();
@@ -135,8 +136,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         _ => {
             match app.new_preset_focus {
-
-
                 NewPresetFocus::Name => {
                     if app.mode == InputMode::Normal {
                         match key.code {

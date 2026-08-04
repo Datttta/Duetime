@@ -104,13 +104,17 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     }
                 }
 
+                    if let Err(e) = crate::storage_known_tasks::save_known_tasks(&app.known_tasks) {
+                        eprintln!("Failed to save known tasks: {e}");
+                    }
+
                 app.pending_command = None;
             } else {
                 app.pending_command = Some('d');
             }
         }
 
-        KeyCode::Esc => {
+        KeyCode::Char('q') => {
             app.popup = Popup::None
         }
 

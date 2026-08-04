@@ -33,19 +33,19 @@ pub fn keys(app: &App) -> Line<'static> {
         ]),
 
         Popup::Presets => Line::from(vec![
-            Span::styled("n", bold),
-            Span::raw(" New  "),
+            Span::styled("a", bold),
+            Span::raw(" Add preset  "),
             Span::styled("e", bold),
             Span::raw(" Edit  "),
             Span::styled("dd", bold),
             Span::raw(" Delete  "),
             Span::styled("Enter", bold),
             Span::raw(" Load  "),
-            Span::styled("Esc", bold),
+            Span::styled("q", bold),
             Span::raw(" Close"),
         ]),
 
-        Popup::NewPreset | Popup::KnownTasks => Line::from(vec![
+        Popup::NewPreset => Line::from(vec![
             Span::styled("a", bold),
             Span::raw(" Add Task  "),
             Span::styled("e", bold),
@@ -56,6 +56,17 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::raw(" Save  "),
             Span::styled("Esc", bold),
             Span::raw(" Cancel"),
+        ]),
+
+        Popup::KnownTasks => Line::from(vec![
+            Span::styled("a", bold),
+            Span::raw(" Add Task  "),
+            Span::styled("e", bold),
+            Span::raw(" Edit Task  "),
+            Span::styled("dd", bold),
+            Span::raw(" Delete Task  "),
+            Span::styled("q", bold),
+            Span::raw(" Close"),
         ]),
     }
 }

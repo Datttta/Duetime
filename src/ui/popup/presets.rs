@@ -78,7 +78,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
 
-        KeyCode::Char('n') => {
+        KeyCode::Char('a') => {
             app.preset_name.clear();
             app.preset_tasks.clear();
 
@@ -147,7 +147,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        KeyCode::Esc => {
+        KeyCode::Char('q') => {
             app.popup = Popup::None
         }
 
