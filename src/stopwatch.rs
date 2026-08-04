@@ -11,13 +11,6 @@ impl Stopwatch {
         self.started_at.is_some() || self.stopwatch != Duration::ZERO
     }
 
-    pub fn new() -> Self {
-        Self {
-            started_at: None,
-            stopwatch: Duration::ZERO,
-        }
-    }
-
     pub fn start(&mut self) {
         if self.started_at.is_none() {
             self.started_at = Some(Instant::now());

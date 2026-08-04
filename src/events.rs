@@ -21,7 +21,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     popup::add_task::handle_keys(app, key);
                 }
 
-                Popup::EditTask(_) => {
+                Popup::EditTask => {
                     popup::add_task::handle_keys(app, key);
                 }
 
@@ -91,7 +91,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('e') => {
             if let Some(index) = app.table_state.selected() {
-                app.popup = Popup::EditTask(index);
+                app.popup = Popup::EditTask;
 
                 app.task_destination = TaskDestination::EditTask(index);
 

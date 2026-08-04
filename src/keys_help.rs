@@ -21,9 +21,11 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::raw(" Reset   "),
             Span::styled("P", bold),
             Span::raw(" Presets  "),
+            Span::styled("Ctrl+l", bold),
+            Span::raw(" Saved tasks  "),
         ]),
 
-        Popup::AddTask | Popup::EditTask(_) | Popup::AddKnownTask | Popup::EditKnownTask(_) => Line::from(vec![
+        Popup::AddTask | Popup::EditTask | Popup::AddKnownTask | Popup::EditKnownTask(_) => Line::from(vec![
             Span::styled("Enter", bold),
             Span::raw(" Save  "),
             Span::styled("Esc", bold),

@@ -1,7 +1,6 @@
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
-    widgets::{Clear, Block, List, ListItem, Padding, Paragraph},
-    text::Line,
+    widgets::{Clear, Block, Padding, Paragraph},
     Frame
 };
 
@@ -10,7 +9,6 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::vim_text::InputResult;
-use crate::vim_text;
 use crate::keys_help;
 use crate::app::{App, Popup};
 use crate::models::KnownTask;

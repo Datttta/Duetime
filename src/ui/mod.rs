@@ -60,7 +60,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         popup::add_task::draw(frame, app);
     }
 
-    if let Popup::EditTask(_) = app.popup {
+    if let Popup::EditTask = app.popup {
         popup::add_task::draw(frame, app);
     }
 

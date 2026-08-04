@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use crate::models::{KnownTask, Preset};
 use ratatui::{
-    style::{Style, Stylize},
+    style::{Style},
     widgets::{List, ListItem},
 };
 

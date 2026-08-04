@@ -7,11 +7,9 @@ use ratatui::{
 
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::ui::widgets::input;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
 use crate::keys_help;
-use crate::ui::Popup::NewPreset;
 use crate::app::{App, Popup};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {

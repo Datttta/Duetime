@@ -12,7 +12,7 @@ use crate::suggestions;
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
-    widgets::{Block, Clear, Paragraph, Padding, List},
+    widgets::{Block, Clear, Paragraph, Padding},
     Frame,
 };
 

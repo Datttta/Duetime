@@ -16,7 +16,7 @@ pub enum Popup {
     None,
     AddTask,
     Presets,
-    EditTask(usize),
+    EditTask,
     NewPreset,
     KnownTasks,
     AddKnownTask,
@@ -53,8 +53,6 @@ pub struct App {
 
     pub table_state: TableState,
     pub preset_task_state: ListState,
-
-    pub templates: Vec<TaskTemplate>,
 
     pub presets: Vec<Preset>,
     pub edit_preset: Option<usize>,
@@ -103,8 +101,6 @@ impl App {
             table_state,
             preset_task_state,
             
-            templates: Vec::new(),
-
             presets: storage_preset::load_presets(),
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),

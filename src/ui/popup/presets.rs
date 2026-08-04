@@ -4,7 +4,6 @@ use ratatui::{
     text::Line,
     Frame
 };
-use serde::{Deserialize, Serialize};
 
 use crossterm::event::{KeyCode, KeyEvent};
 
@@ -12,7 +11,6 @@ use crate::vim_navigation;
 use crate::vim_text::InputMode;
 use crate::tasks::TaskInfo;
 use crate::app::{App, Popup};
-use crate::models::{Preset, TaskTemplate};
 use crate::keys_help;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
