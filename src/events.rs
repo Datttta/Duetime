@@ -103,6 +103,12 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
+        KeyCode::Char('i') => {
+            if let Some(index) = app.table_state.selected() {
+                // show informations about the task, also the entire task name in a larger window
+            }
+        }
+
         KeyCode::Char('s') => {
             if let Some(index) = app.table_state.selected() {
                 let task = &mut app.tasks[index];
