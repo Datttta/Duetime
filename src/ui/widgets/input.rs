@@ -21,6 +21,17 @@ pub fn draw(
     is_selected: bool,
     mode: InputMode
 ) {
+    let visible_width = area.width.saturating_sub(3) as usize;
+
+    let start = input.cursor.saturating_sub(visible_width.saturating_sub(1));
+
+    let visible: String = input
+        .text
+        .chars()
+        .skip(start)
+        .take(visible_width)
+        .collect();
+
     let line = if input.text.is_empty() {
         Line::from(
             Span::styled(
@@ -29,13 +40,13 @@ pub fn draw(
             )
         )
     } else {
-        Line::from(input.text.as_str())
+        Line::from(visible)
     };
 
     let paragraph = Paragraph::new(line).block(
         Block::bordered().padding(Padding {
             left: 1,
-            right: 0,
+            right: 1,
             top: 0,
             bottom: 0,
         })
@@ -44,8 +55,10 @@ pub fn draw(
     frame.render_widget(paragraph, area);
     
     if is_selected {
+        let cursor_x = input.cursor.saturating_sub(start);
+
         frame.set_cursor_position((
-            area.x + 2 + input.cursor as u16,
+            area.x + 2 + cursor_x as u16,
             area.y + 1,
         ));
 
