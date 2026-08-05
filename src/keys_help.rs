@@ -68,5 +68,7 @@ pub fn keys(app: &App) -> Line<'static> {
             Span::styled("q", bold),
             Span::raw(" Close"),
         ]),
+
+        _ => Vec::new().into()
     }
 }

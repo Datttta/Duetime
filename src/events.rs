@@ -28,6 +28,8 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 Popup::AddKnownTask => popup::known_tasks_add::handle_keys(app, key),
 
                 Popup::EditKnownTask(_) => popup::known_tasks_add::handle_keys(app, key),
+
+                Popup::TaskInfo => popup::task_info::handle_keys(app, key),
             }
         }
     }
@@ -106,6 +108,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('i') => {
             if let Some(index) = app.table_state.selected() {
                 // show informations about the task, also the entire task name in a larger window
+                app.popup = Popup::TaskInfo;
             }
         }
 

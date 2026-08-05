@@ -22,6 +22,7 @@ pub enum Popup {
     KnownTasks,
     AddKnownTask,
     EditKnownTask(usize),
+    TaskInfo,
 }
 
 pub enum TaskDestination {
