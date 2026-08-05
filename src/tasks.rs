@@ -1,5 +1,6 @@
 use crate::app::App;
 use crate::stopwatch::Stopwatch;
+use crate::ui::widgets::input::ellipsize;
 
 use chrono::{DateTime, Local};
 
@@ -38,7 +39,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let rows = app.tasks.iter().map(|task| {
         Row::new(vec![
-            Cell::from(format!("  {}", task.name)),
+            Cell::from(format!("  {}", ellipsize(&task.name, 22))),
             Cell::from(Line::from(task.status.as_str()).alignment(Alignment::Center)),
             Cell::from(String::new()),
             Cell::from(task.planned_start.clone()),

@@ -86,3 +86,16 @@ pub fn draw(
         }
     }
 }
+
+pub fn ellipsize(text: &str, max: usize) -> String {
+    let len = text.chars().count();
+
+    if len <= max {
+        return text.to_string();
+    }
+
+    text.chars()
+        .take(max.saturating_sub(1))
+        .collect::<String>()
+        + "…"
+}

@@ -13,37 +13,21 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
         if let Event::Key(key) = event::read()? {
 
             match app.popup {
-                Popup::None => {
-                    handle_normal_keys(app, key);
-                }
+                Popup::None => handle_normal_keys(app, key),
 
-                Popup::AddTask => {
-                    popup::add_task::handle_keys(app, key);
-                }
+                Popup::AddTask => popup::add_task::handle_keys(app, key),
 
-                Popup::EditTask => {
-                    popup::add_task::handle_keys(app, key);
-                }
-
-                Popup::Presets => {
-                    popup::presets::handle_keys(app, key);
-                }
+                Popup::EditTask => popup::add_task::handle_keys(app, key),
                 
-                Popup::NewPreset => {
-                    popup::new_preset::handle_keys(app, key);
-                }
+                Popup::Presets => popup::presets::handle_keys(app, key),
+                
+                Popup::NewPreset => popup::new_preset::handle_keys(app, key),
 
-                Popup::KnownTasks => {
-                    popup::known_tasks::handle_keys(app, key);
-                }
+                Popup::KnownTasks => popup::known_tasks::handle_keys(app, key),
 
-                Popup::AddKnownTask => {
-                    popup::known_tasks_add::handle_keys(app, key);
-                }
+                Popup::AddKnownTask => popup::known_tasks_add::handle_keys(app, key),
 
-                Popup::EditKnownTask(_) => {
-                    popup::known_tasks_add::handle_keys(app, key);
-                }
+                Popup::EditKnownTask(_) => popup::known_tasks_add::handle_keys(app, key),
             }
         }
     }
