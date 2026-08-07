@@ -271,8 +271,6 @@ fn save_task(app: &mut App) {
                 ..Default::default()
             });
 
-            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-
             if app.table_state.selected().is_none() && !app.tasks.is_empty() {
                 app.table_state.select(Some(0));
             }
@@ -286,7 +284,6 @@ fn save_task(app: &mut App) {
                 app.popup = Popup::None;
             }
             
-            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
         }
 
         TaskDestination::EditPresetTask(index) => {
