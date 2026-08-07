@@ -10,6 +10,7 @@ use crate::models::TaskTemplate;
 use crate::vim_text::InputResult;
 use crate::vim_text::InputMode;
 use crate::suggestions;
+use crate::storage_current_tasks;
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
@@ -270,6 +271,8 @@ fn save_task(app: &mut App) {
                 ..Default::default()
             });
 
+            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+
             if app.table_state.selected().is_none() && !app.tasks.is_empty() {
                 app.table_state.select(Some(0));
             }
@@ -282,6 +285,8 @@ fn save_task(app: &mut App) {
                 task.planned_end = app.planned_end.text.clone();
                 app.popup = Popup::None;
             }
+            
+            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
         }
 
         TaskDestination::EditPresetTask(index) => {
