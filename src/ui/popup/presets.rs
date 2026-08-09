@@ -12,6 +12,7 @@ use crate::vim_text::InputMode;
 use crate::tasks::TaskInfo;
 use crate::app::{App, Popup};
 use crate::keys_help;
+use crate::app::NewPresetFocus;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -85,8 +86,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.preset_tasks.clear();
 
             app.mode = InputMode::Insert;
-            
             app.popup = Popup::NewPreset;
+            app.new_preset_focus = NewPresetFocus::Name;
         }
 
         KeyCode::Char('e') => {
@@ -103,6 +104,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                 app.popup = Popup::NewPreset;
                 app.mode = InputMode::Normal;
+                app.new_preset_focus = NewPresetFocus::Name;
             }
         }
 

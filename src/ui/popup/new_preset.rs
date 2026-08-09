@@ -120,6 +120,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Enter => {
+            if let NewPresetFocus::Name = app.new_preset_focus {
+                app.new_preset_focus = NewPresetFocus::Tasks;
+                return;
+            }
+
             save_preset(app);
             if let Err(err) = crate::storage_preset::save_preset(&app.presets) {
                 eprintln!("Failed to save preset: {err}");
@@ -226,7 +231,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             }
                         }
 
-                        KeyCode::Esc => {
+                        KeyCode::Char('q') => {
                             app.popup = Popup::Presets;
                         }
 
