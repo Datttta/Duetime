@@ -3,13 +3,13 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use crate::{
     app::{App, Popup, SelectedInput, TaskDestination},
     ui::widgets::input,
+    tasks::TaskInfo,
+    models::TaskTemplate,
+    vim_text::{InputMode, InputResult},
+    keys_help,
+    suggestions,
+    storage_current_tasks,
 };
-use crate::tasks::TaskInfo;
-use crate::keys_help;
-use crate::models::TaskTemplate;
-use crate::vim_text::InputResult;
-use crate::vim_text::InputMode;
-use crate::suggestions;
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
@@ -293,6 +293,7 @@ fn save_task(app: &mut App) {
                 app.popup = Popup::NewPreset;
             }
         }
+
     }
 
     app.task_name.clear();
@@ -301,4 +302,6 @@ fn save_task(app: &mut App) {
     
     app.suggestions.clear();
     app.selected_suggestion = 0;
+        
+    storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
 }

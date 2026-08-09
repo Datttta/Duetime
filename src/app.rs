@@ -127,4 +127,16 @@ impl App {
             tasks: storage_current_tasks::load_current_tasks(),
         }
     }
+
+    pub fn add_task_popup (&mut self, destination: TaskDestination) {
+        self.task_destination = destination;
+
+        self.task_name.clear();
+        self.planned_start.clear();
+        self.planned_end.clear();
+
+        self.selected_input = SelectedInput::TaskName;
+        self.mode = InputMode::Insert;
+        self.popup = Popup::AddTask;
+    }
 }
