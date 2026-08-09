@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
 
 #[derive(Default)]
@@ -6,7 +7,27 @@ pub struct Stopwatch {
     stopwatch: Duration,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct StopwatchData {
+    pub elapsed_secs: u64,
+    pub running: bool,
+}
+
 impl Stopwatch {
+    pub fn to_data(&self) -> StopwatchData {
+        StopwatchData {
+            elapsed_secs: self.elapsed().as_secs(),
+            running: self.running(),
+        }
+    }
+
+    pub fn from_data(data: StopwatchData) -> Self {
+        Stopwatch {
+            started_at: None,
+            stopwatch: Duration::from_secs(data.elapsed_secs),
+        }
+    }
+
     pub fn started(&self) -> bool {
         self.started_at.is_some() || self.stopwatch != Duration::ZERO
     }

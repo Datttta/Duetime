@@ -1,9 +1,9 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex, Alignment},
-    widgets::{Clear, Block, Paragraph, Padding, Wrap},
-    text::{Line, Text},
+    layout::{Rect, Constraint, Layout, Flex},
+    widgets::{Clear, Block, Paragraph, Padding},
+    text::{Line},
     Frame
 };
 

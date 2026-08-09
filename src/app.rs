@@ -3,6 +3,7 @@ use ratatui::widgets::{TableState, ListState};
 use crate::vim_text::{InputState, InputMode};
 use crate::tasks::TaskInfo;
 use crate::models::{TaskTemplate, Preset, KnownTask};
+use crate::storage_current_tasks;
 use crate::storage_preset;
 use crate::storage_known_tasks;
 
@@ -74,7 +75,8 @@ pub struct App {
 
 impl App {
     pub fn new() -> Self {
-        let table_state = TableState::default();
+        let mut table_state = TableState::default();
+        table_state.select(Some(0));
 
         let mut preset_task_state = ListState::default();
         preset_task_state.select(Some(0));
@@ -98,7 +100,6 @@ impl App {
             planned_end: InputState::default(),
             
             selected_input: SelectedInput::TaskName,
-            tasks: Vec::new(),
 
             table_state,
             preset_task_state,
@@ -117,7 +118,8 @@ impl App {
             suggestions: Vec::new(),
             selected_suggestion: 0,
             known_tasks: storage_known_tasks::load_known_tasks(),
-
+            
+            tasks: storage_current_tasks::load_current_tasks(),
         }
     }
 }

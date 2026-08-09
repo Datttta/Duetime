@@ -1,9 +1,10 @@
 use crate::app::App;
-use crate::stopwatch::Stopwatch;
+use crate::stopwatch::{Stopwatch, StopwatchData};
 use crate::ui::widgets::input::ellipsize;
+use crate::ui::theme::selection_color;
 
 use chrono::{DateTime, Local};
-
+use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 
 use ratatui::{
@@ -23,6 +24,44 @@ pub struct TaskInfo {
     pub actual_start: Option<SystemTime>,
     pub actual_end: Option<SystemTime>,
     pub stopwatch: Stopwatch,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TaskInfoData {
+    pub name: String,
+    pub status: String,
+    pub planned_start: String,
+    pub planned_end: String,
+    pub actual_start: Option<SystemTime>,
+    pub actual_end: Option<SystemTime>,
+    pub stopwatch: StopwatchData,
+}
+
+impl TaskInfo {
+    pub fn to_data(&self) -> TaskInfoData {
+        TaskInfoData {
+            name: self.name.clone(),
+            status: self.status.clone(),
+            planned_start: self.planned_start.clone(),
+            planned_end: self.planned_end.clone(),
+            actual_start: self.actual_start.clone(),
+            actual_end: self.actual_end.clone(),
+            stopwatch: self.stopwatch.to_data(),
+        }
+    }
+
+    pub fn from_data(data: TaskInfoData) -> Self {
+        TaskInfo {
+            name: data.name,
+            status: data.status,
+            planned_start: data.planned_start,
+            planned_end: data.planned_end,
+            actual_start: data.actual_start,
+            actual_end: data.actual_end,
+            stopwatch: Stopwatch::from_data(data.stopwatch),
+            ..Default::default()
+        }
+    }
 }
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
@@ -52,7 +91,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let table = Table::new(rows, columns)
         //.highlight_symbol("> ");
-        .row_highlight_style(Style::default().reversed());
+        .row_highlight_style(Style::default().bg(selection_color()));
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
 }

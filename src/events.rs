@@ -2,6 +2,7 @@ use crate::app::{App, Popup, SelectedInput, TaskDestination};
 use crate::ui::popup;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
+use crate::storage_current_tasks;
 
 use std::time::SystemTime;
 use std::io;
@@ -70,7 +71,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.popup = Popup::AddTask;
                 app.selected_input = SelectedInput::TaskName;
                 app.mode = InputMode::Insert;
+            
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
+
 
             app.pending_command = None;
         }
@@ -94,8 +98,11 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
                 app.mode = InputMode::Normal;
                 app.selected_input = SelectedInput::TaskName;
+
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
+
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 delete_task(app);
@@ -125,6 +132,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                     task.actual_start = Some(SystemTime::now());
                     task.status = "IN PROGRESS".into();
                 }
+
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
 
@@ -136,6 +145,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 task.actual_start = None;
                 task.actual_end = None;
                 task.status = "PENDING".into();
+                
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
 
@@ -145,9 +156,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
                 if task.stopwatch.running() {
                     task.stopwatch.stop();
-                    task.actual_end = Some(SystemTime::now());
                     task.status = "STOPPED".into();
                 }
+
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
 
@@ -160,6 +172,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('q') => {
+            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+
             app.running = false;
         }
 
@@ -179,5 +193,7 @@ fn delete_task(app: &mut App) {
             let new_index = index.min(app.tasks.len() - 1);
             app.table_state.select(Some(new_index));
         }
+            
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }

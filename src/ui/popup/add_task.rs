@@ -10,7 +10,6 @@ use crate::models::TaskTemplate;
 use crate::vim_text::InputResult;
 use crate::vim_text::InputMode;
 use crate::suggestions;
-use crate::storage_current_tasks;
 
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect, Alignment},
