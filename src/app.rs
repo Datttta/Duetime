@@ -8,6 +8,8 @@ use crate::storage_current_tasks;
 use crate::storage_preset;
 use crate::storage_known_tasks;
 
+use std::time::SystemTime;
+
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
     Name,
@@ -128,6 +130,31 @@ impl App {
         }
     }
 
+    pub fn start_task(&mut self) {
+        if let Some(index) = self.table_state.selected() {
+            let task = &mut self.tasks[index];
+
+            if !task.stopwatch.running() {
+                task.stopwatch.start();
+                task.actual_start = Some(SystemTime::now());
+                task.status = "IN PROGRESS".into();
+            }
+
+            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+        }
+    }
+
+    pub fn pause_task(&mut self) {
+        if let Some(index) = self.table_state.selected() {
+            let task = &mut self.tasks[index];
+
+            if task.stopwatch.running() {
+                task.stopwatch.stop();
+                task.status = "STOPPED".into();
+            }
+        }
+    }
+
     pub fn add_task_popup (&mut self, destination: TaskDestination) {
         self.task_destination = destination;
 
@@ -158,6 +185,8 @@ impl App {
             self.mode = InputMode::Normal;
             self.selected_input = SelectedInput::TaskName;
             self.popup = Popup::EditTask;
+
+            self.pending_command = None;
         }
     }
 
@@ -180,5 +209,29 @@ impl App {
             self.mode = InputMode::Normal;
             self.selected_input = SelectedInput::TaskName;
         }
+    }
+
+    pub fn add_tasks_to_preset(&mut self) {
+        self.preset_tasks = self.tasks
+            .iter()
+            .map(|task| TaskTemplate {
+                id: self.next_id,
+                name: task.name.clone(),
+                planned_start: Some(task.planned_start.clone()),
+                planned_end: Some(task.planned_end.clone()),
+            })
+            .collect();
+
+        self.next_id += self.preset_tasks.len() as u64;
+
+        if !self.preset_tasks.is_empty() {
+            self.preset_task_state.select(Some(0));
+        }
+
+        self.preset_name.clear();
+        self.new_preset_focus = NewPresetFocus::Name;
+        self.popup = Popup::NewPreset;
+
+        self.pending_command = None;
     }
 }

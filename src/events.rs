@@ -67,41 +67,14 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('p') => {
             if app.pending_command == Some('a') {
-                app.preset_tasks = app.tasks
-                    .iter()
-                    .map(|task| TaskTemplate {
-                        id: app.next_id,
-                        name: task.name.clone(),
-                        planned_start: Some(task.planned_start.clone()),
-                        planned_end: Some(task.planned_end.clone()),
-                    })
-                    .collect();
-
-                app.next_id += app.preset_tasks.len() as u64;
-
-                if !app.preset_tasks.is_empty() {
-                    app.preset_task_state.select(Some(0));
-                }
-
-                app.preset_name.clear();
-                app.new_preset_focus = NewPresetFocus::Name;
-                app.popup = Popup::NewPreset;
-
-                app.pending_command = None;
-
-            } else if let Some(index) = app.table_state.selected() {
-                let task = &mut app.tasks[index];
-
-                if task.stopwatch.running() {
-                    task.stopwatch.stop();
-                    task.status = "STOPPED".into();
-                }
+                app.add_tasks_to_preset();
+            } else { 
+                app.pause_task();
             }
         }
 
         KeyCode::Char('t') => {
             app.add_task_popup(TaskDestination::AddTask);
-            app.pending_command = None;
         }
 
         KeyCode::Char('e') => {
