@@ -113,9 +113,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('q') => {
-            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-
-            app.running = false;
+            app.quit();
         }
 
         _ => {

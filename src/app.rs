@@ -271,4 +271,10 @@ impl App {
 
         self.pending_command = None;
     }
+
+    //
+    pub fn quit(&mut self) {
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+        app.running = false;
+    }
 }
