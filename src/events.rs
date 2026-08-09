@@ -82,7 +82,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 delete_task(app);
-                app.pending_command = None;
             } else {
                 app.pending_command = Some('d')
             }
@@ -148,4 +147,6 @@ fn delete_task(app: &mut App) {
 
         storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
+
+    app.pending_command = None;
 }

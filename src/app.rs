@@ -222,8 +222,8 @@ impl App {
     }
 
     pub fn task_info(&mut self) {
-        if app.table_state.selected().is_some() {
-            app.popup = Popup::TaskInfo;
+        if self.table_state.selected().is_some() {
+            self.popup = Popup::TaskInfo;
         }
     }
 
@@ -274,7 +274,7 @@ impl App {
 
     //
     pub fn quit(&mut self) {
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-        app.running = false;
+        storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+        self.running = false;
     }
 }
