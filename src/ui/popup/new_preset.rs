@@ -1,11 +1,13 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus};
-use crate::ui::widgets::input;
-use crate::vim_text::InputMode;
-use crate::vim_navigation;
-use crate::keys_help;
-use crate::models::Preset;
+use crate::{
+    app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus},
+    ui::widgets::input,
+    vim_text::InputMode,
+    models::Preset,
+    vim_navigation,
+    keys_help,
+};
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
@@ -180,26 +182,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
 
                         KeyCode::Char('e') => {
-                            if let Some(index) = app.preset_task_state.selected() {
-                                app.popup = Popup::AddTask;
-
-                                app.task_destination = TaskDestination::EditPresetTask(index);
-
-                                let preset = &app.preset_tasks[index];
-
-                                app.task_name.text = preset.name.clone();
-                                app.planned_start.text = preset.planned_start.clone().unwrap_or_default();
-                                app.planned_end.text = preset.planned_end.clone().unwrap_or_default();
-
-                                app.task_name.cursor = app.task_name.text.len();
-                                app.planned_start.cursor = app.planned_start.text.len();
-                                app.planned_end.cursor = app.planned_end.text.len();
-
-                                app.mode = InputMode::Normal;
-                                app.selected_input = SelectedInput::TaskName;
-
-                                return;
-                            }
+                            app.edit_preset_task_popup();
+                            return;
                         }
 
                         KeyCode::Char('d') => {

@@ -139,4 +139,46 @@ impl App {
         self.mode = InputMode::Insert;
         self.popup = Popup::AddTask;
     }
+
+    pub fn edit_task_popup(&mut self) {
+        if let Some(index) = self.table_state.selected() {
+            let task = &self.tasks[index];
+
+            self.task_destination = TaskDestination::EditTask(index);
+
+            // Load task data into inputs
+            self.task_name.text = task.name.clone();
+            self.planned_start.text = task.planned_start.clone();
+            self.planned_end.text = task.planned_end.clone();
+
+            self.task_name.cursor = self.task_name.text.len();
+            self.planned_start.cursor = self.planned_start.text.len();
+            self.planned_end.cursor = self.planned_end.text.len();
+
+            self.mode = InputMode::Normal;
+            self.selected_input = SelectedInput::TaskName;
+            self.popup = Popup::EditTask;
+        }
+    }
+
+    pub fn edit_preset_task_popup(&mut self) {
+        if let Some(index) = self.preset_task_state.selected() {
+            self.popup = Popup::AddTask;
+
+            self.task_destination = TaskDestination::EditPresetTask(index);
+
+            let preset = &self.preset_tasks[index];
+
+            self.task_name.text = preset.name.clone();
+            self.planned_start.text = preset.planned_start.clone().unwrap_or_default();
+            self.planned_end.text = preset.planned_end.clone().unwrap_or_default();
+
+            self.task_name.cursor = self.task_name.text.len();
+            self.planned_start.cursor = self.planned_start.text.len();
+            self.planned_end.cursor = self.planned_end.text.len();
+
+            self.mode = InputMode::Normal;
+            self.selected_input = SelectedInput::TaskName;
+        }
+    }
 }

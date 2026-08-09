@@ -1,10 +1,11 @@
-use crate::app::{App, Popup, SelectedInput, TaskDestination, NewPresetFocus};
-use crate::ui::popup;
-use crate::vim_text::InputMode;
-use crate::vim_navigation;
-use crate::storage_current_tasks;
-use crate::vim_navigation::NavigationMode;
-use crate::models::TaskTemplate;
+use crate::{
+    app::{App, Popup, TaskDestination, NewPresetFocus},
+    ui::popup,
+    vim_navigation::NavigationMode,
+    models::TaskTemplate,
+    vim_navigation,
+    storage_current_tasks,
+};
 
 use std::time::SystemTime;
 use std::io;
@@ -95,8 +96,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                     task.stopwatch.stop();
                     task.status = "STOPPED".into();
                 }
-
-                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
 
@@ -106,27 +105,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('e') => {
-            if let Some(index) = app.table_state.selected() {
-                app.popup = Popup::EditTask;
-
-                app.task_destination = TaskDestination::EditTask(index);
-
-                let task = &app.tasks[index];
-                
-                //load task data into the inputs
-                app.task_name.text = task.name.clone();
-                app.planned_start.text = task.planned_start.clone();
-                app.planned_end.text = task.planned_end.clone();
-
-                app.task_name.cursor = app.task_name.text.len();
-                app.planned_start.cursor = app.planned_start.text.len();
-                app.planned_end.cursor = app.planned_end.text.len();
-
-                app.mode = InputMode::Normal;
-                app.selected_input = SelectedInput::TaskName;
-
-                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-            }
+            app.edit_task_popup();
         }
 
         KeyCode::Char('d') => {
