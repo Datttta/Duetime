@@ -1,9 +1,10 @@
-use crate::app::{App, Popup, SelectedInput, TaskDestination};
+use crate::app::{App, Popup, SelectedInput, TaskDestination, NewPresetFocus};
 use crate::ui::popup;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
 use crate::storage_current_tasks;
 use crate::vim_navigation::NavigationMode;
+use crate::models::TaskTemplate;
 
 use std::time::SystemTime;
 use std::thread::current;
@@ -62,6 +63,32 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('a') => {
             app.pending_command = Some('a');
+        }
+
+        KeyCode::Char('p') => {
+            if app.pending_command == Some('a') {
+                app.preset_tasks = app.tasks
+                    .iter()
+                    .map(|task| TaskTemplate {
+                        id: app.next_id,
+                        name: task.name.clone(),
+                        planned_start: Some(task.planned_start.clone()),
+                        planned_end: Some(task.planned_end.clone()),
+                    })
+                    .collect();
+
+                app.next_id += app.preset_tasks.len() as u64;
+
+                if !app.preset_tasks.is_empty() {
+                    app.preset_task_state.select(Some(0));
+                }
+
+                app.preset_name.clear();
+                app.new_preset_focus = NewPresetFocus::Name;
+                app.popup = Popup::NewPreset;
+
+                app.pending_command = None;
+            }
         }
 
         KeyCode::Char('t') => {
