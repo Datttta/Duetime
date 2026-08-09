@@ -7,7 +7,6 @@ use crate::vim_navigation::NavigationMode;
 use crate::models::TaskTemplate;
 
 use std::time::SystemTime;
-use std::thread::current;
 use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
@@ -88,6 +87,16 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 app.popup = Popup::NewPreset;
 
                 app.pending_command = None;
+
+            } else if let Some(index) = app.table_state.selected() {
+                let task = &mut app.tasks[index];
+
+                if task.stopwatch.running() {
+                    task.stopwatch.stop();
+                    task.status = "STOPPED".into();
+                }
+
+                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
 
@@ -176,19 +185,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 task.actual_end = None;
                 task.status = "PENDING".into();
                 
-                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-            }
-        }
-
-        KeyCode::Char('p') => {
-            if let Some(index) = app.table_state.selected(){
-                let task = &mut app.tasks[index];
-
-                if task.stopwatch.running() {
-                    task.stopwatch.stop();
-                    task.status = "STOPPED".into();
-                }
-
                 storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
             }
         }
