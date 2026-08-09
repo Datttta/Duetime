@@ -109,22 +109,9 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         row
     });
 
-    let highlight_style = if visual_mode {
-        Style::default()
-            .fg(Color::Black)
-            .bg(Color::White)
-    } else {
-        Style::default()
-            .bg(task_selection_color())
-            .fg(Color::Black)
-    };
-
-    let table = Table::new(rows, columns);
-    let table = if visual_mode {
-        table.row_highlight_style(highlight_style)
-    } else {
-        table.highlight_symbol("> ")
-    };
+    let table = Table::new(rows, columns)
+        //.highlight_symbol("> ");
+        .row_highlight_style(Style::default().bg(task_selection_color()).fg(Color::Black));
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
 }

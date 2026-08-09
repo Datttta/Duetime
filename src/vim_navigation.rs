@@ -31,7 +31,7 @@ pub fn handle (
             true
         }
 
-        KeyCode::Char('v') => {
+        KeyCode::Char('V') | KeyCode::Char('v')=> {
             match *mode {
                 NavigationMode::Normal => {
                     *mode = NavigationMode::Visual;

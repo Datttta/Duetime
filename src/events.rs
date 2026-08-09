@@ -3,8 +3,10 @@ use crate::ui::popup;
 use crate::vim_text::InputMode;
 use crate::vim_navigation;
 use crate::storage_current_tasks;
+use crate::vim_navigation::NavigationMode;
 
 use std::time::SystemTime;
+use std::thread::current;
 use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
@@ -185,16 +187,29 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 }
 
 fn delete_task(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
-        app.tasks.remove(index);
+    if let Some(current) = app.table_state.selected() {
+        let (first, last) = if app.n_mode == NavigationMode::Visual {
+            if let Some(start) = app.n_visual_start {
+                (start.min(current), start.max(current))
+            } else {
+                (current, current)
+            }
+        } else {
+            (current, current)
+        };
+
+        app.tasks.drain(first..=last);
 
         if app.tasks.is_empty() {
             app.table_state.select(None);
         } else {
-            let new_index = index.min(app.tasks.len() - 1);
+            let new_index = first.min(app.tasks.len() - 1);
             app.table_state.select(Some(new_index));
         }
-            
+
+        app.n_mode = NavigationMode::Normal;
+        app.n_visual_start = None;
+
         storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
