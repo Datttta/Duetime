@@ -1,13 +1,11 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus},
+    app::{App, Popup, TaskDestination},
     ui::popup,
     vim_navigation::NavigationMode,
-    models::TaskTemplate,
     vim_navigation,
     storage_current_tasks,
 };
 
-use std::time::SystemTime;
 use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
@@ -91,40 +89,19 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('i') => {
-            if app.table_state.selected().is_some() {
-                app.popup = Popup::TaskInfo;
-            }
+            app.task_info();
         }
 
         KeyCode::Char('s') => {
-            if let Some(index) = app.table_state.selected() {
-                let task = &mut app.tasks[index];
-
-                if task.stopwatch.running() {
-                    task.stopwatch.stop();
-                    task.actual_end = Some(SystemTime::now());
-                    task.status = "COMPLETED".into();
-                } else {
-                    task.stopwatch.start();
-                    task.actual_start = Some(SystemTime::now());
-                    task.status = "IN PROGRESS".into();
-                }
-
-                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-            }
+            app.start_task();
+        }
+        
+        KeyCode::Char('c') => {
+            app.complete_task();
         }
 
         KeyCode::Char('r') => {
-            if let Some(index) = app.table_state.selected() {
-                let task = &mut app.tasks[index];
-
-                task.stopwatch.reset();
-                task.actual_start = None;
-                task.actual_end = None;
-                task.status = "PENDING".into();
-                
-                storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-            }
+            app.reset_task();
         }
 
         KeyCode::Char('P') => {

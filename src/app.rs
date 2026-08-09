@@ -1,12 +1,14 @@
 use ratatui::widgets::{TableState, ListState};
 
-use crate::vim_text::{InputState, InputMode};
-use crate::vim_navigation::NavigationMode;
-use crate::tasks::TaskInfo;
-use crate::models::{TaskTemplate, Preset, KnownTask};
-use crate::storage_current_tasks;
-use crate::storage_preset;
-use crate::storage_known_tasks;
+use crate::{
+    vim_text::{InputState, InputMode},
+    vim_navigation::NavigationMode,
+    tasks::TaskInfo,
+    models::{TaskTemplate, Preset, KnownTask},
+    storage_current_tasks,
+    storage_known_tasks,
+    storage_preset,
+};
 
 use std::time::SystemTime;
 
@@ -144,6 +146,33 @@ impl App {
         }
     }
 
+    pub fn complete_task(&mut self) {
+        if let Some(index) = self.table_state.selected() {
+            let task = &mut self.tasks[index];
+
+            if task.stopwatch.running() {
+                task.stopwatch.stop();
+                task.actual_end = Some(SystemTime::now());
+                task.status = "COMPLETED".into();
+            } 
+
+            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+        }
+    }
+
+    pub fn reset_task(&mut self) {
+        if let Some(index) = self.table_state.selected() {
+            let task = &mut self.tasks[index];
+
+            task.stopwatch.reset();
+            task.actual_start = None;
+            task.actual_end = None;
+            task.status = "PENDING".into();
+            
+            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+        }
+    }
+
     pub fn pause_task(&mut self) {
         if let Some(index) = self.table_state.selected() {
             let task = &mut self.tasks[index];
@@ -154,6 +183,8 @@ impl App {
             }
         }
     }
+
+    // =================== POPUPS =======================
 
     pub fn add_task_popup (&mut self, destination: TaskDestination) {
         self.task_destination = destination;
@@ -187,6 +218,12 @@ impl App {
             self.popup = Popup::EditTask;
 
             self.pending_command = None;
+        }
+    }
+
+    pub fn task_info(&mut self) {
+        if app.table_state.selected().is_some() {
+            app.popup = Popup::TaskInfo;
         }
     }
 
