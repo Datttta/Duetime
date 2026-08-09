@@ -119,9 +119,12 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
             .fg(Color::Black)
     };
 
-    let table = Table::new(rows, columns)
-        //.highlight_symbol("> ");
-        .row_highlight_style(highlight_style);
+    let table = Table::new(rows, columns);
+    let table = if visual_mode {
+        table.row_highlight_style(highlight_style)
+    } else {
+        table.highlight_symbol("> ")
+    };
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
 }
