@@ -1,6 +1,7 @@
 use ratatui::widgets::{TableState, ListState};
 
 use crate::vim_text::{InputState, InputMode};
+use crate::vim_navigation::NavigationMode;
 use crate::tasks::TaskInfo;
 use crate::models::{TaskTemplate, Preset, KnownTask};
 use crate::storage_current_tasks;
@@ -49,6 +50,9 @@ pub struct App {
     pub planned_start: InputState,
     pub planned_end: InputState,
 
+    pub n_mode: NavigationMode,
+    pub n_visual_start: Option<usize>,
+
     pub mode: InputMode,
     pub selected_input: SelectedInput,
 
@@ -89,16 +93,17 @@ impl App {
 
         Self {
             pending_command: None,
-
             popup: Popup::None,
             running: true,
-
-            mode: InputMode::Insert,
 
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
+
+            n_visual_start: Some(0),
+            n_mode: NavigationMode::Normal,
             
+            mode: InputMode::Insert,
             selected_input: SelectedInput::TaskName,
 
             table_state,

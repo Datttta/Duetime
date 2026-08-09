@@ -240,6 +240,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         &mut app.pending_command,
                         &mut selected,
                         app.preset_tasks.len(),
+                        &mut app.n_mode,
+                        &mut app.n_visual_start,
                     );
 
                     app.preset_task_state.select(selected);

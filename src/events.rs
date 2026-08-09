@@ -47,6 +47,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         &mut app.pending_command,
         &mut selected,
         app.tasks.len(),
+        &mut app.n_mode,
+        &mut app.n_visual_start,
     );
 
     app.table_state.select(selected);

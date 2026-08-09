@@ -2,6 +2,7 @@ use crate::app::App;
 use crate::stopwatch::{Stopwatch, StopwatchData};
 use crate::ui::widgets::input::ellipsize;
 use crate::ui::theme::task_selection_color;
+use crate::vim_navigation::NavigationMode;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
@@ -76,8 +77,12 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         Constraint::Length(8), // stopwatch/elapsed
     ];
 
-    let rows = app.tasks.iter().map(|task| {
-        Row::new(vec![
+    let visual_start = app.n_visual_start;
+    let visual_mode = app.n_mode == NavigationMode::Visual;
+    let current = app.table_state.selected();
+
+    let rows = app.tasks.iter().enumerate().map(|(index, task)| {
+        let row = Row::new(vec![
             Cell::from(format!("  {}", ellipsize(&task.name, 22))),
             Cell::from(Line::from(task.status.as_str()).alignment(Alignment::Center)),
             Cell::from(String::new()),
@@ -86,12 +91,37 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
             Cell::from(format_time(task.actual_start)),
             Cell::from(format_time(task.actual_end)),
             Cell::from(task.stopwatch.formatted()),
-        ])
+        ]);
+
+        if visual_mode {
+            if let Some(start) = visual_start {
+                if let Some(end) = current {
+                    let first = start.min(end);
+                    let last = start.max(end);
+
+                    if index >= first && index <= last {
+                        return row.style(Style::default().fg(Color::Black).bg(Color::White));
+                    }
+                }
+            }
+        }
+
+        row
     });
+
+    let highlight_style = if visual_mode {
+        Style::default()
+            .fg(Color::Black)
+            .bg(Color::White)
+    } else {
+        Style::default()
+            .bg(task_selection_color())
+            .fg(Color::Black)
+    };
 
     let table = Table::new(rows, columns)
         //.highlight_symbol("> ");
-        .row_highlight_style(Style::default().bg(task_selection_color()).fg(Color::Black));
+        .row_highlight_style(highlight_style);
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
 }
