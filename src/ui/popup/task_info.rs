@@ -10,7 +10,7 @@ use ratatui::{
 use crate::app::{App, Popup};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = centered_rect(frame, app);
+    let area = centered_rect(frame);
 
     frame.render_widget(Clear, area);
 
@@ -20,7 +20,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(&block, area);
 
-    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
+    fn centered_rect(frame: &mut Frame) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(23),
             Constraint::Length(1), // keys help

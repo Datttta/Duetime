@@ -1,7 +1,7 @@
 use crate::app::App;
 use crate::stopwatch::{Stopwatch, StopwatchData};
 use crate::ui::widgets::input::ellipsize;
-use crate::ui::theme::selection_color;
+use crate::ui::theme::task_selection_color;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
@@ -10,7 +10,7 @@ use std::time::SystemTime;
 use ratatui::{
     layout::{Constraint, Rect, Alignment},
     widgets::{Row, Table, Cell},
-    style::Style,
+    style::{Style, Color},
     text::Line,
     Frame,
 };
@@ -91,7 +91,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     let table = Table::new(rows, columns)
         //.highlight_symbol("> ");
-        .row_highlight_style(Style::default().bg(selection_color()));
+        .row_highlight_style(Style::default().bg(task_selection_color()).fg(Color::Black));
 
     frame.render_stateful_widget(table, area, &mut app.table_state);
 }

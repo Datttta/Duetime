@@ -113,8 +113,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('i') => {
-            if let Some(index) = app.table_state.selected() {
-                // show informations about the task, also the entire task name in a larger window
+            if app.table_state.selected().is_some() {
                 app.popup = Popup::TaskInfo;
             }
         }
