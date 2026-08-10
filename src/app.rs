@@ -386,6 +386,38 @@ impl App {
         storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
     }
 
+    pub fn save_preset(&mut self) {
+        if let Some(index) = self.edit_preset {
+            self.presets[index].name = self.preset_name.text.clone();
+            self.presets[index].tasks = std::mem::take(&mut self.preset_tasks);
+
+            self.edit_preset = None;
+        } else {
+            let preset = Preset {
+                id: self.next_id,
+                name: self.preset_name.text.clone(),
+                tasks: std::mem::take(&mut self.preset_tasks),
+            };
+
+            self.next_id += 1;
+            self.presets.push(preset);
+            self.mode = InputMode::Normal;
+        }
+
+        self.preset_name.clear();
+        self.popup = Popup::Presets;
+
+        self.task_name.clear();
+        self.planned_start.clear();
+        self.planned_end.clear();
+
+        if self.preset_state.selected().is_none() && !self.presets.is_empty() {
+            self.preset_state.select(Some(0));
+        }
+
+        storage_preset::save_preset(&self.presets).unwrap();
+    }
+
     pub fn save_known_task(&mut self) {
         match self.popup {
             Popup::AddKnownTask => {
@@ -461,6 +493,22 @@ impl App {
             }
 
             crate::storage_preset::save_preset(&self.presets).unwrap();
+        }
+
+        self.pending_command = None;
+    }
+
+    pub fn delete_preset_task(&mut self) {
+        if let Some(index) = self.preset_task_state.selected() {
+            self.preset_tasks.remove(index);
+
+            // Keep the selection valid
+            if self.preset_tasks.is_empty() {
+                self.preset_task_state.select(None);
+            } else {
+                let new_index = index.min(self.preset_tasks.len() - 1);
+                self.preset_task_state.select(Some(new_index));
+            }
         }
 
         self.pending_command = None;

@@ -4,7 +4,6 @@ use crate::{
     app::{App, Popup, TaskDestination, NewPresetFocus},
     ui::widgets::input,
     vim_text::InputMode,
-    models::Preset,
     vim_navigation,
     keys_help,
 };
@@ -90,28 +89,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
 }
 
-fn save_preset(app: &mut App) {
-    if let Some(index) = app.edit_preset {
-        app.presets[index].name = app.preset_name.text.clone();
-        app.presets[index].tasks = std::mem::take(&mut app.preset_tasks);
-
-        app.edit_preset = None;
-    } else {
-        let preset = Preset {
-            id: app.next_id,
-            name: app.preset_name.text.clone(),
-            tasks: std::mem::take(&mut app.preset_tasks),
-        };
-
-        app.next_id += 1;
-        app.presets.push(preset);
-        app.mode = InputMode::Normal;
-    }
-
-    app.preset_name.clear();
-    app.popup = Popup::Presets;
-}
-
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Tab => {
@@ -127,18 +104,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 return;
             }
 
-            save_preset(app);
-            if let Err(err) = crate::storage_preset::save_preset(&app.presets) {
-                eprintln!("Failed to save preset: {err}");
-            }
-
-            app.task_name.clear();
-            app.planned_start.clear();
-            app.planned_end.clear();
-
-            if app.preset_state.selected().is_none() && !app.presets.is_empty() {
-                app.preset_state.select(Some(0));
-            }
+            app.save_preset();
         }
 
         _ => {
@@ -148,7 +114,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         match key.code {
                             KeyCode::Char('a') => {
                                 app.add_task(TaskDestination::Preset);
-
                                 return;
                             }
 
@@ -179,19 +144,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                         KeyCode::Char('d') => {
                             if app.pending_command == Some('d') {
-                                if let Some(index) = app.preset_task_state.selected() {
-                                    app.preset_tasks.remove(index);
-
-                                    // Keep the selection valid
-                                    if app.preset_tasks.is_empty() {
-                                        app.preset_task_state.select(None);
-                                    } else {
-                                        let new_index = index.min(app.preset_tasks.len() - 1);
-                                        app.preset_task_state.select(Some(new_index));
-                                    }
-                                }
-
-                                app.pending_command = None;
+                                app.delete_preset_task();
                             } else {
                                 app.pending_command = Some('d');
                             }

@@ -1,17 +1,17 @@
+use crossterm::event::{KeyCode, KeyEvent};
+
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Padding, Paragraph},
     Frame
 };
 
-use crossterm::event::{KeyCode, KeyEvent};
-
-use crate::ui::widgets::input;
-use crate::vim_text::InputMode;
-use crate::vim_text::InputResult;
-use crate::keys_help;
-use crate::app::{App, Popup};
-use crate::models::KnownTask;
+use crate::{
+    ui::widgets::input,
+    vim_text::{InputMode, InputResult},
+    app::{App, Popup},
+    keys_help,
+};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
