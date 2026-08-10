@@ -78,17 +78,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('e') => {
-            if let Some(index) = selected {
-                app.mode = InputMode::Insert;
-
-                app.popup = Popup::EditKnownTask(index);
-
-                let suggestion = &app.known_tasks[index];
-
-                app.known_task_name.text = suggestion.name.clone();
-
-                return;
-            }
+            app.edit_known_task();
+            return;
         }
 
         KeyCode::Char('d') => {

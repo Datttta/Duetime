@@ -300,6 +300,20 @@ impl App {
         self.pending_command = None;
     }
 
+    pub fn edit_known_task(&mut self) {
+        let mut selected = self.known_tasks_state.selected();
+        
+        if let Some(index) = selected {
+            self.mode = InputMode::Insert;
+
+            self.popup = Popup::EditKnownTask(index);
+
+            let suggestion = &self.known_tasks[index];
+
+            self.known_task_name.text = suggestion.name.clone();
+        }
+    }
+
     //  ====================== Actions ===================
     pub fn save_task(&mut self) {
         match self.task_destination {
