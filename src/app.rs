@@ -132,6 +132,8 @@ impl App {
         }
     }
 
+    // ========================== Main tasks panel ==========================
+
     pub fn start_task(&mut self) {
         if let Some(index) = self.table_state.selected() {
             let task = &mut self.tasks[index];
@@ -298,7 +300,126 @@ impl App {
         self.pending_command = None;
     }
 
-    //
+    //  ====================== Actions ===================
+    pub fn save_task(&mut self) {
+        match self.task_destination {
+
+            TaskDestination::Preset => {
+                let id = self.next_id;
+                self.next_id += 1;
+
+                self.preset_tasks.push(TaskTemplate {
+                    id,
+                    name: self.task_name.text.clone(),
+                    planned_start: Some(self.planned_start.text.clone()),
+                    planned_end: Some(self.planned_end.text.clone()),
+                });
+
+                if self.preset_task_state.selected().is_none() && !self.preset_tasks.is_empty() {
+                    self.preset_task_state.select(Some(0));
+                }
+
+                self.mode = InputMode::Normal;
+                self.popup = Popup::NewPreset;
+            }
+
+            TaskDestination::AddTask => {
+                self.tasks.push(TaskInfo {
+                    name: self.task_name.text.clone(),
+                    status: "PENDING".into(),
+                    planned_start: self.planned_start.text.clone(),
+                    planned_end: self.planned_end.text.clone(),
+                    ..Default::default()
+                });
+
+                if self.table_state.selected().is_none() && !self.tasks.is_empty() {
+                    self.table_state.select(Some(0));
+                }
+            }
+
+            TaskDestination::EditTask(index) => {
+                if let Some(task) = self.tasks.get_mut(index) {
+                    task.name = self.task_name.text.clone();
+                    task.planned_start = self.planned_start.text.clone();
+                    task.planned_end = self.planned_end.text.clone();
+                    self.popup = Popup::None;
+                }
+                
+            }
+
+            TaskDestination::EditPresetTask(index) => {
+                if let Some(task) = self.preset_tasks.get_mut(index) {
+                    task.name = self.task_name.text.clone();
+                    task.planned_start = Some(self.planned_start.text.clone());
+                    task.planned_end = Some(self.planned_end.text.clone());
+                    self.popup = Popup::NewPreset;
+                }
+            }
+
+        }
+
+        self.task_name.clear();
+        self.planned_start.clear();
+        self.planned_end.clear();
+        
+        self.suggestions.clear();
+        self.selected_suggestion = 0;
+            
+        storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+    }
+
+    pub fn close_popup(&mut self) {
+        match self.task_destination {
+            TaskDestination::AddTask | TaskDestination::EditTask(_) => {
+                self.popup = Popup::None;
+            }
+
+            TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
+                self.popup = Popup::NewPreset;
+            }
+        }
+    }
+
+    pub fn apply_preset(&mut self) {
+        if let Some(index) = self.preset_state.selected() {
+            // Set preset to main task table
+            let preset = &self.presets[index];
+
+            self.tasks = preset
+                .tasks
+                .iter()
+                .map(|task| TaskInfo {
+                    name: task.name.clone(),
+                    status: "PENDING".to_string(),
+                    planned_start: task.planned_start.clone().unwrap_or_default(),
+                    planned_end: task.planned_end.clone().unwrap_or_default(),
+                    ..Default::default()
+                })
+                .collect();
+
+            self.popup = Popup::None;
+        }
+    }
+
+    pub fn delete_preset(&mut self) {
+        if let Some(index) = self.preset_state.selected() {
+            self.presets.remove(index);
+            
+            if self.presets.is_empty() {
+                self.preset_state.select(None);
+            } else {
+                let new_index = index.min(self.presets.len() - 1);
+                self.preset_state.select(Some(new_index));
+            }
+
+            if let Err(err) = crate::storage_preset::save_preset(&self.presets) {
+                eprintln!("Failed to save presets: {err}");
+            }
+        }
+
+        self.pending_command = None;
+    }
+
     pub fn quit(&mut self) {
         storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
         self.running = false;

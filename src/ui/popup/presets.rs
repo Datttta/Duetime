@@ -6,7 +6,6 @@ use ratatui::{
 };
 
 use crate::{
-    tasks::TaskInfo,
     app::{App, Popup},
     keys_help,
     vim_navigation,
@@ -91,45 +90,14 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
-                if let Some(index) = app.preset_state.selected() {
-                    app.presets.remove(index);
-                    
-                    if app.presets.is_empty() {
-                        app.preset_state.select(None);
-                    } else {
-                        let new_index = index.min(app.presets.len() - 1);
-                        app.preset_state.select(Some(new_index));
-                    }
-
-                    if let Err(err) = crate::storage_preset::save_preset(&app.presets) {
-                        eprintln!("Failed to save presets: {err}");
-                    }
-                }
-                app.pending_command = None;
+                app.delete_preset();
             } else {
                 app.pending_command = Some('d')
             }
         }
 
         KeyCode::Enter => {
-            if let Some(index) = app.preset_state.selected() {
-                // Set preset to main task table
-                let preset = &app.presets[index];
-
-                app.tasks = preset
-                    .tasks
-                    .iter()
-                    .map(|task| TaskInfo {
-                        name: task.name.clone(),
-                        status: "PENDING".to_string(),
-                        planned_start: task.planned_start.clone().unwrap_or_default(),
-                        planned_end: task.planned_end.clone().unwrap_or_default(),
-                        ..Default::default()
-                    })
-                    .collect();
-
-                app.popup = Popup::None;
-            }
+            app.apply_preset();
         }
 
         KeyCode::Char('q') => {

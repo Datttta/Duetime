@@ -1,14 +1,11 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 use crate::{
-    app::{App, Popup, SelectedInput, TaskDestination},
+    app::{App, SelectedInput},
     ui::widgets::input,
-    tasks::TaskInfo,
-    models::TaskTemplate,
-    vim_text::{InputMode, InputResult},
+    vim_text::{InputResult},
     keys_help,
     suggestions,
-    storage_current_tasks,
 };
 
 use ratatui::{
@@ -200,11 +197,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Enter => {
-            save_task(app);
+            app.save_task();
         }
 
         KeyCode::Esc => {
-            close_popup(app);
+            app.close_popup();
         }
 
         KeyCode::Tab => {
@@ -225,83 +222,4 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         _ => {}
     }
-}
-
-fn close_popup(app: &mut App) {
-    match app.task_destination {
-        TaskDestination::AddTask | TaskDestination::EditTask(_) => {
-            app.popup = Popup::None;
-        }
-
-        TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
-            app.popup = Popup::NewPreset;
-        }
-    }
-}
-
-fn save_task(app: &mut App) {
-    match app.task_destination {
-
-        TaskDestination::Preset => {
-            let id = app.next_id;
-            app.next_id += 1;
-
-            app.preset_tasks.push(TaskTemplate {
-                id,
-                name: app.task_name.text.clone(),
-                planned_start: Some(app.planned_start.text.clone()),
-                planned_end: Some(app.planned_end.text.clone()),
-            });
-
-            if app.preset_task_state.selected().is_none() && !app.preset_tasks.is_empty() {
-                app.preset_task_state.select(Some(0));
-            }
-
-            app.mode = InputMode::Normal;
-            app.popup = Popup::NewPreset;
-        }
-
-        TaskDestination::AddTask => {
-            app.tasks.push(TaskInfo {
-                name: app.task_name.text.clone(),
-                status: "PENDING".into(),
-                planned_start: app.planned_start.text.clone(),
-                planned_end: app.planned_end.text.clone(),
-                ..Default::default()
-            });
-
-            if app.table_state.selected().is_none() && !app.tasks.is_empty() {
-                app.table_state.select(Some(0));
-            }
-        }
-
-        TaskDestination::EditTask(index) => {
-            if let Some(task) = app.tasks.get_mut(index) {
-                task.name = app.task_name.text.clone();
-                task.planned_start = app.planned_start.text.clone();
-                task.planned_end = app.planned_end.text.clone();
-                app.popup = Popup::None;
-            }
-            
-        }
-
-        TaskDestination::EditPresetTask(index) => {
-            if let Some(task) = app.preset_tasks.get_mut(index) {
-                task.name = app.task_name.text.clone();
-                task.planned_start = Some(app.planned_start.text.clone());
-                task.planned_end = Some(app.planned_end.text.clone());
-                app.popup = Popup::NewPreset;
-            }
-        }
-
-    }
-
-    app.task_name.clear();
-    app.planned_start.clear();
-    app.planned_end.clear();
-    
-    app.suggestions.clear();
-    app.selected_suggestion = 0;
-        
-    storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
 }

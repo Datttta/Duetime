@@ -74,7 +74,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('a') => {
             app.mode = InputMode::Insert;
-
             app.popup = Popup::AddKnownTask;
         }
 
