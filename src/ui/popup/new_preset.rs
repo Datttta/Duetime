@@ -167,16 +167,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                     match key.code {
                         KeyCode::Char('a') => {
-                            app.popup = Popup::AddTask;
-
-                            app.task_destination = TaskDestination::Preset;
-
-                            app.task_name.clear();
-                            app.planned_start.clear();
-                            app.planned_end.clear();
-
-                            app.selected_input = SelectedInput::TaskName;
-                            app.mode = InputMode::Insert;
+                            app.add_task_popup(TaskDestination::Preset);
 
                             return;
                         }
