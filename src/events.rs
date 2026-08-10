@@ -4,6 +4,7 @@ use crate::{
     vim_navigation::NavigationMode,
     vim_navigation,
     storage_current_tasks,
+    move_task,
 };
 
 use std::io;
@@ -41,6 +42,11 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
 
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
+    if app.moving_task.is_some() {
+        move_task::handle_keys(app, key);
+        return;
+    }
+
     let mut selected = app.table_state.selected();
 
     let handled = vim_navigation::handle(
@@ -84,6 +90,12 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                 delete_task(app);
             } else {
                 app.pending_command = Some('d')
+            }
+        }
+
+        KeyCode::Char('m') => {
+            if app.n_mode == NavigationMode::Visual {
+                move_task::move_tasks(app);
             }
         }
 

@@ -81,35 +81,9 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let visual_mode = app.n_mode == NavigationMode::Visual;
     let current = app.table_state.selected();
 
-    let rows = app.tasks.iter().enumerate().map(|(index, task)| {
-        let row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&task.name, 22))),
-            Cell::from(Line::from(task.status.as_str()).alignment(Alignment::Center)),
-            Cell::from(String::new()),
-            Cell::from(task.planned_start.clone()),
-            Cell::from(task.planned_end.clone()),
-            Cell::from(format_time(task.actual_start)),
-            Cell::from(format_time(task.actual_end)),
-            Cell::from(task.stopwatch.formatted()),
-        ]);
-
-        if visual_mode {
-            if let Some(start) = visual_start {
-                if let Some(end) = current {
-                    let first = start.min(end);
-                    let last = start.max(end);
-
-                    if index >= first && index <= last {
-                        return row.style(Style::default().fg(Color::Black).bg(Color::White));
-                    }
-                }
-            }
-        }
-
-        row
-    });
-
-    let highlight_style = if visual_mode {
+    let highlight_style = if app.moving_task.is_some() {
+        Style::default()
+    } else if visual_mode {
         Style::default()
             .fg(Color::Black)
             .bg(Color::White)
@@ -119,11 +93,83 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
             .fg(Color::Black)
     };
 
+    let mut rows = Vec::new();
+
+    for (index, task) in app.tasks.iter().enumerate() {
+        // Draw insertion line before this task.
+        if app.moving_task.is_some()
+            && app.move_position == Some(index)
+        {
+            rows.push(Row::new(vec![
+                Cell::from("────────────────────"),
+                Cell::from(""),
+                Cell::from(""),
+                Cell::from(""),
+                Cell::from(""),
+                Cell::from(""),
+                Cell::from(""),
+                Cell::from(""),
+            ]));
+        }
+
+        let mut row = Row::new(vec![
+            Cell::from(format!("  {}", ellipsize(&task.name, 22))),
+            Cell::from(
+                Line::from(task.status.as_str())
+                    .alignment(Alignment::Center),
+            ),
+            Cell::from(String::new()),
+            Cell::from(task.planned_start.clone()),
+            Cell::from(task.planned_end.clone()),
+            Cell::from(format_time(task.actual_start)),
+            Cell::from(format_time(task.actual_end)),
+            Cell::from(task.stopwatch.formatted()),
+        ]);
+
+        if visual_mode {
+            if let (Some(start), Some(end)) = (visual_start, current) {
+                let first = start.min(end);
+                let last = start.max(end);
+
+                if index >= first && index <= last {
+                    row = row.style(
+                        Style::default()
+                            .fg(Color::Black)
+                            .bg(Color::White),
+                    );
+                }
+            }
+        }
+
+        rows.push(row);
+    }
+
+    // Insertion line after the final task.
+    if app.moving_task.is_some()
+        && app.move_position == Some(app.tasks.len())
+    {
+        rows.push(Row::new(vec![
+            Cell::from("────────────────────"),
+            Cell::from(""),
+            Cell::from(""),
+            Cell::from(""),
+            Cell::from(""),
+            Cell::from(""),
+            Cell::from(""),
+            Cell::from(""),
+        ]));
+    }
+
     let table = Table::new(rows, columns)
         //.highlight_symbol("> ");
         .row_highlight_style(highlight_style);
 
-    frame.render_stateful_widget(table, area, &mut app.table_state);
+
+    frame.render_stateful_widget(
+        table,
+        area,
+        &mut app.table_state,
+    );
 }
 
 fn format_time(time: Option<SystemTime>) -> String {

@@ -11,6 +11,7 @@ mod storage_current_tasks;
 mod models;
 mod keys_help;
 mod suggestions;
+mod move_task;
 
 use std::io;
 use app::App;
