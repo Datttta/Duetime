@@ -300,17 +300,21 @@ impl App {
         self.pending_command = None;
     }
 
+    pub fn add_known_task(&mut self) {
+        self.known_task_name.clear();
+        self.mode = InputMode::Insert;
+        self.popup = Popup::AddKnownTask;
+    }
+
     pub fn edit_known_task(&mut self) {
         let selected = self.known_tasks_state.selected();
         
         if let Some(index) = selected {
-            self.mode = InputMode::Insert;
-
-            self.popup = Popup::EditKnownTask(index);
-
             let suggestion = &self.known_tasks[index];
 
             self.known_task_name.text = suggestion.name.clone();
+            self.mode = InputMode::Insert;
+            self.popup = Popup::EditKnownTask(index);
         }
     }
 
