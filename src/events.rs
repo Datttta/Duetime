@@ -72,11 +72,11 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('t') => {
-            app.add_task_popup(TaskDestination::AddTask);
+            app.add_task(TaskDestination::AddTask);
         }
 
         KeyCode::Char('e') => {
-            app.edit_task_popup();
+            app.edit_task();
         }
 
         KeyCode::Char('d') => {

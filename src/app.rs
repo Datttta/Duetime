@@ -186,7 +186,7 @@ impl App {
 
     // =================== POPUPS =======================
 
-    pub fn add_task_popup (&mut self, destination: TaskDestination) {
+    pub fn add_task (&mut self, destination: TaskDestination) {
         self.task_destination = destination;
 
         self.task_name.clear();
@@ -198,7 +198,7 @@ impl App {
         self.popup = Popup::AddTask;
     }
 
-    pub fn edit_task_popup(&mut self) {
+    pub fn edit_task(&mut self) {
         if let Some(index) = self.table_state.selected() {
             let task = &self.tasks[index];
 
@@ -227,7 +227,33 @@ impl App {
         }
     }
 
-    pub fn edit_preset_task_popup(&mut self) {
+    pub fn create_preset(&mut self) {
+        self.preset_name.clear();
+        self.preset_tasks.clear();
+
+        self.mode = InputMode::Insert;
+        self.popup = Popup::NewPreset;
+        self.new_preset_focus = NewPresetFocus::Name;
+    }
+
+    pub fn edit_preset(&mut self) {
+        if let Some(index) = self.preset_state.selected() {
+            let preset = &self.presets[index];
+
+            self.edit_preset = Some(index);
+
+            self.preset_name.text = preset.name.clone();
+            self.preset_name.cursor = self.preset_name.text.len();
+
+            self.preset_tasks = preset.tasks.clone();
+
+            self.popup = Popup::NewPreset;
+            self.mode = InputMode::Normal;
+            self.new_preset_focus = NewPresetFocus::Name;
+        }
+    }
+
+    pub fn edit_preset_task(&mut self) {
         if let Some(index) = self.preset_task_state.selected() {
             self.popup = Popup::AddTask;
 

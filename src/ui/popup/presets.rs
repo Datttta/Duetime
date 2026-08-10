@@ -5,14 +5,14 @@ use ratatui::{
     Frame
 };
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crate::{
+    tasks::TaskInfo,
+    app::{App, Popup},
+    keys_help,
+    vim_navigation,
+};
 
-use crate::vim_navigation;
-use crate::vim_text::InputMode;
-use crate::tasks::TaskInfo;
-use crate::app::{App, Popup};
-use crate::keys_help;
-use crate::app::NewPresetFocus;
+use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -82,30 +82,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
 
         KeyCode::Char('a') => {
-            app.preset_name.clear();
-            app.preset_tasks.clear();
-
-            app.mode = InputMode::Insert;
-            app.popup = Popup::NewPreset;
-            app.new_preset_focus = NewPresetFocus::Name;
+            app.create_preset();
         }
 
         KeyCode::Char('e') => {
-            // edit preset
-            if let Some(index) = app.preset_state.selected() {
-                let preset = &app.presets[index];
-
-                app.edit_preset = Some(index);
-
-                app.preset_name.text = preset.name.clone();
-                app.preset_name.cursor = app.preset_name.text.len();
-
-                app.preset_tasks = preset.tasks.clone();
-
-                app.popup = Popup::NewPreset;
-                app.mode = InputMode::Normal;
-                app.new_preset_focus = NewPresetFocus::Name;
-            }
+            app.edit_preset();
         }
 
         KeyCode::Char('d') => {

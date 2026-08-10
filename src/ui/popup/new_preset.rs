@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
-    app::{App, Popup, TaskDestination, SelectedInput, NewPresetFocus},
+    app::{App, Popup, TaskDestination, NewPresetFocus},
     ui::widgets::input,
     vim_text::InputMode,
     models::Preset,
@@ -147,7 +147,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     if app.mode == InputMode::Normal {
                         match key.code {
                             KeyCode::Char('a') => {
-                                app.add_task_popup(TaskDestination::Preset);
+                                app.add_task(TaskDestination::Preset);
 
                                 return;
                             }
@@ -167,13 +167,13 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                     match key.code {
                         KeyCode::Char('a') => {
-                            app.add_task_popup(TaskDestination::Preset);
+                            app.add_task(TaskDestination::Preset);
 
                             return;
                         }
 
                         KeyCode::Char('e') => {
-                            app.edit_preset_task_popup();
+                            app.edit_preset_task();
                             return;
                         }
 
