@@ -84,23 +84,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
-                if let Some(index) = selected {
-                    app.known_tasks.remove(index);
-
-                    // Keep the selection valid
-                    if app.known_tasks.is_empty() {
-                        app.known_tasks_state.select(None);
-                    } else {
-                        let new_index = index.min(app.known_tasks.len() - 1);
-                        app.known_tasks_state.select(Some(new_index));
-                    }
-                }
-
-                    if let Err(e) = crate::storage_known_tasks::save_known_tasks(&app.known_tasks) {
-                        eprintln!("Failed to save known tasks: {e}");
-                    }
-
-                app.pending_command = None;
+                app.delete_known_task();
             } else {
                 app.pending_command = Some('d');
             }

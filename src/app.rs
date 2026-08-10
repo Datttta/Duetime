@@ -301,7 +301,7 @@ impl App {
     }
 
     pub fn edit_known_task(&mut self) {
-        let mut selected = self.known_tasks_state.selected();
+        let selected = self.known_tasks_state.selected();
         
         if let Some(index) = selected {
             self.mode = InputMode::Insert;
@@ -430,6 +430,25 @@ impl App {
                 eprintln!("Failed to save presets: {err}");
             }
         }
+
+        self.pending_command = None;
+    }
+
+    pub fn delete_known_task(&mut self) {
+        let selected = self.known_tasks_state.selected();
+        
+        if let Some(index) = selected {
+            self.known_tasks.remove(index);
+
+            // Keep the selection valid
+            if self.known_tasks.is_empty() {
+                self.known_tasks_state.select(None);
+            } else {
+                let new_index = index.min(self.known_tasks.len() - 1);
+                self.known_tasks_state.select(Some(new_index));
+            }
+        }
+        crate::storage_known_tasks::save_known_tasks(&self.known_tasks);
 
         self.pending_command = None;
     }
