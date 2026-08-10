@@ -386,6 +386,36 @@ impl App {
         storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
     }
 
+    pub fn save_known_task(&mut self) {
+        match self.popup {
+            Popup::AddKnownTask => {
+                let id = self.next_id;
+                self.next_id += 1;
+
+                self.known_tasks.push(KnownTask {
+                    id, name: self.known_task_name.text.clone(),
+                });
+                
+                if self.known_tasks_state.selected().is_none() && !self.known_tasks.is_empty() {
+                    self.known_tasks_state.select(Some(0));
+                }
+            }
+
+            Popup::EditKnownTask(index) => {
+                if let Some(task) = self.known_tasks.get_mut(index) {
+                    task.name = self.known_task_name.text.clone();
+                }
+            }
+
+            _ => return,
+        }
+
+        crate::storage_known_tasks::save_known_tasks(&self.known_tasks).unwrap();
+
+        self.known_task_name.clear();
+        self.popup = Popup::KnownTasks;
+    }
+
     pub fn close_popup(&mut self) {
         match self.task_destination {
             TaskDestination::AddTask | TaskDestination::EditTask(_) => {

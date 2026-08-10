@@ -66,38 +66,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 }
 
-fn save_known_task(app: &mut App) {
-    match app.popup {
-        Popup::AddKnownTask => {
-            let id = app.next_id;
-            app.next_id += 1;
-
-            app.known_tasks.push(KnownTask {
-                id, name: app.known_task_name.text.clone(),
-            });
-            
-            if app.known_tasks_state.selected().is_none() && !app.known_tasks.is_empty() {
-                app.known_tasks_state.select(Some(0));
-            }
-        }
-
-        Popup::EditKnownTask(index) => {
-            if let Some(task) = app.known_tasks.get_mut(index) {
-                task.name = app.known_task_name.text.clone();
-            }
-        }
-
-        _ => return,
-    }
-
-    if let Err(e) = crate::storage_known_tasks::save_known_tasks(&app.known_tasks) {
-        eprintln!("Failed to save known tasks: {e}");
-    }
-
-    app.known_task_name.clear();
-    app.popup = Popup::KnownTasks;
-}
-
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     if app.known_task_name.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
         return;
@@ -105,7 +73,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Enter => {
-            save_known_task(app);
+            app.save_known_task();
         }
 
         KeyCode::Esc => {
