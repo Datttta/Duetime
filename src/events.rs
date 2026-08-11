@@ -6,6 +6,7 @@ use crate::{
     storage_current_tasks,
     move_task,
 };
+use log::info;
 
 use std::io;
 

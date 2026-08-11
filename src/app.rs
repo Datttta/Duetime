@@ -543,38 +543,4 @@ impl App {
         storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
         self.running = false;
     }
-
-    // move tasks
-    pub fn finish_move(&mut self) {
-        let Some(from) = self.moving_task.take() else {
-            return;
-        };
-
-        let Some(mut position) = self.move_position.take() else {
-            return;
-        };
-
-        if self.tasks.is_empty() {
-            return;
-        }
-
-        let task = self.tasks.remove(from);
-
-        if position > from {
-            position -= 1;
-        }
-
-        position = position.min(self.tasks.len());
-
-        self.tasks.insert(position, task);
-
-        self.table_state.select(Some(position));
-
-        storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
-    }
-
-    pub fn cancel_move(&mut self) {
-        self.moving_task = None;
-        self.move_position = None;
-    }
 }

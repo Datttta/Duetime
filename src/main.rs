@@ -1,3 +1,11 @@
+use std::{
+    fs::File,
+    io,
+};
+use log::info; 
+use simplelog::{LevelFilter, WriteLogger, Config}; 
+use crate::app::App;
+
 mod app;
 mod events;
 mod ui;
@@ -13,13 +21,16 @@ mod keys_help;
 mod suggestions;
 mod move_task;
 
-use std::io;
-use app::App;
-
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
 
     let mut app = App::new();
+
+    let _ = WriteLogger::init(
+        LevelFilter::Debug,
+        simplelog::Config::default(),
+        File::create("debug.log").unwrap(),
+    );
 
     while app.running {
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
