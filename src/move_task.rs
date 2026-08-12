@@ -2,6 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use log::info;
 use crate::{
     app::App,
+    vim_navigation::NavigationMode,
 };
 
 pub fn move_tasks(app: &mut App) {
@@ -95,8 +96,14 @@ fn previous_position(app: &App, position: usize) -> usize {
 }
 
 fn finish_move(app: &mut App) {
-    let Some(from) = app.moving_task.take() else {
+    let Some(current) = app.table_state.selected() else {
         return;
+    };
+
+    let (first, last) = if let Some(start) = app.n_visual_start {
+        (start.min(current), start.max(current))
+    } else {
+        (current, current)
     };
 
     let Some(mut position) = app.move_position.take() else {
@@ -107,19 +114,29 @@ fn finish_move(app: &mut App) {
         return;
     }
 
-    let task = app.tasks.remove(from);
+    // Remove all selected tasks.
+    let moved_tasks: Vec<_> = app.tasks.drain(first..=last).collect();
 
-    if position > from {
-        position -= 1;
+    // The removal changes the position of the insertion point.
+    if position > last {
+        position -= moved_tasks.len();
+    } else if position >= first {
+        position = first;
     }
 
     position = position.min(app.tasks.len());
 
-    app.tasks.insert(position, task);
+    // Insert the selected tasks as a group.
+    for (offset, task) in moved_tasks.into_iter().enumerate() {
+        app.tasks.insert(position + offset, task);
+    }
 
+    // Select the first task of the moved group.
     app.table_state.select(Some(position));
-    
+
+    app.moving_task = None;
     app.n_visual_start = None;
+    app.n_mode = NavigationMode::Normal;
 }
 
 fn cancel_move(app: &mut App) {
