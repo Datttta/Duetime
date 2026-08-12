@@ -7,7 +7,22 @@ use crate::{
 pub fn move_tasks(app: &mut App) {
     if let Some(index) = app.table_state.selected() {
         app.moving_task = Some(index);
-        app.move_position = Some(index + 1);
+        let Some(current) = app.table_state.selected() else {
+            return;
+        };
+
+        let (beginning_selected_row, end_selected_row) =  
+            if let Some(start) = app.n_visual_start {
+                (start.min(current), start.max(current))
+            } else {
+                (current, current)
+            };
+
+        if index == beginning_selected_row {
+            app.move_position = Some(index);
+        } else {
+            app.move_position = Some(index + 1);
+        }
     }
 }
 
