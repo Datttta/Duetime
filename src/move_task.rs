@@ -18,7 +18,15 @@ pub fn move_tasks(app: &mut App) {
                 (current, current)
             };
 
+        info!("beginning_selected_row: {:?}", beginning_selected_row);
+        info!("end_selected_row: {:?}", end_selected_row);
+        info!("index: {:?}", index);
+
         if index == beginning_selected_row {
+            if beginning_selected_row == 0 {
+                app.move_position = Some(end_selected_row + 1);
+                return;
+            }
             app.move_position = Some(index);
         } else {
             app.move_position = Some(index + 1);
