@@ -1,51 +1,62 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use log::info;
-use crate::app::App;
+use crate::{
+    app::App,
+};
 
 pub fn move_tasks(app: &mut App) {
     if let Some(index) = app.table_state.selected() {
         app.moving_task = Some(index);
-        app.move_position = Some(index);
+        app.move_position = Some(index + 1);
     }
 }
 
 fn next_position(app: &App, position: usize) -> usize {
-    let mut next = position + 1;
+    let Some(current) = app.table_state.selected() else {
+        return position.saturating_add(1);
+    };
 
-    if let Some(current) = app.table_state.selected() {
-        let (beginning_selected_row, end_selected_row) =  
+    let (beginning_selected_row, end_selected_row) =  
         if let Some(start) = app.n_visual_start {
             (start.min(current), start.max(current))
         } else {
             (current, current)
         };
 
-        let moving = (end_selected_row - beginning_selected_row) + 1;
+    let moving = (end_selected_row - beginning_selected_row) + 1;
 
-        info!("moving: {:?}", moving);
+    let mut next = position.saturating_add(1);
 
-        if Some(next - 1) == Some(beginning_selected_row) {
-            next += (moving - 1);
-        }
-    };
+    if Some(next - 1) == Some(beginning_selected_row) {
+        next += moving - 1;
+    }
 
 
     next.min(app.tasks.len())
 }
 
 fn previous_position(app: &App, position: usize) -> usize {
-    let Some(moving) = app.moving_task else {
-        return position;
+    let Some(current) = app.table_state.selected() else {
+        return position.saturating_sub(1);
     };
 
-    if position == 0 {
-        return 0;
-    }
+    let (beginning_selected_row, end_selected_row) =
+        if let Some(start) = app.n_visual_start {
+            (start.min(current), start.max(current))
+        } else {
+            (current, current)
+        };
 
-    let mut previous = position - 1;
+    let moving = end_selected_row - beginning_selected_row + 1;
 
-    if previous == moving {
-        previous = previous.saturating_sub(1);
+    let mut previous = position.saturating_sub(1);
+
+    if previous == end_selected_row {
+        if beginning_selected_row == 0 {
+            previous = previous.saturating_add(1)
+        } else {
+            previous = previous.saturating_sub(moving - 1);
+        }
     }
 
     previous
@@ -80,6 +91,7 @@ fn finish_move(app: &mut App) {
 fn cancel_move(app: &mut App) {
     app.moving_task = None;
     app.move_position = None;
+    app.n_visual_start = None;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) -> bool {
@@ -105,7 +117,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) -> bool {
             true
         }
 
-        KeyCode::Esc => {
+        KeyCode::Char('q') => {
             cancel_move(app);
             true
         }
