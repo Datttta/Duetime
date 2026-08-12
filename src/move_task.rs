@@ -24,7 +24,7 @@ pub fn move_tasks(app: &mut App) {
 
         if index == beginning_selected_row {
             if beginning_selected_row == 0 {
-                app.move_position = Some(end_selected_row);
+                app.move_position = Some(end_selected_row + 1);
                 return;
             }
             app.move_position = Some(index);
@@ -56,7 +56,11 @@ fn next_position(app: &App, position: usize) -> usize {
     let mut next = position.saturating_add(1);
 
     if Some(next - 1) == Some(beginning_selected_row) {
-        next += moving - 1;
+        if end_selected_row == app.tasks.len() - 1 {
+            next = next.saturating_sub(1)
+        } else {
+            next += moving - 1;
+        }
     }
 
 
@@ -114,6 +118,8 @@ fn finish_move(app: &mut App) {
     app.tasks.insert(position, task);
 
     app.table_state.select(Some(position));
+    
+    app.n_visual_start = None;
 }
 
 fn cancel_move(app: &mut App) {

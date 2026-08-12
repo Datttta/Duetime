@@ -94,7 +94,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        KeyCode::Char('m') => {
+        KeyCode::Char('x') => {
             if app.n_mode == NavigationMode::Visual {
                 move_task::move_tasks(app);
             }
