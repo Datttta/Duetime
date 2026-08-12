@@ -24,11 +24,16 @@ pub fn move_tasks(app: &mut App) {
 
         if index == beginning_selected_row {
             if beginning_selected_row == 0 {
-                app.move_position = Some(end_selected_row + 1);
+                app.move_position = Some(end_selected_row);
                 return;
             }
             app.move_position = Some(index);
+
         } else {
+            if end_selected_row == app.tasks.len() - 1 {
+                app.move_position = Some(beginning_selected_row);
+                return;
+            }
             app.move_position = Some(index + 1);
         }
     }
