@@ -2,8 +2,7 @@ use std::{
     fs::File,
     io,
 };
-use log::info; 
-use simplelog::{LevelFilter, WriteLogger, Config}; 
+use simplelog::{LevelFilter, WriteLogger}; 
 use crate::app::App;
 
 mod app;
