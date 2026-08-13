@@ -222,7 +222,6 @@ impl App {
             self.planned_end.cursor = self.planned_end.text.len();
 
             self.mode = InputMode::Normal;
-            self.selected_input = SelectedInput::TaskName;
             self.popup = Popup::EditTask;
 
             self.pending_command = None;

@@ -151,7 +151,7 @@ fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
             true
         }
 
-        KeyCode::Tab => {
+        KeyCode::Enter => {
             if let Some(name) = app.suggestions.get(app.selected_suggestion) {
                 app.task_name.text = name.clone();
                 app.task_name.cursor = app.task_name.text.chars().count();
@@ -200,7 +200,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.save_task();
         }
 
-        KeyCode::Esc => {
+        KeyCode::Esc | KeyCode::Char('q') => {
             app.close_popup();
         }
 
