@@ -4,7 +4,7 @@ use crate::{
     vim_navigation::NavigationMode,
     vim_navigation,
     storage_current_tasks,
-    move_task,
+    move_items,
 };
 
 use std::io;
@@ -42,8 +42,24 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
 
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
-    if app.moving_task.is_some() {
-        move_task::handle_keys(app, key);
+    if app.move_state.is_moving() {
+        let was_moving = app.move_state.is_moving();
+
+        move_items::handle_keys(
+            &mut app.move_state,
+            &mut app.tasks,
+            &mut app.table_state,
+            key,
+        );
+
+        // Enter or Esc ended the move.
+        if was_moving && !app.move_state.is_moving() {
+            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+
+            app.n_mode = NavigationMode::Normal;
+            app.n_visual_start = None;
+        }
+
         return;
     }
 
@@ -95,7 +111,15 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('x') => {
             if app.n_mode == NavigationMode::Visual {
-                move_task::move_tasks(app);
+                move_items::start(
+                    &mut app.move_state,
+                    app.table_state.selected(),
+                    app.n_visual_start,
+                    app.tasks.len(),
+                );
+
+                app.n_mode = NavigationMode::Normal;
+                app.n_visual_start = None;
             }
         }
 

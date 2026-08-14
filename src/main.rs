@@ -18,7 +18,7 @@ mod storage_current_tasks;
 mod models;
 mod keys_help;
 mod suggestions;
-mod move_task;
+mod move_items;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

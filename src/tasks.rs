@@ -84,7 +84,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let visual_mode = app.n_mode == NavigationMode::Visual;
     let current = app.table_state.selected();
 
-    let highlight_style = if app.moving_task.is_some() {
+    let highlight_style = if app.move_state.is_moving() {
         Style::default()
     } else if visual_mode {
         Style::default()
@@ -100,8 +100,8 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
 
     for (index, task) in app.tasks.iter().enumerate() {
         // Draw insertion line before this task.
-        if app.moving_task.is_some()
-            && app.move_position == Some(index)
+        if app.move_state.is_moving()
+            && app.move_state.position == Some(index)
         {
             rows.push(Row::new(vec![
                 Cell::from("────────────────────"),
@@ -148,8 +148,8 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     }
 
     // Insertion line after the final task.
-    if app.moving_task.is_some()
-        && app.move_position == Some(app.tasks.len())
+    if app.move_state.is_moving()
+        && app.move_state.position == Some(app.tasks.len())
     {
         rows.push(Row::new(vec![
             Cell::from("────────────────────"),

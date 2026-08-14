@@ -5,6 +5,7 @@ use crate::{
     vim_navigation::NavigationMode,
     tasks::TaskInfo,
     models::{TaskTemplate, Preset, KnownTask},
+    move_items::MoveState,
     storage_current_tasks,
     storage_known_tasks,
     storage_preset,
@@ -80,8 +81,7 @@ pub struct App {
     pub suggestions: Vec<String>,
     pub selected_suggestion: usize,
 
-    pub moving_task: Option<usize>,
-    pub move_position: Option<usize>,
+    pub move_state: MoveState,
 }
 
 impl App {
@@ -133,8 +133,7 @@ impl App {
             
             tasks: storage_current_tasks::load_current_tasks(),
 
-            moving_task: None,
-            move_position: None,
+            move_state: MoveState::default(),
         }
     }
 
