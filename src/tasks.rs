@@ -1,12 +1,10 @@
-use crate::app::App;
-use crate::stopwatch::{Stopwatch, StopwatchData};
-use crate::ui::widgets::input::ellipsize;
-use crate::ui::theme::task_selection_color;
-use crate::vim_navigation::NavigationMode;
-
-use chrono::{DateTime, Local};
-use serde::{Deserialize, Serialize};
-use std::time::SystemTime;
+use crate::{
+    app::App,
+    stopwatch::{Stopwatch, StopwatchData},
+    ui::widgets::input::ellipsize,
+    ui::theme::task_selection_color,
+    vim_navigation::NavigationMode,
+};
 
 use ratatui::{
     layout::{Constraint, Rect, Alignment},
@@ -15,6 +13,11 @@ use ratatui::{
     text::Line,
     Frame,
 };
+
+use chrono::{DateTime, Local};
+use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
+
 
 #[derive(Default)]
 pub struct TaskInfo {

@@ -4,6 +4,7 @@ use crate::{
     app::{App, Popup, TaskDestination, NewPresetFocus},
     ui::widgets::input,
     vim_text::InputMode,
+    vim_navigation::NavigationMode,
     vim_navigation,
     keys_help,
 };
@@ -11,6 +12,7 @@ use crate::{
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, List, ListItem, Padding, Paragraph},
+    style::{Style, Color},
     text::Line,
     Frame
 };
@@ -61,16 +63,38 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical_inner[0]);
 
+    let visual_start = app.n_visual_start;
+    let visual_mode = app.n_mode == NavigationMode::Visual;
+    let current = app.preset_task_state.selected();
+
     let tasks: Vec<ListItem> = app
         .preset_tasks
         .iter()
-        .map(|task| {
-            ListItem::new(Line::from(format!(
+        .enumerate()
+        .map(|(index, task)| {
+            let mut item = ListItem::new(Line::from(format!(
                 "{} {} - {}",
                 task.name,
                 task.planned_start.as_deref().unwrap_or(""),
                 task.planned_end.as_deref().unwrap_or("")
-            )))
+            )));
+
+            if visual_mode {
+                if let (Some(start), Some(end)) = (visual_start, current) {
+                    let first = start.min(end);
+                    let last = start.max(end);
+
+                    if index >= first && index <= last {
+                        item = item.style (
+                            Style::default()
+                                .fg(Color::Black)
+                                .bg(Color::White)
+                        );
+                    }
+                }
+            }
+
+            item
         })
         .collect();
 
@@ -82,11 +106,43 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         app.new_preset_focus == NewPresetFocus::Name,
         app.mode,
     );
+    
+    let highlight_style = if visual_mode {
+        Style::default()
+            .fg(Color::Black)
+            .bg(Color::White)
+    } else {
+        Style::default()
+    };
 
-    let list = List::new(tasks.clone())
-        .highlight_symbol("> ");
+    let highlight_symbol = if visual_mode {
+        ""
+    } else {
+        "> "
+    };
+
+    let list = List::new(tasks)
+        .highlight_style(highlight_style)
+        .highlight_symbol(highlight_symbol);
+
 
     frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
+}
+
+fn delete_preset_task(app: &mut App) {
+    if let Some(index) = app.preset_task_state.selected() {
+        app.preset_tasks.remove(index);
+
+        // Keep the selection valid
+        if app.preset_tasks.is_empty() {
+            app.preset_task_state.select(None);
+        } else {
+            let new_index = index.min(app.preset_tasks.len() - 1);
+            app.preset_task_state.select(Some(new_index));
+        }
+    }
+
+    app.pending_command = None;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
@@ -144,7 +200,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                         KeyCode::Char('d') => {
                             if app.pending_command == Some('d') {
-                                app.delete_preset_task();
+                                delete_preset_task(app);
                             } else {
                                 app.pending_command = Some('d');
                             }

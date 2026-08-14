@@ -503,22 +503,6 @@ impl App {
         self.pending_command = None;
     }
 
-    pub fn delete_preset_task(&mut self) {
-        if let Some(index) = self.preset_task_state.selected() {
-            self.preset_tasks.remove(index);
-
-            // Keep the selection valid
-            if self.preset_tasks.is_empty() {
-                self.preset_task_state.select(None);
-            } else {
-                let new_index = index.min(self.preset_tasks.len() - 1);
-                self.preset_task_state.select(Some(new_index));
-            }
-        }
-
-        self.pending_command = None;
-    }
-
     pub fn delete_known_task(&mut self) {
         let selected = self.known_tasks_state.selected();
         
