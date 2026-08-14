@@ -1,6 +1,8 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::widgets::{ListState, TableState};
 
+use log::info;
+
 pub trait Selectable {
     fn select(&mut self, index: Option<usize>);
 }
@@ -36,7 +38,7 @@ pub fn start(
     visual_start: Option<usize>,
     len: usize,
 ) {
-    let Some(current) = selected else {
+    let Some(index) = selected else {
         return;
     };
 
@@ -44,15 +46,29 @@ pub fn start(
         return;
     }
 
-    let (first, last) = if let Some(start) = visual_start {
-        (start.min(current), start.max(current))
-    } else {
-        (current, current)
-    };
+    let (beginning_selected_row, end_selected_row) =
+        if let Some(start) = visual_start {
+            (start.min(index), start.max(index))
+        } else {
+            (index, index)
+        };
 
-    state.first = Some(first);
-    state.last = Some(last);
-    state.position = Some(last + 1);
+    state.first = Some(beginning_selected_row);
+    state.last = Some(end_selected_row);
+
+    if index == beginning_selected_row {
+        if beginning_selected_row == 0 {
+            state.position = Some(end_selected_row + 1);
+        } else {
+            state.position = Some(index);
+        }
+    } else {
+        if end_selected_row == len - 1 {
+            state.position = Some(beginning_selected_row);
+        } else {
+            state.position = Some(index + 1);
+        }
+    }
 }
 
 pub fn handle_keys<T, S>(
@@ -66,17 +82,56 @@ where
 {
     match key.code {
         KeyCode::Char('j') => {
-            if let Some(position) = state.position {
-                state.position = Some((position + 1).min(items.len()));
+            let (Some(first), Some(last), Some(position)) =
+                (state.first, state.last, state.position)
+            else {
+                return false;
+            };
+
+            let last_item = items.len() - 1;
+
+            let moving_len = last - first + 1;
+
+            let mut next = position.saturating_add(1);
+
+            info!("first: {:?}", first);
+            info!("last: {:?}", last);
+            info!("position: {:?}", position + 1);
+            info!("last_item: {:?}", last_item);
+
+            if next > first && next <= last {
+                if last_item == last {
+                    next -= 1;
+                    return false;
+                }
+
+                next = last + 1;
             }
+
+            state.position = Some(next.min(items.len()));
 
             true
         }
 
         KeyCode::Char('k') => {
-            if let Some(position) = state.position {
-                state.position = Some(position.saturating_sub(1));
+            let (Some(first), Some(last), Some(position)) =
+                (state.first, state.last, state.position)
+            else {
+                return false;
+            };
+
+            let mut previous = position.saturating_sub(1);
+
+            if previous >= first && previous <= last {
+                if first == 0 {
+                    previous += 1;
+                    return false;
+                }
+
+                previous = first.saturating_sub(0);
             }
+
+            state.position = Some(previous);
 
             true
         }
@@ -86,7 +141,7 @@ where
             true
         }
 
-        KeyCode::Esc => {
+        KeyCode::Char('q') => {
             *state = MoveState::default();
             true
         }

@@ -117,9 +117,6 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                     app.n_visual_start,
                     app.tasks.len(),
                 );
-
-                app.n_mode = NavigationMode::Normal;
-                app.n_visual_start = None;
             }
         }
 
