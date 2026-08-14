@@ -130,18 +130,29 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 }
 
 fn delete_preset_task(app: &mut App) {
-    if let Some(index) = app.preset_task_state.selected() {
-        app.preset_tasks.remove(index);
+    if let Some(current) = app.preset_task_state.selected() {
+        let (first, last) = if app.n_mode == NavigationMode::Visual {
+            if let Some(start) = app.n_visual_start{
+                (start.min(current), start.max(current))
+            } else {
+                (current, current)
+            }
+        } else {
+            (current, current)
+        };
+
+        app.preset_tasks.drain(first..=last);
 
         // Keep the selection valid
         if app.preset_tasks.is_empty() {
             app.preset_task_state.select(None);
         } else {
-            let new_index = index.min(app.preset_tasks.len() - 1);
+            let new_index = first.min(app.preset_tasks.len() - 1);
             app.preset_task_state.select(Some(new_index));
         }
     }
-
+    
+    app.n_mode = NavigationMode::Normal;
     app.pending_command = None;
 }
 
