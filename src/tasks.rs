@@ -1,9 +1,10 @@
 use crate::{
-    app::App,
+    app::{App, Popup},
     stopwatch::{Stopwatch, StopwatchData},
     ui::widgets::input::ellipsize,
     ui::theme::task_selection_color,
     vim_navigation::NavigationMode,
+    move_items::MoveTarget
 };
 
 use ratatui::{
@@ -84,7 +85,11 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     let visual_mode = app.n_mode == NavigationMode::Visual;
     let current = app.table_state.selected();
 
-    let highlight_style = if app.move_state.is_moving() {
+    let popup_open = !matches!(app.popup, Popup::None);
+
+    let highlight_style = if popup_open {
+        Style::default()
+    } else if app.move_state.is_moving() {
         Style::default()
     } else if visual_mode {
         Style::default()
@@ -101,6 +106,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
     for (index, task) in app.tasks.iter().enumerate() {
         // Draw insertion line before this task.
         if app.move_state.is_moving()
+            && app.move_state.target == Some(MoveTarget::Tasks)
             && app.move_state.position == Some(index)
         {
             rows.push(Row::new(vec![
@@ -129,7 +135,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
             Cell::from(task.stopwatch.formatted()),
         ]);
 
-        if visual_mode {
+        if !popup_open && visual_mode {
             if let (Some(start), Some(end)) = (visual_start, current) {
                 let first = start.min(end);
                 let last = start.max(end);

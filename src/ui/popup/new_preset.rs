@@ -5,6 +5,8 @@ use crate::{
     ui::widgets::input,
     vim_text::InputMode,
     vim_navigation::NavigationMode,
+    move_items::MoveTarget,
+    move_items,
     vim_navigation,
     keys_help,
 };
@@ -67,36 +69,49 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let visual_mode = app.n_mode == NavigationMode::Visual;
     let current = app.preset_task_state.selected();
 
-    let tasks: Vec<ListItem> = app
-        .preset_tasks
-        .iter()
-        .enumerate()
-        .map(|(index, task)| {
-            let mut item = ListItem::new(Line::from(format!(
-                "{} {} - {}",
-                task.name,
-                task.planned_start.as_deref().unwrap_or(""),
-                task.planned_end.as_deref().unwrap_or("")
-            )));
+    let mut tasks: Vec<ListItem> = Vec::new();
 
-            if visual_mode {
-                if let (Some(start), Some(end)) = (visual_start, current) {
-                    let first = start.min(end);
-                    let last = start.max(end);
+    for (index, task) in app.preset_tasks.iter().enumerate() {
+        // Insertion line before this task.
+        if app.move_state.is_moving()
+            && app.move_state.target == Some(MoveTarget::PresetTasks)
+            && app.move_state.position == Some(index)
+        {
+            tasks.push(ListItem::new("────────────────────"));
+        }
 
-                    if index >= first && index <= last {
-                        item = item.style (
-                            Style::default()
-                                .fg(Color::Black)
-                                .bg(Color::White)
-                        );
-                    }
+        let mut item = ListItem::new(Line::from(format!(
+            "{} {} - {}",
+            task.name,
+            task.planned_start.as_deref().unwrap_or(""),
+            task.planned_end.as_deref().unwrap_or("")
+        )));
+
+        if visual_mode {
+            if let (Some(start), Some(end)) = (visual_start, current) {
+                let first = start.min(end);
+                let last = start.max(end);
+
+                if index >= first && index <= last {
+                    item = item.style(
+                        Style::default()
+                            .fg(Color::Black)
+                            .bg(Color::White),
+                    );
                 }
             }
+        }
 
-            item
-        })
-        .collect();
+        tasks.push(item);
+    }
+
+    // Insertion line after the final task.
+    if app.move_state.is_moving()
+        && app.move_state.target == Some(MoveTarget::PresetTasks)
+        && app.move_state.position == Some(app.preset_tasks.len())
+    {
+        tasks.push(ListItem::new("────────────────────"));
+    }
 
     input::draw(
         frame,
@@ -107,7 +122,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         app.mode,
     );
     
-    let highlight_style = if visual_mode {
+    let highlight_style = if app.move_state.is_moving() {
+        Style::default()
+    } else if visual_mode {
         Style::default()
             .fg(Color::Black)
             .bg(Color::White)
@@ -157,6 +174,27 @@ fn delete_preset_task(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    if app.move_state.is_moving()
+        && app.move_state.target == Some(MoveTarget::PresetTasks)
+    {
+        let was_moving = app.move_state.is_moving();
+        
+        move_items::handle_keys(
+            &mut app.move_state,
+            &mut app.preset_tasks,
+            &mut app.preset_task_state,
+            key,
+        );
+
+        if was_moving && !app.move_state.is_moving() {
+            app.n_mode = NavigationMode::Normal;
+            app.n_visual_start = None;
+        }
+
+        return;
+
+    }
+
     match key.code {
         KeyCode::Tab => {
             app.new_preset_focus = match app.new_preset_focus {
@@ -207,6 +245,20 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         KeyCode::Char('e') => {
                             app.edit_preset_task();
                             return;
+                        }
+
+                        KeyCode::Char('x') => {
+                            if app.n_mode == NavigationMode::Visual {
+                                move_items::start(
+                                    &mut app.move_state,
+                                    app.preset_task_state.selected(),
+                                    app.n_visual_start,
+                                    app.preset_tasks.len(),
+                                    MoveTarget::PresetTasks,
+                                );
+
+                                return;
+                            }
                         }
 
                         KeyCode::Char('d') => {

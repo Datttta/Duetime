@@ -2,6 +2,7 @@ use crate::{
     app::{App, Popup, TaskDestination},
     ui::popup,
     vim_navigation::NavigationMode,
+    move_items::MoveTarget,
     vim_navigation,
     storage_current_tasks,
     move_items,
@@ -116,7 +117,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
                     app.table_state.selected(),
                     app.n_visual_start,
                     app.tasks.len(),
+                    MoveTarget::Tasks,
                 );
+
+                return;
             }
         }
 

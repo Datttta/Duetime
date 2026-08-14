@@ -24,6 +24,14 @@ pub struct MoveState {
     pub first: Option<usize>,
     pub last: Option<usize>,
     pub position: Option<usize>,
+    pub target: Option<MoveTarget>,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum MoveTarget {
+    Tasks,
+    PresetTasks,
+    KnownTasks,
 }
 
 impl MoveState {
@@ -37,6 +45,7 @@ pub fn start(
     selected: Option<usize>,
     visual_start: Option<usize>,
     len: usize,
+    target: MoveTarget,
 ) {
     let Some(index) = selected else {
         return;
@@ -55,6 +64,7 @@ pub fn start(
 
     state.first = Some(beginning_selected_row);
     state.last = Some(end_selected_row);
+    state.target = Some(target);
 
     if index == beginning_selected_row {
         if beginning_selected_row == 0 {
@@ -94,11 +104,6 @@ where
 
             let mut next = position.saturating_add(1);
 
-            info!("first: {:?}", first);
-            info!("last: {:?}", last);
-            info!("position: {:?}", position + 1);
-            info!("last_item: {:?}", last_item);
-
             if next > first && next <= last {
                 if last_item == last {
                     next -= 1;
@@ -128,7 +133,7 @@ where
                     return false;
                 }
 
-                previous = first.saturating_sub(0);
+                previous = first;
             }
 
             state.position = Some(previous);
