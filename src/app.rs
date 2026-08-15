@@ -240,17 +240,22 @@ impl App {
             }
 
             TaskDestination::AddTask => {
-                self.tasks.push(TaskInfo {
+                let task = TaskInfo {
                     name: self.task_name.text.clone(),
                     status: "PENDING".into(),
                     planned_start: self.planned_start.text.clone(),
                     planned_end: self.planned_end.text.clone(),
                     ..Default::default()
-                });
+                };
 
-                if self.table_state.selected().is_none() && !self.tasks.is_empty() {
-                    self.table_state.select(Some(0));
-                }
+                let position = match self.table_state.selected() {
+                    Some(index) => index + 1,
+                    None => 0
+                };
+                
+                self.tasks.insert(position.min(self.tasks.len()), task);
+
+                self.table_state.select(Some(position.min(self.tasks.len() - 1)));
             }
 
             TaskDestination::EditTask(index) => {
