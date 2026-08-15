@@ -183,6 +183,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             &mut app.move_state,
             &mut app.preset_tasks,
             &mut app.preset_task_state,
+            &mut app.pending_command,
             key,
         );
 

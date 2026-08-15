@@ -159,11 +159,9 @@ fn complete_task(app: &mut App) {
     if let Some(index) = app.table_state.selected() {
         let task = &mut app.tasks[index];
 
-        if task.stopwatch.running() {
-            task.stopwatch.stop();
-            task.actual_end = Some(SystemTime::now());
-            task.status = "COMPLETED".into();
-        } 
+        task.stopwatch.stop();
+        task.actual_end = Some(SystemTime::now());
+        task.status = "COMPLETED".into();
 
         storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
@@ -208,6 +206,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
             &mut app.move_state,
             &mut app.tasks,
             &mut app.table_state,
+            &mut app.pending_command,
             key,
         );
 

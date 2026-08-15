@@ -1,5 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::widgets::{ListState, TableState};
+use crate::App;
 
 use log::info;
 
@@ -81,80 +82,6 @@ pub fn start(
     }
 }
 
-pub fn handle_keys<T, S>(
-    state: &mut MoveState,
-    items: &mut Vec<T>,
-    selection: &mut S,
-    key: KeyEvent,
-) -> bool
-where
-    S: Selectable,
-{
-    match key.code {
-        KeyCode::Char('j') => {
-            let (Some(first), Some(last), Some(position)) =
-                (state.first, state.last, state.position)
-            else {
-                return false;
-            };
-
-            let last_item = items.len() - 1;
-
-            let moving_len = last - first + 1;
-
-            let mut next = position.saturating_add(1);
-
-            if next > first && next <= last {
-                if last_item == last {
-                    next -= 1;
-                    return false;
-                }
-
-                next = last + 1;
-            }
-
-            state.position = Some(next.min(items.len()));
-
-            true
-        }
-
-        KeyCode::Char('k') => {
-            let (Some(first), Some(last), Some(position)) =
-                (state.first, state.last, state.position)
-            else {
-                return false;
-            };
-
-            let mut previous = position.saturating_sub(1);
-
-            if previous >= first && previous <= last {
-                if first == 0 {
-                    previous += 1;
-                    return false;
-                }
-
-                previous = first;
-            }
-
-            state.position = Some(previous);
-
-            true
-        }
-
-        KeyCode::Enter => {
-            finish(state, items, selection);
-            true
-        }
-
-        KeyCode::Char('q') => {
-            *state = MoveState::default();
-            true
-        }
-
-        _ => false,
-    }
-}
-
 pub fn move_items<T>(
     items: &mut Vec<T>,
     first: usize,
@@ -206,4 +133,104 @@ where
     selection.select(Some(new_position));
 
     *state = MoveState::default();
+}
+
+fn move_down<T>(state: &mut MoveState, items: &[T]) -> bool {
+    let (Some(first), Some(last), Some(position)) =
+            (state.first, state.last, state.position)
+        else {
+            return false;
+        };
+
+        let last_item = items.len() - 1;
+
+        let moving_len = last - first + 1;
+
+        let mut next = position.saturating_add(1);
+
+        if next > first && next <= last {
+            if last_item == last {
+                next -= 1;
+                return false;
+            }
+
+            next = last + 1;
+        }
+
+        state.position = Some(next.min(items.len()));
+
+        true
+}
+
+fn move_up<T>(state: &mut MoveState, items: &[T]) -> bool {
+    let (Some(first), Some(last), Some(position)) =
+            (state.first, state.last, state.position)
+        else {
+            return false;
+        };
+
+        let mut previous = position.saturating_sub(1);
+
+        if previous >= first && previous <= last {
+            if first == 0 {
+                previous += 1;
+                return false;
+            }
+
+            previous = first;
+        }
+
+        state.position = Some(previous);
+        true
+}
+
+pub fn handle_keys<T, S>(
+    state: &mut MoveState,
+    items: &mut Vec<T>,
+    selection: &mut S,
+    pending_command: &mut Option<char>,
+    key: KeyEvent,
+) -> bool
+where
+    S: Selectable,
+{
+    match key.code {
+        KeyCode::Char('j') => {
+            move_down(state, items);
+            true
+        }
+
+        KeyCode::Char('k') => {
+            move_up(state, items);
+            true
+        }
+
+        KeyCode::Char('G') => {
+            state.position = Some(items.len());
+            true 
+        }
+
+        KeyCode::Char('g') => {
+            if *pending_command == Some('g') {
+                state.position = Some(0);
+                *pending_command = None;
+            } else {
+                *pending_command = Some('g')
+            }
+
+            true
+        }
+
+        KeyCode::Enter => {
+            finish(state, items, selection);
+            true
+        }
+
+        KeyCode::Char('q') => {
+            *state = MoveState::default();
+            true
+        }
+
+        _ => false,
+    }
 }
