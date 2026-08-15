@@ -1,4 +1,5 @@
 *.txt
+*.log
 __pycache__/
 
 target/
