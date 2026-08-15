@@ -137,60 +137,6 @@ impl App {
         }
     }
 
-    // ========================== Main tasks panel ==========================
-
-    pub fn start_task(&mut self) {
-        if let Some(index) = self.table_state.selected() {
-            let task = &mut self.tasks[index];
-
-            if !task.stopwatch.running() {
-                task.stopwatch.start();
-                task.actual_start = Some(SystemTime::now());
-                task.status = "IN PROGRESS".into();
-            }
-
-            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
-        }
-    }
-
-    pub fn complete_task(&mut self) {
-        if let Some(index) = self.table_state.selected() {
-            let task = &mut self.tasks[index];
-
-            if task.stopwatch.running() {
-                task.stopwatch.stop();
-                task.actual_end = Some(SystemTime::now());
-                task.status = "COMPLETED".into();
-            } 
-
-            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
-        }
-    }
-
-    pub fn reset_task(&mut self) {
-        if let Some(index) = self.table_state.selected() {
-            let task = &mut self.tasks[index];
-
-            task.stopwatch.reset();
-            task.actual_start = None;
-            task.actual_end = None;
-            task.status = "PENDING".into();
-            
-            storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
-        }
-    }
-
-    pub fn pause_task(&mut self) {
-        if let Some(index) = self.table_state.selected() {
-            let task = &mut self.tasks[index];
-
-            if task.stopwatch.running() {
-                task.stopwatch.stop();
-                task.status = "STOPPED".into();
-            }
-        }
-    }
-
     // =================== POPUPS =======================
 
     pub fn add_task (&mut self, destination: TaskDestination) {
@@ -203,34 +149,6 @@ impl App {
         self.selected_input = SelectedInput::TaskName;
         self.mode = InputMode::Insert;
         self.popup = Popup::AddTask;
-    }
-
-    pub fn edit_task(&mut self) {
-        if let Some(index) = self.table_state.selected() {
-            let task = &self.tasks[index];
-
-            self.task_destination = TaskDestination::EditTask(index);
-
-            // Load task data into inputs
-            self.task_name.text = task.name.clone();
-            self.planned_start.text = task.planned_start.clone();
-            self.planned_end.text = task.planned_end.clone();
-
-            self.task_name.cursor = self.task_name.text.len();
-            self.planned_start.cursor = self.planned_start.text.len();
-            self.planned_end.cursor = self.planned_end.text.len();
-
-            self.mode = InputMode::Normal;
-            self.popup = Popup::EditTask;
-
-            self.pending_command = None;
-        }
-    }
-
-    pub fn task_info(&mut self) {
-        if self.table_state.selected().is_some() {
-            self.popup = Popup::TaskInfo;
-        }
     }
 
     pub fn create_preset(&mut self) {
@@ -278,30 +196,6 @@ impl App {
             self.mode = InputMode::Normal;
             self.selected_input = SelectedInput::TaskName;
         }
-    }
-
-    pub fn add_tasks_to_preset(&mut self) {
-        self.preset_tasks = self.tasks
-            .iter()
-            .map(|task| TaskTemplate {
-                id: self.next_id,
-                name: task.name.clone(),
-                planned_start: Some(task.planned_start.clone()),
-                planned_end: Some(task.planned_end.clone()),
-            })
-            .collect();
-
-        self.next_id += self.preset_tasks.len() as u64;
-
-        if !self.preset_tasks.is_empty() {
-            self.preset_task_state.select(Some(0));
-        }
-
-        self.preset_name.clear();
-        self.new_preset_focus = NewPresetFocus::Name;
-        self.popup = Popup::NewPreset;
-
-        self.pending_command = None;
     }
 
     pub fn add_known_task(&mut self) {
@@ -519,10 +413,5 @@ impl App {
         crate::storage_known_tasks::save_known_tasks(&self.known_tasks).unwrap();
 
         self.pending_command = None;
-    }
-
-    pub fn quit(&mut self) {
-        storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
-        self.running = false;
     }
 }

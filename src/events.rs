@@ -1,14 +1,17 @@
 use crate::{
-    app::{App, Popup, TaskDestination},
+    app::{App, Popup, TaskDestination, NewPresetFocus},
     ui::popup,
     vim_navigation::NavigationMode,
+    vim_text::InputMode,
     move_items::MoveTarget,
+    models::TaskTemplate,
     vim_navigation,
     storage_current_tasks,
     move_items,
 };
 
 use std::io;
+use std::time::SystemTime;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
 
@@ -41,7 +44,159 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
     Ok(())
 }
 
+// ========================== popups ====================
 
+fn edit_task(app: &mut App) {
+    if let Some(index) = app.table_state.selected() {
+        let task = &app.tasks[index];
+
+        app.task_destination = TaskDestination::EditTask(index);
+
+        // Load task data into inputs
+        app.task_name.text = task.name.clone();
+        app.planned_start.text = task.planned_start.clone();
+        app.planned_end.text = task.planned_end.clone();
+
+        app.task_name.cursor = app.task_name.text.len();
+        app.planned_start.cursor = app.planned_start.text.len();
+        app.planned_end.cursor = app.planned_end.text.len();
+
+        app.mode = InputMode::Normal;
+        app.popup = Popup::EditTask;
+
+        app.pending_command = None;
+    }
+}
+
+fn add_tasks_to_preset(app: &mut App) {
+    app.preset_tasks = app.tasks
+        .iter()
+        .map(|task| TaskTemplate {
+            id: app.next_id,
+            name: task.name.clone(),
+            planned_start: Some(task.planned_start.clone()),
+            planned_end: Some(task.planned_end.clone()),
+        })
+        .collect();
+
+    app.next_id += app.preset_tasks.len() as u64;
+
+    if !app.preset_tasks.is_empty() {
+        app.preset_task_state.select(Some(0));
+    }
+
+    app.preset_name.clear();
+    app.new_preset_focus = NewPresetFocus::Name;
+    app.popup = Popup::NewPreset;
+
+    app.pending_command = None;
+}
+
+fn open_presets_popup(app: &mut App) {
+    app.popup = Popup::Presets;
+}
+
+fn task_info(app: &mut App) {
+    if app.table_state.selected().is_some() {
+        app.popup = Popup::TaskInfo;
+    }
+}
+
+fn open_known_tasks(app: &mut App) {
+    app.popup = Popup::KnownTasks;
+}
+
+// ============================ actions =======================
+fn delete_task(app: &mut App) {
+    if let Some(current) = app.table_state.selected() {
+        let (first, last) = if app.n_mode == NavigationMode::Visual {
+            if let Some(start) = app.n_visual_start {
+                (start.min(current), start.max(current))
+            } else {
+                (current, current)
+            }
+        } else {
+            (current, current)
+        };
+
+        app.tasks.drain(first..=last);
+
+        if app.tasks.is_empty() {
+            app.table_state.select(None);
+        } else {
+            let new_index = first.min(app.tasks.len() - 1);
+            app.table_state.select(Some(new_index));
+        }
+
+        app.n_mode = NavigationMode::Normal;
+        app.n_visual_start = None;
+
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    }
+
+    app.pending_command = None;
+}
+
+fn start_stop(app: &mut App) {
+    if let Some(index) = app.table_state.selected() {
+        let task = &mut app.tasks[index];
+
+        if task.stopwatch.running() {
+            task.stopwatch.stop();
+            task.status = "STOPPED".into();
+        } else {
+            task.stopwatch.start();
+            task.actual_start = Some(SystemTime::now());
+            task.status = "IN PROGRESS".into();
+        }
+    }
+}
+
+fn complete_task(app: &mut App) {
+    if let Some(index) = app.table_state.selected() {
+        let task = &mut app.tasks[index];
+
+        if task.stopwatch.running() {
+            task.stopwatch.stop();
+            task.actual_end = Some(SystemTime::now());
+            task.status = "COMPLETED".into();
+        } 
+
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    }
+}
+
+fn reset_task(app: &mut App) {
+    if let Some(index) = app.table_state.selected() {
+        let task = &mut app.tasks[index];
+
+        task.stopwatch.reset();
+        task.actual_start = None;
+        task.actual_end = None;
+        task.status = "PENDING".into();
+        
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    }
+}
+
+fn move_tasks(app: &mut App) {
+    if app.n_mode == NavigationMode::Visual {
+        move_items::start(
+            &mut app.move_state,
+            app.table_state.selected(),
+            app.n_visual_start,
+            app.tasks.len(),
+            MoveTarget::Tasks,
+        );
+    }
+}
+
+fn quit(app: &mut App) {
+    storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    app.running = false;
+}
+
+//  ====================== handle keys =================================
 fn handle_normal_keys(app: &mut App, key: KeyEvent) {
     if app.move_state.is_moving() {
         let was_moving = app.move_state.is_moving();
@@ -88,10 +243,8 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('p') => {
             if app.pending_command == Some('a') {
-                app.add_tasks_to_preset();
-            } else { 
-                app.pause_task();
-            }
+                add_tasks_to_preset(app);
+            } 
         }
 
         KeyCode::Char('t') => {
@@ -99,7 +252,7 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('e') => {
-            app.edit_task();
+            edit_task(app);
         }
 
         KeyCode::Char('d') => {
@@ -111,79 +264,40 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('x') => {
-            if app.n_mode == NavigationMode::Visual {
-                move_items::start(
-                    &mut app.move_state,
-                    app.table_state.selected(),
-                    app.n_visual_start,
-                    app.tasks.len(),
-                    MoveTarget::Tasks,
-                );
-
-                return;
-            }
+            move_tasks(app);
+            return;
         }
 
         KeyCode::Char('i') => {
-            app.task_info();
+            task_info(app);
         }
 
         KeyCode::Char('s') => {
-            app.start_task();
+            start_stop(app);
         }
         
         KeyCode::Char('c') => {
-            app.complete_task();
+            complete_task(app);
         }
 
         KeyCode::Char('r') => {
-            app.reset_task();
+            reset_task(app);
         }
 
         KeyCode::Char('P') => {
-            app.popup = Popup::Presets;
+           open_presets_popup(app); 
         }
 
         KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-            app.popup = Popup::KnownTasks;
+           open_known_tasks(app); 
         }
 
         KeyCode::Char('q') => {
-            app.quit();
+            quit(app);
         }
 
         _ => {
             app.pending_command = None;
         }
     }
-}
-
-fn delete_task(app: &mut App) {
-    if let Some(current) = app.table_state.selected() {
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start {
-                (start.min(current), start.max(current))
-            } else {
-                (current, current)
-            }
-        } else {
-            (current, current)
-        };
-
-        app.tasks.drain(first..=last);
-
-        if app.tasks.is_empty() {
-            app.table_state.select(None);
-        } else {
-            let new_index = first.min(app.tasks.len() - 1);
-            app.table_state.select(Some(new_index));
-        }
-
-        app.n_mode = NavigationMode::Normal;
-        app.n_visual_start = None;
-
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
-    }
-
-    app.pending_command = None;
 }
