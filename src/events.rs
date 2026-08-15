@@ -146,7 +146,10 @@ fn start_stop(app: &mut App) {
             task.status = "STOPPED".into();
         } else {
             task.stopwatch.start();
-            task.actual_start = Some(SystemTime::now());
+            if task.actual_start.is_none() {
+                task.actual_start = Some(SystemTime::now());
+            }
+
             task.status = "IN PROGRESS".into();
         }
     }
