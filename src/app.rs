@@ -30,6 +30,7 @@ pub enum Popup {
     AddKnownTask,
     EditKnownTask(usize),
     TaskInfo,
+    Help,
 }
 
 pub enum TaskDestination {

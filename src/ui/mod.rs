@@ -87,4 +87,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::TaskInfo = app.popup {
         popup::task_info::draw(frame, app);
     }
+
+    if let Popup::Help = app.popup {
+        popup::help::draw(frame, app);
+    }
 }

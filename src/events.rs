@@ -37,6 +37,8 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 Popup::EditKnownTask(_) => popup::known_tasks_add::handle_keys(app, key),
 
                 Popup::TaskInfo => popup::task_info::handle_keys(app, key),
+
+                Popup::Help => popup::help::handle_keys(app, key),
             }
         }
     }
@@ -104,6 +106,10 @@ fn task_info(app: &mut App) {
 
 fn open_known_tasks(app: &mut App) {
     app.popup = Popup::KnownTasks;
+}
+
+fn open_help_popup(app: &mut App) {
+    app.popup = Popup::Help;
 }
 
 // ============================ actions =======================
@@ -292,6 +298,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
            open_known_tasks(app); 
+        }
+
+        KeyCode::Char('?') => {
+            open_help_popup(app);
         }
 
         KeyCode::Char('q') => {
