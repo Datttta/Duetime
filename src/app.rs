@@ -83,6 +83,8 @@ pub struct App {
     pub selected_suggestion: usize,
 
     pub move_state: MoveState,
+
+    pub help_scroll: u16,
 }
 
 impl App {
@@ -135,6 +137,8 @@ impl App {
             tasks: storage_current_tasks::load_current_tasks(),
 
             move_state: MoveState::default(),
+
+            help_scroll: 0,
         }
     }
 

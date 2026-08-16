@@ -7,3 +7,7 @@ pub fn placeholder_color() -> Color {
 pub fn task_selection_color() -> Color {
     Color::Rgb(180 ,180 ,180)
 }
+
+pub fn gray_color() -> Color {
+    Color::Rgb(210, 210 ,210)
+}
