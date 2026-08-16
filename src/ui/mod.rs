@@ -44,7 +44,7 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
         Constraint::Length(1),
         Constraint::Length(1),
         Constraint::Min(0),
-        Constraint::Length(1),
+        Constraint::Length(2),
     ])
     .split(inner);
 
@@ -66,7 +66,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         let status = Paragraph::new(format!(
             " Total elapsed: {}",
             format_duration(app.total_elapsed())
-        ));
+        ))
+        .block(
+            Block::default()
+                .padding(Padding::new(2, 0, 0, 0))
+        );
 
         frame.render_widget(status, layout.footer);
     }
