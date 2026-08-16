@@ -7,6 +7,8 @@ use crate::app::{App, Popup};
 use crate::keys_help;
 use crate::tasks;
 
+use std::time::Duration;
+
 use ratatui::{
     layout::{Constraint, Layout, Rect, Alignment},
     widgets::{Block, Padding, Paragraph},
@@ -19,10 +21,20 @@ struct MainLayout {
     footer: Rect,
 }
 
+fn format_duration(duration: Duration) -> String {
+    let total_seconds = duration.as_secs();
+
+    let hours = total_seconds / 3600;
+    let minutes = (total_seconds % 3600) / 60;
+    let seconds = total_seconds % 60;
+
+    format!("{:02}:{:02}:{:02}", hours, minutes, seconds)
+}
+
 fn draw_layout(frame: &mut Frame) -> MainLayout {
     let border = Block::bordered()
         .title(" Duetime ")
-        .padding(Padding::new(0, 0, 1, 1));
+        .padding(Padding::new(0, 0, 1, 0));
 
     let inner = border.inner(frame.area());
 
@@ -50,10 +62,13 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     tasks::draw(frame, layout.tasks, app);
     
     if let Popup::None = app.popup {
-        let keys_help = Paragraph::new(keys_help::keys(app))
-            .alignment(Alignment::Center);
 
-        frame.render_widget(keys_help, layout.footer);
+        let status = Paragraph::new(format!(
+            " Total elapsed: {}",
+            format_duration(app.total_elapsed())
+        ));
+
+        frame.render_widget(status, layout.footer);
     }
 
     if let Popup::AddTask = app.popup {

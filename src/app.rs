@@ -11,7 +11,7 @@ use crate::{
     storage_preset,
 };
 
-use std::time::SystemTime;
+use std::time::{SystemTime, Duration};
 
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
@@ -424,4 +424,14 @@ impl App {
 
         self.pending_command = None;
     }
+
+    // ======================= Datas =========================
+
+    pub fn total_elapsed(&self) -> Duration {
+        self.tasks
+            .iter()
+            .map(|task| task.stopwatch.elapsed())
+            .sum()
+    }
+
 }

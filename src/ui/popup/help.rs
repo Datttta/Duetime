@@ -16,7 +16,7 @@ use crate::{
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = centered_rect(frame, 40, 22);
+    let area = centered_rect(frame, 40, 30);
 
     frame.render_widget(Clear, area);
 
