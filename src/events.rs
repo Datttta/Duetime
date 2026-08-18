@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -65,6 +65,7 @@ fn edit_task(app: &mut App) {
 
         app.mode = InputMode::Normal;
         app.popup = Popup::EditTask;
+        app.selected_input = SelectedInput::TaskName;
 
         app.pending_command = None;
     }
@@ -186,6 +187,21 @@ fn reset_task(app: &mut App) {
     }
 }
 
+fn hard_reset_task(app: &mut App) {
+    if let Some(index) = app.table_state.selected() {
+        let task = &mut app.tasks[index];
+
+        task.stopwatch.reset();
+        task.actual_start = None;
+        task.actual_end = None;
+        task.planned_start = "".to_string();
+        task.planned_end = "".to_string();
+        task.status = "PENDING".into();
+        
+        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    }
+}
+
 fn move_tasks(app: &mut App) {
     if app.n_mode == NavigationMode::Visual {
         move_items::start(
@@ -290,6 +306,10 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('r') => {
             reset_task(app);
+        }
+        
+        KeyCode::Char('R') => {
+            hard_reset_task(app);
         }
 
         KeyCode::Char('P') => {
