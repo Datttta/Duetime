@@ -11,7 +11,7 @@ use crate::{
     storage_preset,
 };
 
-use std::time::{SystemTime, Duration};
+use std::time::{Duration};
 
 #[derive(PartialEq)]
 pub enum NewPresetFocus {

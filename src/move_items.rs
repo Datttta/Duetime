@@ -1,8 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::widgets::{ListState, TableState};
-use crate::App;
-
-use log::info;
 
 pub trait Selectable {
     fn select(&mut self, index: Option<usize>);
@@ -32,7 +29,6 @@ pub struct MoveState {
 pub enum MoveTarget {
     Tasks,
     PresetTasks,
-    KnownTasks,
 }
 
 impl MoveState {
@@ -144,13 +140,10 @@ fn move_down<T>(state: &mut MoveState, items: &[T]) -> bool {
 
         let last_item = items.len() - 1;
 
-        let moving_len = last - first + 1;
-
         let mut next = position.saturating_add(1);
 
         if next > first && next <= last {
             if last_item == last {
-                next -= 1;
                 return false;
             }
 
@@ -162,7 +155,7 @@ fn move_down<T>(state: &mut MoveState, items: &[T]) -> bool {
         true
 }
 
-fn move_up<T>(state: &mut MoveState, items: &[T]) -> bool {
+fn move_up(state: &mut MoveState) -> bool {
     let (Some(first), Some(last), Some(position)) =
             (state.first, state.last, state.position)
         else {
@@ -173,7 +166,6 @@ fn move_up<T>(state: &mut MoveState, items: &[T]) -> bool {
 
         if previous >= first && previous <= last {
             if first == 0 {
-                previous += 1;
                 return false;
             }
 
@@ -201,7 +193,7 @@ where
         }
 
         KeyCode::Char('k') => {
-            move_up(state, items);
+            move_up(state);
             true
         }
 

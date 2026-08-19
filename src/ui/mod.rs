@@ -4,13 +4,12 @@ pub mod widgets;
 pub mod theme;
 
 use crate::app::{App, Popup};
-use crate::keys_help;
 use crate::tasks;
 
 use std::time::Duration;
 
 use ratatui::{
-    layout::{Constraint, Layout, Rect, Alignment},
+    layout::{Constraint, Layout, Rect},
     widgets::{Block, Padding, Paragraph},
     Frame,
 };
