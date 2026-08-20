@@ -229,16 +229,22 @@ impl App {
                 let id = self.next_id;
                 self.next_id += 1;
 
-                self.preset_tasks.push(TaskTemplate {
+                let preset_task = TaskTemplate {
                     id,
                     name: self.task_name.text.clone(),
                     planned_start: Some(self.planned_start.text.clone()),
                     planned_end: Some(self.planned_end.text.clone()),
-                });
+                };
 
-                if self.preset_task_state.selected().is_none() && !self.preset_tasks.is_empty() {
-                    self.preset_task_state.select(Some(0));
-                }
+                let position = match self.preset_task_state.selected() {
+                    Some(index) => index + 1,
+                    None => 0
+                };
+                
+                self.preset_tasks.insert(position.min(self.preset_tasks.len()), preset_task);
+
+                self.preset_task_state.select(Some(position.min(self.preset_tasks.len() - 1)));
+
 
                 self.mode = InputMode::Normal;
                 self.popup = Popup::NewPreset;
