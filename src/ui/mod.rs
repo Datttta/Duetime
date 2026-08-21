@@ -109,6 +109,15 @@ fn draw_inbox_panel (
 }
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
+    let area = frame.area();
+
+    // Small terminal window: show only tasks
+    if area.width < 100 || area.height < 30 {
+        draw_tasks_panel(frame, area, app);
+        return;
+    }
+   
+    // Show all panels if in fullscreen
     let layout = draw_layout(frame);
     
     // draw panels
