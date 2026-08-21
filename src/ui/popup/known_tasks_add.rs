@@ -9,7 +9,7 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputMode, InputResult},
-    app::{App, Popup},
+    app::{App, Popup, TasksPopup},
     keys_help,
 };
 
@@ -78,7 +78,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Esc => {
             if app.mode == InputMode::Normal {
-                app.popup = Popup::KnownTasks
+                app.popup = Popup::Tasks(TasksPopup::KnownTasks)
             }
         }
 

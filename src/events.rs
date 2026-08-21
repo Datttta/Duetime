@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -94,7 +94,7 @@ fn edit_task(app: &mut App) {
         app.planned_end.cursor = app.planned_end.text.len();
 
         app.mode = InputMode::Normal;
-        app.popup = Popup::EditTask;
+        app.popup = Popup::Tasks(TasksPopup::EditTask);
         app.selected_input = SelectedInput::TaskName;
 
         app.pending_command = None;
@@ -120,27 +120,27 @@ fn add_tasks_to_preset(app: &mut App) {
 
     app.preset_name.clear();
     app.new_preset_focus = NewPresetFocus::Name;
-    app.popup = Popup::NewPreset;
+    app.popup = Popup::Tasks(TasksPopup::NewPreset);
 
     app.pending_command = None;
 }
 
 fn open_presets_popup(app: &mut App) {
-    app.popup = Popup::Presets;
+    app.popup = Popup::Tasks(TasksPopup::Presets);
 }
 
 fn task_info(app: &mut App) {
     if app.table_state.selected().is_some() {
-        app.popup = Popup::TaskInfo;
+        app.popup = Popup::Tasks(TasksPopup::TaskInfo);
     }
 }
 
 fn open_known_tasks(app: &mut App) {
-    app.popup = Popup::KnownTasks;
+    app.popup = Popup::Tasks(TasksPopup::KnownTasks);
 }
 
 fn open_help_popup(app: &mut App) {
-    app.popup = Popup::Help;
+    app.popup = Popup::Tasks(TasksPopup::Help);
 }
 
 // ============================ actions =======================
@@ -366,8 +366,7 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 
 fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
     match key.code {
-        KeyCode::Char('j') => {
-            print!("hello");
-        }
+
+        _ => {}
     }
 }

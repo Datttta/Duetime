@@ -3,7 +3,7 @@ pub mod popup;
 pub mod widgets;
 pub mod theme;
 
-use crate::app::{App, Popup, Panel, TasksPopup};
+use crate::app::{App, Popup, TasksPopup};
 use crate::tasks;
 
 use std::time::Duration;

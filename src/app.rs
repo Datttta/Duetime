@@ -23,7 +23,9 @@ pub enum Panel {
 pub enum Popup {
     None,
     Tasks(TasksPopup),
+}
 
+#[derive(PartialEq, Debug)]
 pub enum TasksPopup {
     AddTask,
     Presets,
@@ -166,7 +168,7 @@ impl App {
 
         self.selected_input = SelectedInput::TaskName;
         self.mode = InputMode::Insert;
-        self.popup = Popup::AddTask;
+        self.popup = Popup::Tasks(TasksPopup::AddTask);
     }
 
     pub fn create_preset(&mut self) {
@@ -174,7 +176,7 @@ impl App {
         self.preset_tasks.clear();
 
         self.mode = InputMode::Insert;
-        self.popup = Popup::NewPreset;
+        self.popup = Popup::Tasks(TasksPopup::NewPreset);
         self.new_preset_focus = NewPresetFocus::Name;
     }
 
@@ -189,7 +191,7 @@ impl App {
 
             self.preset_tasks = preset.tasks.clone();
 
-            self.popup = Popup::NewPreset;
+            self.popup = Popup::Tasks(TasksPopup::NewPreset);
             self.mode = InputMode::Normal;
             self.new_preset_focus = NewPresetFocus::Name;
         }
@@ -197,7 +199,7 @@ impl App {
 
     pub fn edit_preset_task(&mut self) {
         if let Some(index) = self.preset_task_state.selected() {
-            self.popup = Popup::AddTask;
+            self.popup = Popup::Tasks(TasksPopup::AddTask);
 
             self.task_destination = TaskDestination::EditPresetTask(index);
 
@@ -219,7 +221,7 @@ impl App {
     pub fn add_known_task(&mut self) {
         self.known_task_name.clear();
         self.mode = InputMode::Insert;
-        self.popup = Popup::AddKnownTask;
+        self.popup = Popup::Tasks(TasksPopup::AddKnownTask);
     }
 
     pub fn edit_known_task(&mut self) {
@@ -230,7 +232,7 @@ impl App {
 
             self.known_task_name.text = suggestion.name.clone();
             self.mode = InputMode::Insert;
-            self.popup = Popup::EditKnownTask(index);
+            self.popup = Popup::Tasks(TasksPopup::EditKnownTask(index))
         }
     }
 
@@ -260,7 +262,7 @@ impl App {
 
 
                 self.mode = InputMode::Normal;
-                self.popup = Popup::NewPreset;
+                self.popup = Popup::Tasks(TasksPopup::NewPreset);
             }
 
             TaskDestination::AddTask => {
@@ -297,7 +299,7 @@ impl App {
                     task.name = self.task_name.text.clone();
                     task.planned_start = Some(self.planned_start.text.clone());
                     task.planned_end = Some(self.planned_end.text.clone());
-                    self.popup = Popup::NewPreset;
+                    self.popup = Popup::Tasks(TasksPopup::NewPreset);
                 }
             }
 
@@ -332,7 +334,7 @@ impl App {
         }
 
         self.preset_name.clear();
-        self.popup = Popup::Presets;
+        self.popup = Popup::Tasks(TasksPopup::Presets);
 
         self.task_name.clear();
         self.planned_start.clear();
@@ -347,7 +349,7 @@ impl App {
 
     pub fn save_known_task(&mut self) {
         match self.popup {
-            Popup::AddKnownTask => {
+            Popup::Tasks(TasksPopup::AddKnownTask) => {
                 let id = self.next_id;
                 self.next_id += 1;
 
@@ -360,7 +362,7 @@ impl App {
                 }
             }
 
-            Popup::EditKnownTask(index) => {
+            Popup::Tasks(TasksPopup::EditKnownTask(index)) => {
                 if let Some(task) = self.known_tasks.get_mut(index) {
                     task.name = self.known_task_name.text.clone();
                 }
@@ -372,7 +374,7 @@ impl App {
         crate::storage_known_tasks::save_known_tasks(&self.known_tasks).unwrap();
 
         self.known_task_name.clear();
-        self.popup = Popup::KnownTasks;
+        self.popup = Popup::Tasks(TasksPopup::KnownTasks)
     }
 
     pub fn close_popup(&mut self) {
@@ -382,7 +384,7 @@ impl App {
             }
 
             TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
-                self.popup = Popup::NewPreset;
+                self.popup = Popup::Tasks(TasksPopup::NewPreset);
             }
         }
     }
@@ -452,5 +454,4 @@ impl App {
             .map(|task| task.stopwatch.elapsed())
             .sum()
     }
-
 }
