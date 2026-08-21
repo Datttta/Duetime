@@ -13,15 +13,18 @@ use crate::{
 
 use std::time::{Duration};
 
-#[derive(PartialEq)]
-pub enum NewPresetFocus {
-    Name,
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Panel {
     Tasks,
+    Inbox,
 }
 
 #[derive(PartialEq, Debug)]
 pub enum Popup {
     None,
+    Tasks(TasksPopup),
+
+pub enum TasksPopup {
     AddTask,
     Presets,
     EditTask,
@@ -31,6 +34,12 @@ pub enum Popup {
     EditKnownTask(usize),
     TaskInfo,
     Help,
+}
+
+#[derive(PartialEq)]
+pub enum NewPresetFocus {
+    Name,
+    Tasks,
 }
 
 pub enum TaskDestination {
@@ -85,6 +94,8 @@ pub struct App {
     pub move_state: MoveState,
 
     pub help_scroll: u16,
+
+    pub focused_panel: Panel,
 }
 
 impl App {
@@ -139,6 +150,8 @@ impl App {
             move_state: MoveState::default(),
 
             help_scroll: 0,
+
+            focused_panel: Panel::Tasks,
         }
     }
 

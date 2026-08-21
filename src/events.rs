@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -19,26 +19,56 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
         if let Event::Key(key) = event::read()? {
 
-            match app.popup {
-                Popup::None => handle_normal_keys(app, key),
+            match app.focused_panel {
+                Panel::Tasks => {
+                    match &app.popup {
+                        Popup::None => handle_tasks_keys(app, key),
 
-                Popup::AddTask => popup::add_task::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::AddTask) => {
+                            popup::add_task::handle_keys(app, key);
+                        }
 
-                Popup::EditTask => popup::add_task::handle_keys(app, key),
-                
-                Popup::Presets => popup::presets::handle_keys(app, key),
-                
-                Popup::NewPreset => popup::new_preset::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::EditTask) => {
+                            popup::add_task::handle_keys(app, key);
+                        }
 
-                Popup::KnownTasks => popup::known_tasks::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::Presets) => {
+                            popup::presets::handle_keys(app, key);
+                        }
 
-                Popup::AddKnownTask => popup::known_tasks_add::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::NewPreset) => {
+                            popup::new_preset::handle_keys(app, key);
+                        }
 
-                Popup::EditKnownTask(_) => popup::known_tasks_add::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::KnownTasks) => {
+                            popup::known_tasks::handle_keys(app, key);
+                        }
 
-                Popup::TaskInfo => popup::task_info::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::AddKnownTask) => {
+                            popup::known_tasks_add::handle_keys(app, key);
+                        }
 
-                Popup::Help => popup::help::handle_keys(app, key),
+                        Popup::Tasks(TasksPopup::EditKnownTask(_)) => {
+                            popup::known_tasks_add::handle_keys(app, key);
+                        }
+
+                        Popup::Tasks(TasksPopup::TaskInfo) => {
+                            popup::task_info::handle_keys(app, key);
+                        }
+                        
+                        Popup::Tasks(TasksPopup::Help) => {
+                            popup::help::handle_keys(app, key);
+                        }
+                    }
+                }
+
+                Panel::Inbox => {
+                    match &app.popup {
+                        Popup::None => handle_inbox_keys(app, key),
+
+                        _ => {}
+                    }
+                }
             }
         }
     }
@@ -220,7 +250,7 @@ fn quit(app: &mut App) {
 }
 
 //  ====================== handle keys =================================
-fn handle_normal_keys(app: &mut App, key: KeyEvent) {
+fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
     if app.move_state.is_moving() {
         let was_moving = app.move_state.is_moving();
 
@@ -330,6 +360,14 @@ fn handle_normal_keys(app: &mut App, key: KeyEvent) {
 
         _ => {
             app.pending_command = None;
+        }
+    }
+}
+
+fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
+    match key.code {
+        KeyCode::Char('j') => {
+            print!("hello");
         }
     }
 }

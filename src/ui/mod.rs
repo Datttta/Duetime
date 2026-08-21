@@ -3,7 +3,7 @@ pub mod popup;
 pub mod widgets;
 pub mod theme;
 
-use crate::app::{App, Popup};
+use crate::app::{App, Popup, Panel, TasksPopup};
 use crate::tasks;
 
 use std::time::Duration;
@@ -15,6 +15,11 @@ use ratatui::{
 };
 
 struct MainLayout {
+    tasks: Rect,
+    inbox: Rect,
+}
+ 
+struct TasksLayout {
     header: Rect,
     tasks: Rect,
     footer: Rect,
@@ -31,82 +36,108 @@ fn format_duration(duration: Duration) -> String {
 }
 
 fn draw_layout(frame: &mut Frame) -> MainLayout {
-    let border = Block::bordered()
-        .title(" Duetime ")
-        .padding(Padding::new(0, 0, 1, 0));
-
-    let inner = border.inner(frame.area());
-
-    frame.render_widget(border, frame.area());
-
-    let chunks = Layout::vertical([
-        Constraint::Length(1),
-        Constraint::Length(1),
-        Constraint::Min(0),
-        Constraint::Length(2),
+    let chunks = Layout::horizontal([
+        Constraint::Percentage(50),
+        Constraint::Percentage(50),
     ])
-    .split(inner);
+    .split(frame.area());
 
     MainLayout {
-        header: chunks[0],
-        tasks: chunks[2],
-        footer: chunks[3],
+        tasks: chunks[0],
+        inbox: chunks[1],
     }
 }
 
-pub fn draw(frame: &mut Frame, app: &mut App) {
-    let layout = draw_layout(frame);
+fn draw_tasks_panel(frame: &mut Frame, area: Rect, app: &mut App) {
+    let border = Block::bordered()
+        .title(" Tasks ")
+        .padding(Padding::new(0, 0, 1, 0));
 
-    header::draw(frame, layout.header);
-    tasks::draw(frame, layout.tasks, app);
-    
+    let inner = border.inner(area);
+
+    frame.render_widget(border, area);
+
+    let chunks = Layout::vertical ([
+        Constraint::Length(1), // header
+        Constraint::Length(1), // spacing
+        Constraint::Min(0),    // tasks
+        Constraint::Length(2), // footer
+    ])
+    .split(inner);
+
+    header::draw(frame, chunks[0]);
+    tasks::draw(frame, chunks[2], app);
+
     if let Popup::None = app.popup {
-
         let status = Paragraph::new(format!(
-            " Total elapsed: {}",
-            format_duration(app.total_elapsed())
+                " Total elapsed {}",
+                format_duration(app.total_elapsed())
         ))
         .block(
             Block::default()
                 .padding(Padding::new(2, 0, 0, 0))
         );
 
-        frame.render_widget(status, layout.footer);
+        frame.render_widget(status, chunks[3]);
     }
+}
 
-    if let Popup::AddTask = app.popup {
-        popup::add_task::draw(frame, app);
-    }
+fn draw_inbox_panel (
+    frame: &mut Frame,
+    area: Rect,
+    app: &mut App
+) {
+    let border = Block::bordered()
+        .title(" Inbox ");
 
-    if let Popup::EditTask = app.popup {
-        popup::add_task::draw(frame, app);
-    }
+    frame.render_widget(border, area);
+}
 
-    if let Popup::NewPreset = app.popup {
-        popup::new_preset::draw(frame, app);
-    }
+pub fn draw(frame: &mut Frame, app: &mut App) {
+    let layout = draw_layout(frame);
     
-    if let Popup::Presets = app.popup {
-        popup::presets::draw(frame, app);
-    }
+    // draw panels
+    draw_tasks_panel(frame, layout.tasks, app);
+    draw_inbox_panel(frame, layout.inbox, app);
 
-    if let Popup::KnownTasks = app.popup {
-        popup::known_tasks::draw(frame, app);
-    }
+    // Tasks-panel popups
+    if let Popup::Tasks(popup) = &app.popup {
+        match popup {
+            TasksPopup::AddTask => {
+                popup::add_task::draw(frame, app);
+            }
 
-    if let Popup::AddKnownTask = app.popup {
-        popup::known_tasks_add::draw(frame, app);
-    }
+            TasksPopup::EditTask => {
+                popup::add_task::draw(frame, app);
+            }
 
-    if let Popup::EditKnownTask(_) = app.popup {
-        popup::known_tasks_add::draw(frame, app);
-    }
+            TasksPopup::Presets => {
+                popup::presets::draw(frame, app);
+            }
 
-    if let Popup::TaskInfo = app.popup {
-        popup::task_info::draw(frame, app);
-    }
+            TasksPopup::NewPreset => {
+                popup::new_preset::draw(frame, app);
+            }
 
-    if let Popup::Help = app.popup {
-        popup::help::draw(frame, app);
+            TasksPopup::KnownTasks => {
+                popup::known_tasks::draw(frame, app);
+            }
+
+            TasksPopup::AddKnownTask => {
+                popup::known_tasks_add::draw(frame, app);
+            }
+
+            TasksPopup::EditKnownTask(_) => {
+                popup::known_tasks_add::draw(frame, app);
+            }
+
+            TasksPopup::TaskInfo => {
+                popup::task_info::draw(frame, app);
+            }
+
+            TasksPopup::Help => {
+                popup::help::draw(frame, app);
+            }
+        }
     }
 }
