@@ -3,16 +3,19 @@ pub mod popup;
 pub mod widgets;
 pub mod theme;
 
-use crate::app::{App, Popup, TasksPopup};
-use crate::tasks;
-
-use std::time::Duration;
+use crate::{
+    app::{App, Popup, TasksPopup, Panel},
+    tasks,
+};
 
 use ratatui::{
     layout::{Constraint, Layout, Rect},
     widgets::{Block, Padding, Paragraph},
+    style::{Color, Style},
     Frame,
 };
+
+use std::time::Duration;
 
 struct MainLayout {
     tasks: Rect,
@@ -38,19 +41,31 @@ fn format_duration(duration: Duration) -> String {
 fn draw_layout(frame: &mut Frame) -> MainLayout {
     let chunks = Layout::horizontal([
         Constraint::Percentage(50),
+        Constraint::Length(1),
         Constraint::Percentage(50),
     ])
     .split(frame.area());
 
     MainLayout {
         tasks: chunks[0],
-        inbox: chunks[1],
+        inbox: chunks[2],
     }
 }
 
-fn draw_tasks_panel(frame: &mut Frame, area: Rect, app: &mut App) {
+fn draw_tasks_panel(
+    frame: &mut Frame,
+    area: Rect, 
+    app: &mut App,
+) {
+    let border_color = if app.focused_panel == Panel::Tasks {
+        Color::Yellow
+    } else {
+        Color::White
+    };
+
     let border = Block::bordered()
         .title(" Tasks ")
+        .border_style(Style::default().fg(border_color))
         .padding(Padding::new(0, 0, 1, 0));
 
     let inner = border.inner(area);
