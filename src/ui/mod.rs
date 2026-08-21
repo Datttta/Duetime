@@ -102,8 +102,15 @@ fn draw_inbox_panel (
     area: Rect,
     app: &mut App
 ) {
+    let border_color = if app.focused_panel == Panel::Inbox {
+        Color::Yellow
+    } else {
+        Color::White
+    };
+
     let border = Block::bordered()
-        .title(" Inbox ");
+        .title(" Inbox ")
+        .border_style(Style::default().fg(border_color));
 
     frame.render_widget(border, area);
 }

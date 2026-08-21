@@ -19,6 +19,27 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
         if let Event::Key(key) = event::read()? {
 
+            match key.code {
+                KeyCode::Char('L') => {
+                    app.focused_panel = match app.focused_panel {
+                        Panel::Tasks => Panel::Inbox,
+                        Panel::Inbox => Panel::Inbox,
+                    };
+                    return Ok(());
+                }
+
+                KeyCode::Char('H') => {
+                    app.focused_panel = match app.focused_panel {
+                        Panel::Inbox => Panel::Tasks,
+                        Panel::Tasks => Panel::Tasks,
+                    };
+
+                    return Ok(());
+                }
+
+                _ => {}
+            }
+
             match app.focused_panel {
                 Panel::Tasks => {
                     match &app.popup {
@@ -366,6 +387,9 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 
 fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
     match key.code {
+        KeyCode::Char('q') => {
+            quit(app);
+        }
 
         _ => {}
     }
