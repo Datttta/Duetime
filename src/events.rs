@@ -37,6 +37,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     return Ok(());
                 }
 
+                KeyCode::Char('q') => {
+                    quit(app);
+                }
+
                 _ => {}
             }
 
@@ -375,10 +379,6 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
             open_help_popup(app);
         }
 
-        KeyCode::Char('q') => {
-            quit(app);
-        }
-
         _ => {
             app.pending_command = None;
         }
@@ -387,10 +387,6 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 
 fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
     match key.code {
-        KeyCode::Char('q') => {
-            quit(app);
-        }
-
         _ => {}
     }
 }
