@@ -4,11 +4,12 @@ use crate::{
     vim_text::{InputState, InputMode},
     vim_navigation::NavigationMode,
     tasks::TaskInfo,
-    models::{TaskTemplate, Preset, KnownTask},
+    models::{TaskTemplate, Preset, KnownTask, Plan},
     move_items::MoveState,
     storage_current_tasks,
     storage_known_tasks,
     storage_preset,
+    storage_inbox,
 };
 
 use std::time::{Duration};
@@ -23,6 +24,12 @@ pub enum Panel {
 pub enum Popup {
     None,
     Tasks(TasksPopup),
+    Inbox(InboxPopup),
+}
+
+#[derive(PartialEq, Debug)]
+pub enum InboxPopup {
+    AddPlan,
 }
 
 #[derive(PartialEq, Debug)]
@@ -98,6 +105,10 @@ pub struct App {
     pub help_scroll: u16,
 
     pub focused_panel: Panel,
+
+    pub plan_name: InputState,
+    pub inbox: Vec<Plan>,
+    pub plans_state: ListState,
 }
 
 impl App {
@@ -113,6 +124,9 @@ impl App {
 
         let mut known_tasks_state = ListState::default();
         known_tasks_state.select(Some(0));
+        
+        let mut plans_state = ListState::default();
+        plans_state.select(Some(0));
 
         Self {
             pending_command: None,
@@ -154,6 +168,10 @@ impl App {
             help_scroll: 0,
 
             focused_panel: Panel::Tasks,
+
+            plan_name: InputState::default(),
+            inbox: storage_inbox::load_inbox(),
+            plans_state,
         }
     }
 
@@ -345,36 +363,6 @@ impl App {
         }
 
         storage_preset::save_preset(&self.presets).unwrap();
-    }
-
-    pub fn save_known_task(&mut self) {
-        match self.popup {
-            Popup::Tasks(TasksPopup::AddKnownTask) => {
-                let id = self.next_id;
-                self.next_id += 1;
-
-                self.known_tasks.push(KnownTask {
-                    id, name: self.known_task_name.text.clone(),
-                });
-                
-                if self.known_tasks_state.selected().is_none() && !self.known_tasks.is_empty() {
-                    self.known_tasks_state.select(Some(0));
-                }
-            }
-
-            Popup::Tasks(TasksPopup::EditKnownTask(index)) => {
-                if let Some(task) = self.known_tasks.get_mut(index) {
-                    task.name = self.known_task_name.text.clone();
-                }
-            }
-
-            _ => return,
-        }
-
-        crate::storage_known_tasks::save_known_tasks(&self.known_tasks).unwrap();
-
-        self.known_task_name.clear();
-        self.popup = Popup::Tasks(TasksPopup::KnownTasks)
     }
 
     pub fn close_popup(&mut self) {

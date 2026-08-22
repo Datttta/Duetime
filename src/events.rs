@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -80,12 +80,18 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         Popup::Tasks(TasksPopup::Help) => {
                             popup::help::handle_keys(app, key);
                         }
+                        
+                        _ => {}
                     }
                 }
 
                 Panel::Inbox => {
                     match &app.popup {
                         Popup::None => handle_inbox_keys(app, key),
+
+                        Popup::Inbox(InboxPopup::AddPlan) => {
+                            popup::add_plan::handle_keys(app, key);
+                        }
 
                         _ => {}
                     }
@@ -96,6 +102,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
     Ok(())
 }
+
+// =======================================================
+// #####################    TASKS   ######################      
+// =======================================================
 
 // ========================== popups ====================
 
@@ -162,6 +172,15 @@ fn open_known_tasks(app: &mut App) {
 
 fn open_help_popup(app: &mut App) {
     app.popup = Popup::Tasks(TasksPopup::Help);
+}
+
+// =======================================================
+// ######################   INBOX   ######################      
+// =======================================================
+
+fn add_plan_popup(app: &mut App) {
+    app.plan_name.clear();
+    app.popup = Popup::Inbox(InboxPopup::AddPlan);
 }
 
 // ============================ actions =======================
@@ -387,10 +406,24 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 
 fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
     match key.code {
+        KeyCode::Char('a') => {
+            app.pending_command = Some('a');
+        }
+
+        KeyCode::Char('p') => {
+            if app.pending_command == Some('a') {
+                add_plan_popup(app);
+            }
+            
+            app.pending_command = None;
+        }
+        
         KeyCode::Char('q') => {
             quit(app);
         }
 
-        _ => {}
+        _ => {
+            app.pending_command = None;
+        }
     }
 }

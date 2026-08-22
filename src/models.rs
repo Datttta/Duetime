@@ -21,3 +21,10 @@ pub struct KnownTask {
     pub name: String,
 }
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Plan {
+    pub id: u64,
+    pub name: String,
+}
+
+

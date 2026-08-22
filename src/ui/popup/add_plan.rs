@@ -9,8 +9,8 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputMode, InputResult},
-    app::{App, Popup, TasksPopup},
-    models::KnownTask,
+    app::{App, Popup, InboxPopup},
+    models::Plan,
     keys_help,
 };
 
@@ -45,7 +45,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
-        .title("Add task name")
+        .title("Add Plan")
         .padding(Padding::new(1, 1, 0, 0));
 
     frame.render_widget(&block, area);
@@ -60,59 +60,57 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     input::draw(
         frame,
         name_input[0],
-        &app.known_task_name,
+        &app.plan_name,
         "Task name",
         true,
         app.mode,
     );
 }
 
-pub fn save_known_task(app: &mut App) {
+fn save_plan (app: &mut App) {
     match app.popup {
-        Popup::Tasks(TasksPopup::AddKnownTask) => {
+        Popup::Inbox(InboxPopup::AddPlan) => {
             let id = app.next_id;
             app.next_id += 1;
 
-            app.known_tasks.push(KnownTask {
-                id, name: app.known_task_name.text.clone(),
+            app.inbox.push(Plan {
+                id, name: app.plan_name.text.clone(),
             });
             
-            if app.known_tasks_state.selected().is_none() && !app.known_tasks.is_empty() {
-                app.known_tasks_state.select(Some(0));
+            if app.plans_state.selected().is_none() && !app.inbox.is_empty() {
+                app.plans_state.select(Some(0));
             }
         }
 
-        Popup::Tasks(TasksPopup::EditKnownTask(index)) => {
-            if let Some(task) = app.known_tasks.get_mut(index) {
-                task.name = app.known_task_name.text.clone();
-            }
-        }
+        //Popup::Inbox(InboxPopup::EditKnownTask(index)) => {
+        //    if let Some(task) = app.known_tasks.get_mut(index) {
+        //        task.name = app.known_task_name.text.clone();
+        //    }
+        //}
 
         _ => return,
     }
 
-    crate::storage_known_tasks::save_known_tasks(&app.known_tasks).unwrap();
+    crate::storage_inbox::save_inbox(&app.inbox).unwrap();
 
     app.known_task_name.clear();
-    app.popup = Popup::Tasks(TasksPopup::KnownTasks)
+    app.popup = Popup::None;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    if app.known_task_name.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
+    if app.plan_name.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
         return;
     }
 
     match key.code {
         KeyCode::Enter => {
-            save_known_task(app);
+            save_plan(app);
         }
 
-        KeyCode::Esc => {
-            if app.mode == InputMode::Normal {
-                app.popup = Popup::Tasks(TasksPopup::KnownTasks)
-            }
+        KeyCode::Char('q') => {
+            app.popup = Popup::None;
         }
-
+ 
         _ => {}
     }
 }

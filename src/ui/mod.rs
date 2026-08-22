@@ -4,7 +4,7 @@ pub mod widgets;
 pub mod theme;
 
 use crate::{
-    app::{App, Popup, TasksPopup, Panel},
+    app::{App, Popup, TasksPopup, Panel, InboxPopup},
     ui::theme::unfocused_panel,
     tasks,
 };
@@ -163,6 +163,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
             TasksPopup::Help => {
                 popup::help::draw(frame, app);
+            }
+        }
+    }
+
+    // Inbox-panel popups
+    if let Popup::Inbox(popup) = &app.popup {
+        match popup {
+            InboxPopup::AddPlan => {
+                popup::add_plan::draw(frame, app);
             }
         }
     }

@@ -13,12 +13,14 @@ mod vim_navigation;
 mod tasks;
 mod stopwatch;
 mod storage_preset;
+mod storage_inbox;
 mod storage_known_tasks;
 mod storage_current_tasks;
 mod models;
 mod keys_help;
 mod suggestions;
 mod move_items;
+mod inbox;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
