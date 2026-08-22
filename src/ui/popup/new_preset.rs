@@ -65,8 +65,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical_inner[0]);
 
-    let visual_start = app.n_visual_start;
-    let visual_mode = app.n_mode == NavigationMode::Visual;
+    let visual_start = app.tasks_visual_start;
+    let visual_mode = app.tasks_navigation_mode == NavigationMode::Visual;
     let current = app.preset_task_state.selected();
 
     let mut tasks: Vec<ListItem> = Vec::new();
@@ -148,8 +148,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
 fn delete_preset_task(app: &mut App) {
     if let Some(current) = app.preset_task_state.selected() {
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start{
+        let (first, last) = if app.tasks_navigation_mode == NavigationMode::Visual {
+            if let Some(start) = app.tasks_visual_start{
                 (start.min(current), start.max(current))
             } else {
                 (current, current)
@@ -169,7 +169,7 @@ fn delete_preset_task(app: &mut App) {
         }
     }
     
-    app.n_mode = NavigationMode::Normal;
+    app.tasks_navigation_mode = NavigationMode::Normal;
     app.pending_command = None;
 }
 
@@ -188,8 +188,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         );
 
         if was_moving && !app.move_state.is_moving() {
-            app.n_mode = NavigationMode::Normal;
-            app.n_visual_start = None;
+            app.tasks_navigation_mode = NavigationMode::Normal;
+            app.tasks_visual_start = None;
         }
 
         return;
@@ -249,11 +249,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
 
                         KeyCode::Char('x') => {
-                            if app.n_mode == NavigationMode::Visual {
+                            if app.tasks_navigation_mode == NavigationMode::Visual {
                                 move_items::start(
                                     &mut app.move_state,
                                     app.preset_task_state.selected(),
-                                    app.n_visual_start,
+                                    app.tasks_visual_start,
                                     app.preset_tasks.len(),
                                     MoveTarget::PresetTasks,
                                 );
@@ -284,8 +284,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         &mut app.pending_command,
                         &mut selected,
                         app.preset_tasks.len(),
-                        &mut app.n_mode,
-                        &mut app.n_visual_start,
+                        &mut app.tasks_navigation_mode,
+                        &mut app.tasks_visual_start,
                     );
 
                     app.preset_task_state.select(selected);

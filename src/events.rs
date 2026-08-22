@@ -184,8 +184,8 @@ fn add_inbox_item_popup(app: &mut App) {
 // ============================ actions =======================
 fn delete_task(app: &mut App) {
     if let Some(current) = app.table_state.selected() {
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start {
+        let (first, last) = if app.tasks_navigation_mode == NavigationMode::Visual {
+            if let Some(start) = app.tasks_visual_start {
                 (start.min(current), start.max(current))
             } else {
                 (current, current)
@@ -203,8 +203,8 @@ fn delete_task(app: &mut App) {
             app.table_state.select(Some(new_index));
         }
 
-        app.n_mode = NavigationMode::Normal;
-        app.n_visual_start = None;
+        app.tasks_navigation_mode = NavigationMode::Normal;
+        app.tasks_visual_start = None;
 
         storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
@@ -271,11 +271,11 @@ fn hard_reset_task(app: &mut App) {
 }
 
 fn move_tasks(app: &mut App) {
-    if app.n_mode == NavigationMode::Visual {
+    if app.tasks_navigation_mode == NavigationMode::Visual {
         move_items::start(
             &mut app.move_state,
             app.table_state.selected(),
-            app.n_visual_start,
+            app.tasks_visual_start,
             app.tasks.len(),
             MoveTarget::Tasks,
         );
@@ -291,8 +291,8 @@ fn quit(app: &mut App) {
 // ========= INBOX ================
 fn delete_inbox_item(app: &mut App) {
     if let Some(current) = app.inbox_table_state.selected() {
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start {
+        let (first, last) = if app.tasks_navigation_mode == NavigationMode::Visual {
+            if let Some(start) = app.tasks_visual_start {
                 (start.min(current), start.max(current))
             } else {
                 (current, current)
@@ -310,8 +310,8 @@ fn delete_inbox_item(app: &mut App) {
             app.inbox_table_state.select(Some(new_index));
         }
 
-        app.n_mode = NavigationMode::Normal;
-        app.n_visual_start = None;
+        app.tasks_navigation_mode = NavigationMode::Normal;
+        app.tasks_visual_start = None;
 
         storage_inbox::save_inbox(&app.inbox_items).unwrap();
     }
@@ -336,8 +336,8 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
         if was_moving && !app.move_state.is_moving() {
             storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
 
-            app.n_mode = NavigationMode::Normal;
-            app.n_visual_start = None;
+            app.tasks_navigation_mode = NavigationMode::Normal;
+            app.tasks_visual_start = None;
         }
 
         return;
@@ -350,8 +350,8 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
         &mut app.pending_command,
         &mut selected,
         app.tasks.len(),
-        &mut app.n_mode,
-        &mut app.n_visual_start,
+        &mut app.tasks_navigation_mode,
+        &mut app.tasks_visual_start,
     );
 
     app.table_state.select(selected);
@@ -442,8 +442,8 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
         &mut app.pending_command,
         &mut selected,
         app.inbox_items.len(),
-        &mut app.n_mode,
-        &mut app.n_visual_start,
+        &mut app.inbox_navigation_mode,
+        &mut app.inbox_visual_start,
     );
 
     app.inbox_table_state.select(selected);

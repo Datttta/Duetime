@@ -75,8 +75,8 @@ pub struct App {
     pub planned_start: InputState,
     pub planned_end: InputState,
 
-    pub n_mode: NavigationMode,
-    pub n_visual_start: Option<usize>,
+    pub tasks_navigation_mode: NavigationMode,
+    pub tasks_visual_start: Option<usize>,
 
     pub mode: InputMode,
     pub selected_input: SelectedInput,
@@ -111,6 +111,9 @@ pub struct App {
     pub priority: InputState,
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
+    pub inbox_navigation_mode: NavigationMode,
+    pub inbox_visual_start: Option<usize>,
+
 }
 
 impl App {
@@ -139,8 +142,8 @@ impl App {
             planned_start: InputState::default(),
             planned_end: InputState::default(),
 
-            n_visual_start: Some(0),
-            n_mode: NavigationMode::Normal,
+            tasks_visual_start: Some(0),
+            tasks_navigation_mode: NavigationMode::Normal,
             
             mode: InputMode::Insert,
             selected_input: SelectedInput::TaskName,
@@ -175,6 +178,8 @@ impl App {
             priority: InputState::default(),
             inbox_items: storage_inbox::load_inbox(),
             inbox_table_state,
+            inbox_navigation_mode: NavigationMode::Normal,
+            inbox_visual_start: Some(0),
         }
     }
 

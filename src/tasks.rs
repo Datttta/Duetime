@@ -81,8 +81,8 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         Constraint::Length(8), // stopwatch/elapsed
     ];
 
-    let visual_start = app.n_visual_start;
-    let visual_mode = app.n_mode == NavigationMode::Visual;
+    let visual_start = app.tasks_visual_start;
+    let visual_mode = app.tasks_navigation_mode == NavigationMode::Visual;
     let current = app.table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);

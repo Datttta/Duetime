@@ -50,9 +50,9 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
         Constraint::Percentage(20), // priority (still don't now if i add it)
     ];
 
-    let visual_start = app.n_visual_start;
-    let visual_mode = app.n_mode == NavigationMode::Visual;
-    let current = app.table_state.selected();
+    let visual_start = app.inbox_visual_start;
+    let visual_mode = app.inbox_navigation_mode == NavigationMode::Visual;
+    let current = app.inbox_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 

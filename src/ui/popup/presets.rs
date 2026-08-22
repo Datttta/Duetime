@@ -71,8 +71,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         &mut app.pending_command,
         &mut selected,
         app.presets.len(),
-        &mut app.n_mode,
-        &mut app.n_visual_start,
+        &mut app.tasks_navigation_mode,
+        &mut app.tasks_visual_start,
     ) {
         app.preset_state.select(selected);
         return;
