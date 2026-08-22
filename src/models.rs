@@ -22,7 +22,7 @@ pub struct KnownTask {
 }
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Plan {
+pub struct InboxItem {
     pub id: u64,
     pub name: String,
 }

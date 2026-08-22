@@ -89,8 +89,8 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     match &app.popup {
                         Popup::None => handle_inbox_keys(app, key),
 
-                        Popup::Inbox(InboxPopup::AddPlan) => {
-                            popup::add_plan::handle_keys(app, key);
+                        Popup::Inbox(InboxPopup::AddInboxItem) => {
+                            popup::add_inbox_item::handle_keys(app, key);
                         }
 
                         _ => {}
@@ -178,9 +178,9 @@ fn open_help_popup(app: &mut App) {
 // ######################   INBOX   ######################      
 // =======================================================
 
-fn add_plan_popup(app: &mut App) {
-    app.plan_name.clear();
-    app.popup = Popup::Inbox(InboxPopup::AddPlan);
+fn add_inbox_item_popup(app: &mut App) {
+    app.inbox_item.clear();
+    app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
 }
 
 // ============================ actions =======================
@@ -412,7 +412,7 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('p') => {
             if app.pending_command == Some('a') {
-                add_plan_popup(app);
+                add_inbox_item_popup(app);
             }
             
             app.pending_command = None;

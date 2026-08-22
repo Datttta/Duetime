@@ -4,7 +4,8 @@ use crate::{
     vim_text::{InputState, InputMode},
     vim_navigation::NavigationMode,
     tasks::TaskInfo,
-    models::{TaskTemplate, Preset, KnownTask, Plan},
+    inbox::InboxItemInfo,
+    models::{TaskTemplate, Preset, KnownTask, InboxItem},
     move_items::MoveState,
     storage_current_tasks,
     storage_known_tasks,
@@ -29,7 +30,7 @@ pub enum Popup {
 
 #[derive(PartialEq, Debug)]
 pub enum InboxPopup {
-    AddPlan,
+    AddInboxItem,
 }
 
 #[derive(PartialEq, Debug)]
@@ -106,9 +107,10 @@ pub struct App {
 
     pub focused_panel: Panel,
 
-    pub plan_name: InputState,
-    pub inbox: Vec<Plan>,
-    pub plans_state: ListState,
+    pub inbox_item: InputState,
+    pub priority: InputState,
+    pub inbox_items: Vec<InboxItemInfo>,
+    pub inbox_table_state: TableState,
 }
 
 impl App {
@@ -125,8 +127,8 @@ impl App {
         let mut known_tasks_state = ListState::default();
         known_tasks_state.select(Some(0));
         
-        let mut plans_state = ListState::default();
-        plans_state.select(Some(0));
+        let mut inbox_table_state = TableState::default();
+        inbox_table_state.select(Some(0));
 
         Self {
             pending_command: None,
@@ -169,9 +171,10 @@ impl App {
 
             focused_panel: Panel::Tasks,
 
-            plan_name: InputState::default(),
-            inbox: storage_inbox::load_inbox(),
-            plans_state,
+            inbox_item: InputState::default(),
+            priority: InputState::default(),
+            inbox_items: storage_inbox::load_inbox(),
+            inbox_table_state,
         }
     }
 

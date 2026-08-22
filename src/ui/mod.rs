@@ -170,8 +170,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     // Inbox-panel popups
     if let Popup::Inbox(popup) = &app.popup {
         match popup {
-            InboxPopup::AddPlan => {
-                popup::add_plan::draw(frame, app);
+            InboxPopup::AddInboxItem => {
+                popup::add_inbox_item::draw(frame, app);
             }
         }
     }
