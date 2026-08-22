@@ -11,3 +11,7 @@ pub fn task_selection_color() -> Color {
 pub fn gray_color() -> Color {
     Color::Rgb(210, 210 ,210)
 }
+
+pub fn unfocused_panel() -> Color {
+    Color::Rgb(150, 150, 150)
+}

@@ -5,6 +5,7 @@ pub mod theme;
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel},
+    ui::theme::unfocused_panel,
     tasks,
 };
 
@@ -22,12 +23,6 @@ struct MainLayout {
     inbox: Rect,
 }
  
-struct TasksLayout {
-    header: Rect,
-    tasks: Rect,
-    footer: Rect,
-}
-
 fn format_duration(duration: Duration) -> String {
     let total_seconds = duration.as_secs();
 
@@ -58,9 +53,9 @@ fn draw_tasks_panel(
     app: &mut App,
 ) {
     let border_color = if app.focused_panel == Panel::Tasks {
-        Color::Yellow
-    } else {
         Color::White
+    } else {
+        unfocused_panel()
     };
 
     let border = Block::bordered()
@@ -103,9 +98,9 @@ fn draw_inbox_panel (
     app: &mut App
 ) {
     let border_color = if app.focused_panel == Panel::Inbox {
-        Color::Yellow
-    } else {
         Color::White
+    } else {
+        unfocused_panel()
     };
 
     let border = Block::bordered()
@@ -120,6 +115,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     // Small terminal window: show only tasks
     if area.width < 100 || area.height < 30 {
+        app.focused_panel = Panel::Tasks;
         draw_tasks_panel(frame, area, app);
         return;
     }
