@@ -2,11 +2,12 @@ pub mod header;
 pub mod popup;
 pub mod widgets;
 pub mod theme;
+pub mod inbox_header;
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
     ui::theme::unfocused_panel,
-    tasks,
+    tasks, inbox,
 };
 
 use ratatui::{
@@ -105,7 +106,20 @@ fn draw_inbox_panel (
 
     let border = Block::bordered()
         .title(" Inbox ")
-        .border_style(Style::default().fg(border_color));
+        .border_style(Style::default().fg(border_color))
+        .padding(Padding::new(0, 0, 1, 0));
+    
+    let inner = border.inner(area);
+
+    let chunks = Layout::vertical ([
+        Constraint::Length(1), // header
+        Constraint::Length(1), // spacing
+        Constraint::Min(0),    // tasks
+    ])
+    .split(inner);
+
+    inbox_header::draw(frame, chunks[0]);
+    inbox::draw(frame, chunks[2], app);
 
     frame.render_widget(border, area);
 }

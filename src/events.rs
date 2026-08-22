@@ -5,9 +5,7 @@ use crate::{
     vim_text::InputMode,
     move_items::MoveTarget,
     models::TaskTemplate,
-    vim_navigation,
-    storage_current_tasks,
-    move_items,
+    vim_navigation,storage_current_tasks, storage_inbox, move_items,
 };
 
 use std::io;
@@ -289,6 +287,38 @@ fn quit(app: &mut App) {
     app.running = false;
 }
 
+
+// ========= INBOX ================
+fn delete_inbox_item(app: &mut App) {
+    if let Some(current) = app.inbox_table_state.selected() {
+        let (first, last) = if app.n_mode == NavigationMode::Visual {
+            if let Some(start) = app.n_visual_start {
+                (start.min(current), start.max(current))
+            } else {
+                (current, current)
+            }
+        } else {
+            (current, current)
+        };
+
+        app.inbox_items.drain(first..=last);
+
+        if app.inbox_items.is_empty() {
+            app.inbox_table_state.select(None);
+        } else {
+            let new_index = first.min(app.inbox_items.len() - 1);
+            app.inbox_table_state.select(Some(new_index));
+        }
+
+        app.n_mode = NavigationMode::Normal;
+        app.n_visual_start = None;
+
+        storage_inbox::save_inbox(&app.inbox_items).unwrap();
+    }
+
+    app.pending_command = None;
+}
+
 //  ====================== handle keys =================================
 fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
     if app.move_state.is_moving() {
@@ -405,6 +435,23 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 }
 
 fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
+    let mut selected = app.inbox_table_state.selected();
+
+    let handled = vim_navigation::handle(
+        key,
+        &mut app.pending_command,
+        &mut selected,
+        app.inbox_items.len(),
+        &mut app.n_mode,
+        &mut app.n_visual_start,
+    );
+
+    app.inbox_table_state.select(selected);
+
+    if handled {
+        return;
+    }
+
     match key.code {
         KeyCode::Char('a') => {
             app.pending_command = Some('a');

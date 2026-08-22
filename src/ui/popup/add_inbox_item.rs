@@ -68,7 +68,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 }
 
-fn save_plan (app: &mut App) {
+fn save_inbox_item (app: &mut App) {
     match app.popup {
         Popup::Inbox(InboxPopup::AddInboxItem) => {
             let item = InboxItemInfo {
@@ -93,7 +93,7 @@ fn save_plan (app: &mut App) {
         //    }
         //}
 
-        _ => return,
+        _ => {},
     }
 
     crate::storage_inbox::save_inbox(&app.inbox_items).unwrap();
@@ -109,7 +109,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Enter => {
-            save_plan(app);
+            save_inbox_item(app);
         }
 
         KeyCode::Char('q') => {
