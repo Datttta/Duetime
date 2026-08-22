@@ -291,8 +291,8 @@ fn quit(app: &mut App) {
 // ========= INBOX ================
 fn delete_inbox_item(app: &mut App) {
     if let Some(current) = app.inbox_table_state.selected() {
-        let (first, last) = if app.tasks_navigation_mode == NavigationMode::Visual {
-            if let Some(start) = app.tasks_visual_start {
+        let (first, last) = if app.inbox_navigation_mode == NavigationMode::Visual {
+            if let Some(start) = app.inbox_visual_start {
                 (start.min(current), start.max(current))
             } else {
                 (current, current)
@@ -310,13 +310,11 @@ fn delete_inbox_item(app: &mut App) {
             app.inbox_table_state.select(Some(new_index));
         }
 
-        app.tasks_navigation_mode = NavigationMode::Normal;
-        app.tasks_visual_start = None;
+        app.inbox_navigation_mode = NavigationMode::Normal;
+        app.inbox_visual_start = None;
 
         storage_inbox::save_inbox(&app.inbox_items).unwrap();
     }
-
-    app.pending_command = None;
 }
 
 //  ====================== handle keys =================================
@@ -382,6 +380,7 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 delete_task(app);
+                app.pending_command = None;
             } else {
                 app.pending_command = Some('d')
             }
@@ -463,6 +462,15 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
             }
             
             app.pending_command = None;
+        }
+
+        KeyCode::Char('d') => {
+            if app.pending_command == Some('d') {
+                delete_inbox_item(app);
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('d');
+            }
         }
         
         KeyCode::Char('q') => {
