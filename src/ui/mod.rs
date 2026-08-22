@@ -117,15 +117,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 100 || area.height < 30 {
         app.focused_panel = Panel::Tasks;
         draw_tasks_panel(frame, area, app);
-        return;
+    } else {
+        // Show all panels if in fullscreen
+        let layout = draw_layout(frame);
+        
+        // draw panels
+        draw_tasks_panel(frame, layout.tasks, app);
+        draw_inbox_panel(frame, layout.inbox, app);
     }
-   
-    // Show all panels if in fullscreen
-    let layout = draw_layout(frame);
-    
-    // draw panels
-    draw_tasks_panel(frame, layout.tasks, app);
-    draw_inbox_panel(frame, layout.inbox, app);
 
     // Tasks-panel popups
     if let Popup::Tasks(popup) = &app.popup {
