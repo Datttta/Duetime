@@ -7,6 +7,7 @@ pub mod inbox_header;
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
     ui::theme::unfocused_panel,
+    vim_navigation::NavigationMode,
     tasks, inbox,
 };
 
@@ -76,8 +77,11 @@ fn draw_tasks_panel(
     ])
     .split(inner);
 
+    let is_visual = app.focused_panel == Panel::Tasks
+        && app.n_mode == NavigationMode::Visual;
+
     header::draw(frame, chunks[0]);
-    tasks::draw(frame, chunks[2], app);
+    tasks::draw(frame, chunks[2], app, is_visual);
 
     if let Popup::None = app.popup {
         let status = Paragraph::new(format!(
@@ -111,6 +115,8 @@ fn draw_inbox_panel (
     
     let inner = border.inner(area);
 
+    frame.render_widget(border, area);
+
     let chunks = Layout::vertical ([
         Constraint::Length(1), // header
         Constraint::Length(1), // spacing
@@ -118,10 +124,11 @@ fn draw_inbox_panel (
     ])
     .split(inner);
 
-    inbox_header::draw(frame, chunks[0]);
-    inbox::draw(frame, chunks[2], app);
+    let is_visual = app.focused_panel == Panel::Inbox
+        && app.n_mode == NavigationMode::Visual;
 
-    frame.render_widget(border, area);
+    inbox_header::draw(frame, chunks[0]);
+    inbox::draw(frame, chunks[2], app, is_visual);
 }
 
 pub fn draw(frame: &mut Frame, app: &mut App) {

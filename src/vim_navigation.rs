@@ -12,7 +12,7 @@ pub fn handle (
     selected: &mut Option<usize>,
     len: usize,
     mode: &mut NavigationMode,
-    tasks_visual_start: &mut Option<usize>,
+    n_visual_start: &mut Option<usize>,
 ) -> bool {
     let current = selected.unwrap_or(0);
 
@@ -35,12 +35,12 @@ pub fn handle (
             match *mode {
                 NavigationMode::Normal => {
                     *mode = NavigationMode::Visual;
-                    *tasks_visual_start = Some(current);
+                    *n_visual_start = Some(current);
                 }
 
                 NavigationMode::Visual => {
                     *mode = NavigationMode::Normal;
-                    *tasks_visual_start = None;
+                    *n_visual_start = None;
                 }
             }
 
@@ -69,7 +69,7 @@ pub fn handle (
 
         KeyCode::Esc => {
             *mode = NavigationMode::Normal;
-            *tasks_visual_start = None;
+            *n_visual_start = None;
             true
         }
 

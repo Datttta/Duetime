@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup},
+    app::{App, Popup, Panel},
     ui::widgets::input::ellipsize,
     ui::theme::task_selection_color,
     vim_navigation::NavigationMode,
@@ -44,19 +44,19 @@ impl InboxItemInfo {
     }
 }
 
-pub fn draw(frame: &mut Frame, area: Rect, app: &mut App) {
+pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     let columns = [
         Constraint::Percentage(80), // task name
         Constraint::Percentage(20), // priority (still don't now if i add it)
     ];
 
-    let visual_start = app.inbox_visual_start;
-    let visual_mode = app.inbox_navigation_mode == NavigationMode::Visual;
+    let visual_start = app.n_visual_start;
+    let visual_mode = is_visual;
     let current = app.inbox_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open {
+    let highlight_style = if popup_open || app.focused_panel != Panel::Inbox {
         Style::default()
     } else if app.move_state.is_moving() {
         Style::default()
