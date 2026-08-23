@@ -72,7 +72,7 @@ fn save_inbox_item (app: &mut App) {
     match app.popup {
         Popup::Inbox(InboxPopup::AddInboxItem) => {
             let item = InboxItemInfo {
-                    item: app.inbox_item.text.clone(),
+                    input: app.inbox_item.text.clone(),
                     priority: app.planned_start.text.clone(),
                     ..Default::default()
                 };
@@ -90,7 +90,7 @@ fn save_inbox_item (app: &mut App) {
         Popup::Inbox(InboxPopup::EditInboxItem) => {
             if let Some(index) = app.inbox_table_state.selected() {
                 if let Some(item) = app.inbox_items.get_mut(index) {
-                    item.item = app.inbox_item.text.clone();
+                    item.input = app.inbox_item.text.clone();
                     item.priority = app.planned_start.text.clone();
                 }
             }

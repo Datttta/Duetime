@@ -139,7 +139,7 @@ fn edit_inbox_item(app: &mut App) {
         let item = &app.inbox_items[index];
 
         // Load task data into inputs
-        app.inbox_item.text = item.item.clone();
+        app.inbox_item.text = item.input.clone();
         app.inbox_item.cursor = app.inbox_item.text.len();
 
         app.mode = InputMode::Normal;

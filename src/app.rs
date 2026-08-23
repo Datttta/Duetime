@@ -15,6 +15,13 @@ use crate::{
 
 use std::time::{Duration};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Priority {
+    Low,
+    Medium,
+    High,
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Panel {
     Tasks,

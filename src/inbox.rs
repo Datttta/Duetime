@@ -3,7 +3,7 @@ use crate::{
         widgets::input::ellipsize,
         theme::task_selection_color,
     },
-    app::{App, Popup, Panel},
+    app::{App, Popup, Panel, Priority},
     vim_navigation::NavigationMode,
     move_items::MoveTarget
 };
@@ -20,27 +20,27 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Default)]
 pub struct InboxItemInfo {
-    pub item: String,
+    pub input: String,
     pub priority: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct InboxItemInfoData {
-    pub item: String,
+    pub input: String,
     pub priority: String,
 }
 
 impl InboxItemInfo {
     pub fn to_data(&self) -> InboxItemInfoData {
         InboxItemInfoData {
-            item: self.item.clone(),
+            input: self.input.clone(),
             priority: self.priority.clone(),
         }
     }
 
     pub fn from_data(data: InboxItemInfoData) -> Self {
         InboxItemInfo {
-            item: data.item,
+            input: data.input,
             priority: data.priority,
         }
     }
@@ -48,7 +48,7 @@ impl InboxItemInfo {
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     let columns = [
-        Constraint::Percentage(80), // inbox item
+        Constraint::Percentage(80), // inbox input
         Constraint::Percentage(20), // priority (still don't now if i add it)
     ];
 
@@ -78,7 +78,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         // Draw insertion line before this task.
 
         let mut row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&item.item, 75))),
+            Cell::from(format!("  {}", ellipsize(&item.input, 75))),
             Cell::from(item.priority.clone()),
         ]);
 
