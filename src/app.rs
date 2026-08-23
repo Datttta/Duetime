@@ -66,6 +66,11 @@ pub enum SelectedInput {
     PlannedEnd,
 }
 
+#[derive(PartialEq)]
+pub enum InboxSelectedInput {
+    InboxItemInput,
+}
+
 pub struct App {
     pub popup: Popup,
     pub pending_command: Option<char>,
@@ -111,6 +116,7 @@ pub struct App {
     pub priority: InputState,
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
+    pub inbox_selected_input: InboxSelectedInput,
 }
 
 impl App {
@@ -175,6 +181,7 @@ impl App {
             priority: InputState::default(),
             inbox_items: storage_inbox::load_inbox(),
             inbox_table_state,
+            inbox_selected_input: InboxSelectedInput::InboxItemInput,
         }
     }
 

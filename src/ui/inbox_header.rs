@@ -6,9 +6,9 @@ use ratatui::{
 
 pub fn draw(frame: &mut Frame, area: Rect) {
     let columns = Layout::horizontal([
-        Constraint::Length(3), // extra
-        Constraint::Length(50), // Item    
-        Constraint::Length(11), // Priority
+        Constraint::Percentage(2), // extra
+        Constraint::Percentage(78), // Item    
+        Constraint::Percentage(20), // Priority
     ])
     .flex(Flex::Start)
     .split(area);

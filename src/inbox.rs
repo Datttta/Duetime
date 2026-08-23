@@ -1,7 +1,9 @@
 use crate::{
+    ui::{
+        widgets::input::ellipsize,
+        theme::task_selection_color,
+    },
     app::{App, Popup, Panel},
-    ui::widgets::input::ellipsize,
-    ui::theme::task_selection_color,
     vim_navigation::NavigationMode,
     move_items::MoveTarget
 };
@@ -46,7 +48,7 @@ impl InboxItemInfo {
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     let columns = [
-        Constraint::Percentage(80), // task name
+        Constraint::Percentage(80), // inbox item
         Constraint::Percentage(20), // priority (still don't now if i add it)
     ];
 
@@ -76,7 +78,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         // Draw insertion line before this task.
 
         let mut row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&item.item, 22))),
+            Cell::from(format!("  {}", ellipsize(&item.item, 75))),
             Cell::from(item.priority.clone()),
         ]);
 

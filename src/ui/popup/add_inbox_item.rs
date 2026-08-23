@@ -8,12 +8,14 @@ use ratatui::{
 
 use crate::{
     ui::widgets::input,
-    vim_text::{InputMode, InputResult},
-    app::{App, Popup, InboxPopup},
+    vim_text::{InputResult},
+    app::{App, Popup, InboxPopup, InboxSelectedInput},
     models::InboxItem,
     inbox::InboxItemInfo,
     keys_help,
 };
+
+pub const INBOX_ITEM_INPUT_WIDTH: u16 = 34;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -29,7 +31,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(36)
+            Constraint::Length(INBOX_ITEM_INPUT_WIDTH + 2)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -52,17 +54,17 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(&block, area);
     
     let inner = block.inner(area);
-    let name_input = Layout::horizontal([
-        Constraint::Length(27),
+    let item_input = Layout::horizontal([
+        Constraint::Length(INBOX_ITEM_INPUT_WIDTH),
     ])
     .flex(Flex::Center)
     .split(inner);
 
     input::draw(
         frame,
-        name_input[0],
+        item_input[0],
         &app.inbox_item,
-        "Task name",
+        "add item",
         true,
         app.mode,
     );
@@ -103,8 +105,17 @@ fn save_inbox_item (app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    if app.inbox_item.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
-        return;
+    let result = match app.inbox_selected_input {
+        InboxSelectedInput::InboxItemInput => {
+            app.inbox_item.handle_key(key, &mut app.mode, usize::MAX)
+        }
+    };
+
+    match result {
+        InputResult::Consumed => return,
+        InputResult::Ignored => {}
+
+        _ => {}
     }
 
     match key.code {

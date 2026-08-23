@@ -14,6 +14,8 @@ use crate::{
     keys_help,
 };
 
+const KNOWN_TASK_NAME_WIDTH: u16 = 43;
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
 
@@ -28,7 +30,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(36)
+            Constraint::Length(45)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -52,7 +54,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     
     let inner = block.inner(area);
     let name_input = Layout::horizontal([
-        Constraint::Length(27),
+        Constraint::Length(KNOWN_TASK_NAME_WIDTH),
     ])
     .flex(Flex::Center)
     .split(inner);
@@ -98,7 +100,7 @@ pub fn save_known_task(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    if app.known_task_name.handle_key(key, &mut app.mode, 22) != InputResult::Ignored {
+    if app.known_task_name.handle_key(key, &mut app.mode, (KNOWN_TASK_NAME_WIDTH - 6).into()) != InputResult::Ignored {
         return;
     }
 
