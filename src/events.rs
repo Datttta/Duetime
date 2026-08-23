@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup, InboxSelectedInput},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -91,6 +91,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             popup::add_inbox_item::handle_keys(app, key);
                         }
 
+                        Popup::Inbox(InboxPopup::EditInboxItem) => {
+                            popup::add_inbox_item::handle_keys(app, key);
+                        }
+
                         _ => {}
                     }
                 }
@@ -125,6 +129,22 @@ fn edit_task(app: &mut App) {
         app.mode = InputMode::Normal;
         app.popup = Popup::Tasks(TasksPopup::EditTask);
         app.selected_input = SelectedInput::TaskName;
+
+        app.pending_command = None;
+    }
+}
+
+fn edit_inbox_item(app: &mut App) {
+    if let Some(index) = app.inbox_table_state.selected() {
+        let item = &app.inbox_items[index];
+
+        // Load task data into inputs
+        app.inbox_item.text = item.item.clone();
+        app.inbox_item.cursor = app.inbox_item.text.len();
+
+        app.mode = InputMode::Normal;
+        app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
+        app.inbox_selected_input = InboxSelectedInput::InboxItemInput;
 
         app.pending_command = None;
     }
@@ -462,6 +482,10 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
             }
             
             app.pending_command = None;
+        }
+
+        KeyCode::Char('e') => {
+            edit_inbox_item(app);
         }
 
         KeyCode::Char('d') => {

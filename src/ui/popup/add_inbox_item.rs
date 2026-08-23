@@ -43,8 +43,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
-    let area = centered_rect(frame, app);
-
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
@@ -88,12 +86,15 @@ fn save_inbox_item (app: &mut App) {
 
                 app.inbox_table_state.select(Some(position.min(app.inbox_items.len() - 1)));
         }
-
-        //Popup::Inbox(InboxPopup::EditKnownTask(index)) => {
-        //    if let Some(task) = app.known_tasks.get_mut(index) {
-        //        task.name = app.known_task_name.text.clone();
-        //    }
-        //}
+        
+        Popup::Inbox(InboxPopup::EditInboxItem) => {
+            if let Some(index) = app.inbox_table_state.selected() {
+                if let Some(item) = app.inbox_items.get_mut(index) {
+                    item.item = app.inbox_item.text.clone();
+                    item.priority = app.planned_start.text.clone();
+                }
+            }
+        }
 
         _ => {},
     }
@@ -110,13 +111,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.inbox_item.handle_key(key, &mut app.mode, usize::MAX)
         }
     };
-
-    match result {
-        InputResult::Consumed => return,
-        InputResult::Ignored => {}
-
-        _ => {}
-    }
 
     match key.code {
         KeyCode::Enter => {

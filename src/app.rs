@@ -31,6 +31,7 @@ pub enum Popup {
 #[derive(PartialEq, Debug)]
 pub enum InboxPopup {
     AddInboxItem,
+    EditInboxItem,
 }
 
 #[derive(PartialEq, Debug)]

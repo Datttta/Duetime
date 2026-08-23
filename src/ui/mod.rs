@@ -194,6 +194,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             InboxPopup::AddInboxItem => {
                 popup::add_inbox_item::draw(frame, app);
             }
+            
+            InboxPopup::EditInboxItem => {
+                popup::add_inbox_item::draw(frame, app);
+            }
         }
     }
 }
