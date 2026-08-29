@@ -152,6 +152,7 @@ fn save_inbox_item (app: &mut App) {
         _ => {},
     }
 
+    app.inbox_items.sort_by_key(|item| App::priority_rank(item.priority));
     crate::storage_inbox::save_inbox(&app.inbox_items).unwrap();
 
     app.known_task_name.clear();

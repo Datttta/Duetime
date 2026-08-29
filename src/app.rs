@@ -455,12 +455,20 @@ impl App {
         self.pending_command = None;
     }
 
-    // ======================= Datas =========================
+    // ======================= UTILS  =========================
 
     pub fn total_elapsed(&self) -> Duration {
         self.tasks
             .iter()
             .map(|task| task.stopwatch.elapsed())
             .sum()
+    }
+
+    pub fn priority_rank(priority: Priority) -> u8 {
+        match priority {
+            Priority::High => 0,
+            Priority::Medium => 1,
+            Priority::Low => 2,
+        }
     }
 }
