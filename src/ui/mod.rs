@@ -5,7 +5,7 @@ pub mod theme;
 pub mod inbox_header;
 
 //use log::info;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
@@ -15,7 +15,7 @@ use crate::{
 };
 
 use ratatui::{
-    layout::{Constraint, Layout, Rect},
+    layout::{Constraint, Layout, Rect, Alignment},
     widgets::{Block, Padding, Paragraph},
     style::{Color, Style},
     Frame,
@@ -25,7 +25,7 @@ struct MainLayout {
     tasks: Rect,
     inbox: Rect,
 }
- 
+
 fn format_duration(duration: Duration) -> String {
     let total_seconds = duration.as_secs();
 
@@ -132,8 +132,45 @@ fn draw_inbox_panel (
     inbox::draw(frame, chunks[2], app, is_visual);
 }
 
+fn draw_status_message(
+    frame: &mut Frame,
+    app: &mut App,
+    area: Rect,
+) {
+    let Some(message) = &app.status_message else {
+        return;
+    };
+
+    let Some(expires) = app.status_message_until else {
+        return;
+    };
+
+    if Instant::now() >= expires {
+        app.status_message = None;
+        app.status_message_until = None;
+        return;
+    }
+
+    let paragraph = Paragraph::new(message.as_str())
+        .alignment(Alignment::Right)
+        .block(
+            Block::default()
+                .padding(Padding::new(0, 2, 0, 0))
+        );
+
+    frame.render_widget(paragraph, area);
+}
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = frame.area();
+    let layout = Layout::vertical([
+        Constraint::Min(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+    ])
+    .split(frame.area());
+
+    let area = layout[0];
+    let status_area = layout[1];
 
     // Small terminal window: show only tasks
     if area.width < 140 {
@@ -147,7 +184,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         draw_tasks_panel(frame, area, app);
     } else {
         //focus on previous panel
-        if app.is_change == false {
+        if !app.is_change {
             app.focused_panel = app.previous_panel;
             app.is_change = true;
         }
@@ -217,5 +254,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             }
         }
     }
+
+    draw_status_message(frame, app, status_area);
 }
 

@@ -60,7 +60,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
 fn copy_input(app: &mut App) {
     let Some(index) = app.inbox_table_state.selected() else {
-        app.status_message = Some("No inbox item selected".to_string());
+        app.set_status_message(
+            "No inbox item selected".to_string()
+        );
+
         log::warn!("Could not copy inbox item: no item selected");
         return;
     };
@@ -68,7 +71,10 @@ fn copy_input(app: &mut App) {
     let text = app.inbox_items[index].input.clone();
 
     let Some(clipboard) = app.clipboard.as_mut() else {
-        app.status_message = Some("Clipboard unavailable".to_string());
+        app.set_status_message(
+            "Clipboard unavailable".to_string()
+        );
+
         log::error!("Could not copy inbox item: clipboard unavailable");
         return;
     };
@@ -81,11 +87,9 @@ fn copy_input(app: &mut App) {
                 Ok(copied) => {
                     log::debug!("Clipboard read-back: {:?}", copied);
 
-                    app.status_message = Some(
+                    app.set_status_message(
                         "Copied to clipboard".to_string()
                     );
-
-                    app.status_message = Some("Copied to clipboard".to_string());
                 }
 
                 Err(error) => {
@@ -94,11 +98,9 @@ fn copy_input(app: &mut App) {
                         error
                     );
 
-                    app.status_message = Some(
+                    app.set_status_message(
                         "Copied, but clipboard could not be verified".to_string()
                     );
-
-                    app.status_message = Some("Failed to copy to clipboard".to_string());
                 }
             }
         }
@@ -106,10 +108,9 @@ fn copy_input(app: &mut App) {
         Err(error) => {
             log::error!("Failed to copy inbox item: {}", error);
 
-            app.status_message = Some(
+            app.set_status_message(
                 format!("Copy failed: {}", error)
             );
-            app.status_message = Some("Failed to copy to clipboard".to_string());
         }
     }
 }

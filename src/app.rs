@@ -14,7 +14,7 @@ use crate::{
     storage_inbox,
 };
 
-use std::time::{Duration};
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum Priority {
@@ -135,9 +135,17 @@ pub struct App {
 
     pub clipboard: Option<arboard::Clipboard>,
     pub status_message: Option<String>,
+    pub status_message_until: Option<Instant>,
 }
 
 impl App {
+    pub fn set_status_message(&mut self, message: String) {
+        self.status_message = Some(message);
+        self.status_message_until = Some(
+            Instant::now() + Duration::from_secs(1)
+        );
+    }
+
     pub fn new() -> Self {
         let mut table_state = TableState::default();
         table_state.select(Some(0));
@@ -206,6 +214,7 @@ impl App {
 
             clipboard: arboard::Clipboard::new().ok(),
             status_message: None,
+            status_message_until: None,
         }
     }
 
@@ -485,3 +494,4 @@ impl App {
         }
     }
 }
+
