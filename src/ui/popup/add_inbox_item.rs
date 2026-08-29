@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::{
     ui::widgets::input,
-    vim_text::{InputResult},
+    vim_text::{InputResult, InputMode},
     app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
     models::InboxItem,
     inbox::InboxItemInfo,
@@ -222,8 +222,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             save_inbox_item(app);
         }
 
-        KeyCode::Char('q') => {
-            app.popup = Popup::None;
+        KeyCode::Char('q') | KeyCode::Esc => {
+            if app.mode == InputMode::Normal {
+                app.popup = Popup::None;
+            } 
         }
  
         _ => {}
