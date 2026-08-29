@@ -12,12 +12,11 @@ use crate::{
     ui::widgets::input,
     vim_text::{InputResult, InputMode},
     app::{App, Popup, InboxPopup, InboxSelectedFeature, Priority},
-    models::InboxItem,
     inbox::InboxItemInfo,
     keys_help,
 };
 
-pub const INBOX_ITEM_INPUT_WIDTH: u16 = 34;
+//pub const INBOX_ITEM_INPUT_WIDTH: u16 = 34;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -32,7 +31,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(block, area);
 
-    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
+    fn centered_rect(frame: &mut Frame, _app: &mut App) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(8),
         ])

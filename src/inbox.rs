@@ -4,8 +4,6 @@ use crate::{
         theme::task_selection_color,
     },
     app::{App, Popup, Panel, Priority},
-    vim_navigation::NavigationMode,
-    move_items::MoveTarget
 };
 
 use ratatui::{

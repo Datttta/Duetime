@@ -3,7 +3,6 @@ use crate::{
     stopwatch::{Stopwatch, StopwatchData},
     ui::widgets::input::ellipsize,
     ui::theme::task_selection_color,
-    vim_navigation::NavigationMode,
     move_items::MoveTarget
 };
 

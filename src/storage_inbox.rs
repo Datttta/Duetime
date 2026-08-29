@@ -1,7 +1,6 @@
 use std::fs;
 use directories::ProjectDirs;
 
-use crate::models::InboxItem;
 use crate::inbox::{InboxItemInfoData, InboxItemInfo};
 
 const FILE_NAME: &str = "Inbox.json";

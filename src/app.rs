@@ -6,7 +6,7 @@ use crate::{
     vim_navigation::NavigationMode,
     tasks::TaskInfo,
     inbox::InboxItemInfo,
-    models::{TaskTemplate, Preset, KnownTask, InboxItem},
+    models::{TaskTemplate, Preset, KnownTask},
     move_items::MoveState,
     storage_current_tasks,
     storage_known_tasks,

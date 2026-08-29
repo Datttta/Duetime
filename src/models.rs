@@ -20,11 +20,3 @@ pub struct KnownTask {
     pub id: u64,
     pub name: String,
 }
-
-#[derive(Clone, Serialize, Deserialize)]
-pub struct InboxItem {
-    pub id: u64,
-    pub name: String,
-}
-
-
