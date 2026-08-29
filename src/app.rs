@@ -41,6 +41,7 @@ pub enum Popup {
 pub enum InboxPopup {
     AddInboxItem,
     EditInboxItem,
+    InfoInboxItem,
 }
 
 #[derive(PartialEq, Debug)]
@@ -204,7 +205,7 @@ impl App {
 
     // =================== POPUPS =======================
 
-    pub fn add_task (&mut self, destination: TaskDestination) {
+    pub fn task_add (&mut self, destination: TaskDestination) {
         self.task_destination = destination;
 
         self.task_name.clear();

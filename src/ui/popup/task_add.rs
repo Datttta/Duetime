@@ -33,7 +33,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     fn centered_rect(frame: &Frame) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(6), // add_task box height
+            Constraint::Length(6), // task_add box height
         ])
         .flex(Flex::Center)
         .split(frame.area());

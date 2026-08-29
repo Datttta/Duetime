@@ -219,7 +219,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     if app.mode == InputMode::Normal {
                         match key.code {
                             KeyCode::Char('a') => {
-                                app.add_task(TaskDestination::Preset);
+                                app.task_add(TaskDestination::Preset);
                                 return;
                             }
 
@@ -238,7 +238,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                     match key.code {
                         KeyCode::Char('a') => {
-                            app.add_task(TaskDestination::Preset);
+                            app.task_add(TaskDestination::Preset);
 
                             return;
                         }

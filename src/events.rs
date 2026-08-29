@@ -64,11 +64,11 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 // TASKS POPUPS
 
                 Popup::Tasks(TasksPopup::AddTask) => {
-                    popup::add_task::handle_keys(app, key);
+                    popup::task_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::EditTask) => {
-                    popup::add_task::handle_keys(app, key);
+                    popup::task_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::Presets) => {
@@ -102,11 +102,15 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 // INBOX POPUPS
 
                 Popup::Inbox(InboxPopup::AddInboxItem) => {
-                    popup::add_inbox_item::handle_keys(app, key);
+                    popup::inbox_item_add::handle_keys(app, key);
                 }
 
                 Popup::Inbox(InboxPopup::EditInboxItem) => {
-                    popup::add_inbox_item::handle_keys(app, key);
+                    popup::inbox_item_add::handle_keys(app, key);
+                }
+                
+                Popup::Inbox(InboxPopup::InfoInboxItem) => {
+                    popup::inbox_item_add::handle_keys(app, key);
                 }
             }
         }
@@ -195,6 +199,12 @@ fn task_info(app: &mut App) {
     }
 }
 
+fn inbox_item_info(app: &mut App) {
+    if app.inbox_table_state.selected().is_some() {
+        app.popup = Popup::Inbox(InboxPopup::InfoInboxItem);
+    }
+}
+
 fn open_known_tasks(app: &mut App) {
     app.popup = Popup::Tasks(TasksPopup::KnownTasks);
 }
@@ -207,7 +217,7 @@ fn open_help_popup(app: &mut App) {
 // ######################   INBOX   ######################      
 // =======================================================
 
-fn add_inbox_item_popup(app: &mut App) {
+fn inbox_item_add_popup(app: &mut App) {
     app.inbox_item.clear();
     app.priority = Priority::Low;
     app.mode = InputMode::Insert;
@@ -404,7 +414,7 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('t') => {
-            app.add_task(TaskDestination::AddTask);
+            app.task_add(TaskDestination::AddTask);
         }
 
         KeyCode::Char('e') => {
@@ -492,10 +502,11 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('i') => {
             if app.pending_command == Some('a') {
-                add_inbox_item_popup(app);
+                inbox_item_add_popup(app);
+                app.pending_command = None;
+            } else {
+                inbox_item_info(app);
             }
-            
-            app.pending_command = None;
         }
 
         KeyCode::Char('e') => {

@@ -1,8 +1,9 @@
-pub mod add_task;
+pub mod task_add;
 pub mod presets;
 pub mod new_preset;
 pub mod known_tasks;
 pub mod known_tasks_add;
 pub mod task_info;
 pub mod help;
-pub mod add_inbox_item;
+pub mod inbox_item_add;
+pub mod inbox_item_info;

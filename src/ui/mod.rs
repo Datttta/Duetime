@@ -165,11 +165,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::Tasks(popup) = &app.popup {
         match popup {
             TasksPopup::AddTask => {
-                popup::add_task::draw(frame, app);
+                popup::task_add::draw(frame, app);
             }
 
             TasksPopup::EditTask => {
-                popup::add_task::draw(frame, app);
+                popup::task_add::draw(frame, app);
             }
 
             TasksPopup::Presets => {
@@ -206,11 +206,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::Inbox(popup) = &app.popup {
         match popup {
             InboxPopup::AddInboxItem => {
-                popup::add_inbox_item::draw(frame, app);
+                popup::inbox_item_add::draw(frame, app);
             }
             
             InboxPopup::EditInboxItem => {
-                popup::add_inbox_item::draw(frame, app);
+                popup::inbox_item_add::draw(frame, app);
+            }
+            
+            InboxPopup::InfoInboxItem => {
+                popup::inbox_item_info::draw(frame, app);
             }
         }
     }
