@@ -17,86 +17,84 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
         if let Event::Key(key) = event::read()? {
 
-            match key.code {
-                KeyCode::Char('L') => {
-                    app.focused_panel = match app.focused_panel {
-                        Panel::Tasks => Panel::Inbox,
-                        Panel::Inbox => Panel::Inbox,
-                    };
-                    return Ok(());
+            // Panel switching only when no popup is open
+            if matches!(app.popup, Popup::None) {
+                match key.code {
+                    KeyCode::Char('L') => {
+                        app.focused_panel = match app.focused_panel {
+                            Panel::Tasks => Panel::Inbox,
+                            Panel::Inbox => Panel::Inbox,
+                        };
+                        return Ok(());
+                    }
+
+                    KeyCode::Char('H') => {
+                        app.focused_panel = match app.focused_panel {
+                            Panel::Inbox => Panel::Tasks,
+                            Panel::Tasks => Panel::Tasks,
+                        };
+                        return Ok(());
+                    }
+
+                    _ => {}
                 }
-
-                KeyCode::Char('H') => {
-                    app.focused_panel = match app.focused_panel {
-                        Panel::Inbox => Panel::Tasks,
-                        Panel::Tasks => Panel::Tasks,
-                    };
-
-                    return Ok(());
-                }
-
-                _ => {}
             }
 
-            match app.focused_panel {
-                Panel::Tasks => {
-                    match &app.popup {
-                        Popup::None => handle_tasks_keys(app, key),
-
-                        Popup::Tasks(TasksPopup::AddTask) => {
-                            popup::add_task::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::EditTask) => {
-                            popup::add_task::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::Presets) => {
-                            popup::presets::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::NewPreset) => {
-                            popup::new_preset::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::KnownTasks) => {
-                            popup::known_tasks::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::AddKnownTask) => {
-                            popup::known_tasks_add::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::EditKnownTask(_)) => {
-                            popup::known_tasks_add::handle_keys(app, key);
-                        }
-
-                        Popup::Tasks(TasksPopup::TaskInfo) => {
-                            popup::task_info::handle_keys(app, key);
-                        }
-                        
-                        Popup::Tasks(TasksPopup::Help) => {
-                            popup::help::handle_keys(app, key);
-                        }
-                        
-                        _ => {}
+            // Popup gets priority over focused panel
+            match &app.popup {
+                Popup::None => {
+                    match app.focused_panel {
+                        Panel::Tasks => handle_tasks_keys(app, key),
+                        Panel::Inbox => handle_inbox_keys(app, key),
                     }
                 }
 
-                Panel::Inbox => {
-                    match &app.popup {
-                        Popup::None => handle_inbox_keys(app, key),
+                // TASKS POPUPS
 
-                        Popup::Inbox(InboxPopup::AddInboxItem) => {
-                            popup::add_inbox_item::handle_keys(app, key);
-                        }
+                Popup::Tasks(TasksPopup::AddTask) => {
+                    popup::add_task::handle_keys(app, key);
+                }
 
-                        Popup::Inbox(InboxPopup::EditInboxItem) => {
-                            popup::add_inbox_item::handle_keys(app, key);
-                        }
+                Popup::Tasks(TasksPopup::EditTask) => {
+                    popup::add_task::handle_keys(app, key);
+                }
 
-                        _ => {}
-                    }
+                Popup::Tasks(TasksPopup::Presets) => {
+                    popup::presets::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::NewPreset) => {
+                    popup::new_preset::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::KnownTasks) => {
+                    popup::known_tasks::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::AddKnownTask) => {
+                    popup::known_tasks_add::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::EditKnownTask(_)) => {
+                    popup::known_tasks_add::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::TaskInfo) => {
+                    popup::task_info::handle_keys(app, key);
+                }
+
+                Popup::Tasks(TasksPopup::Help) => {
+                    popup::help::handle_keys(app, key);
+                }
+
+                // INBOX POPUPS
+
+                Popup::Inbox(InboxPopup::AddInboxItem) => {
+                    popup::add_inbox_item::handle_keys(app, key);
+                }
+
+                Popup::Inbox(InboxPopup::EditInboxItem) => {
+                    popup::add_inbox_item::handle_keys(app, key);
                 }
             }
         }
