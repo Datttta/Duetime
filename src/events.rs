@@ -196,6 +196,7 @@ fn open_help_popup(app: &mut App) {
 
 fn add_inbox_item_popup(app: &mut App) {
     app.inbox_item.clear();
+    app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
 }
 
