@@ -136,16 +136,16 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
 
     // Small terminal window: show only tasks
-    if area.width < 100 || area.height < 30 {
+    info!("Width: {:?}", area.width);
+    if area.width < 140 {
+        // check the previous focused panel
         if app.is_change {
-            info!("previous_panel before: {:?}", app.previous_panel);
             app.previous_panel = app.focused_panel;
             app.is_change = false;
         }
 
         app.focused_panel = Panel::Tasks;
         draw_tasks_panel(frame, area, app);
-        info!("previous_panel after: {:?}", app.previous_panel);
     } else {
         //focus on previous panel
         if app.is_change == false {
