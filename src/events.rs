@@ -1,5 +1,17 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup, InboxSelectedFeature},
+    app::{
+    App,
+    Popup, 
+    TaskDestination, 
+    NewPresetFocus, 
+    SelectedInput, 
+    Panel, 
+    TasksPopup, 
+    InboxPopup, 
+    InboxSelectedFeature,
+    Priority
+    },
+
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -138,6 +150,7 @@ fn edit_inbox_item(app: &mut App) {
 
         // Load task data into inputs
         app.inbox_item.text = item.input.clone();
+        app.priority = item.priority.clone();
         app.inbox_item.cursor = app.inbox_item.text.len();
 
         app.mode = InputMode::Normal;
@@ -196,6 +209,7 @@ fn open_help_popup(app: &mut App) {
 
 fn add_inbox_item_popup(app: &mut App) {
     app.inbox_item.clear();
+    app.priority = Priority::Low;
     app.mode = InputMode::Insert;
     app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
@@ -476,7 +490,7 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
             app.pending_command = Some('a');
         }
 
-        KeyCode::Char('p') => {
+        KeyCode::Char('i') => {
             if app.pending_command == Some('a') {
                 add_inbox_item_popup(app);
             }

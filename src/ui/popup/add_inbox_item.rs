@@ -72,7 +72,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         frame,
         item_features[0],
         &app.inbox_item,
-        "plan...",
+        "I plan to...",
         focused,
         app.mode,
     );
