@@ -4,7 +4,7 @@ pub mod widgets;
 pub mod theme;
 pub mod inbox_header;
 
-use log::info;
+//use log::info;
 use std::time::Duration;
 
 use crate::{

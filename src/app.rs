@@ -132,6 +132,9 @@ pub struct App {
     pub priority: Priority,
 
     pub is_change: bool,
+
+    pub clipboard: Option<arboard::Clipboard>,
+    pub status_message: Option<String>,
 }
 
 impl App {
@@ -200,6 +203,9 @@ impl App {
             priority: Priority::Low,
 
             is_change: true,
+
+            clipboard: arboard::Clipboard::new().ok(),
+            status_message: None,
         }
     }
 

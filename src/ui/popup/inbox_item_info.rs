@@ -58,8 +58,78 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     }
 }
 
-pub fn handle_keys (app: &mut App, key: KeyEvent) {
+fn copy_input(app: &mut App) {
+    let Some(index) = app.inbox_table_state.selected() else {
+        app.status_message = Some("No inbox item selected".to_string());
+        log::warn!("Could not copy inbox item: no item selected");
+        return;
+    };
+
+    let text = app.inbox_items[index].input.clone();
+
+    let Some(clipboard) = app.clipboard.as_mut() else {
+        app.status_message = Some("Clipboard unavailable".to_string());
+        log::error!("Could not copy inbox item: clipboard unavailable");
+        return;
+    };
+
+    match clipboard.set_text(text.clone()) {
+        Ok(()) => {
+            log::debug!("Copied inbox item to clipboard: {:?}", text);
+
+            match clipboard.get_text() {
+                Ok(copied) => {
+                    log::debug!("Clipboard read-back: {:?}", copied);
+
+                    app.status_message = Some(
+                        "Copied to clipboard".to_string()
+                    );
+
+                    app.status_message = Some("Copied to clipboard".to_string());
+                }
+
+                Err(error) => {
+                    log::error!(
+                        "Clipboard write succeeded, but read-back failed: {}",
+                        error
+                    );
+
+                    app.status_message = Some(
+                        "Copied, but clipboard could not be verified".to_string()
+                    );
+
+                    app.status_message = Some("Failed to copy to clipboard".to_string());
+                }
+            }
+        }
+
+        Err(error) => {
+            log::error!("Failed to copy inbox item: {}", error);
+
+            app.status_message = Some(
+                format!("Copy failed: {}", error)
+            );
+            app.status_message = Some("Failed to copy to clipboard".to_string());
+        }
+    }
+}
+
+pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    log::debug!("inbox_item_info received key: {:?}", key);
+
     match key.code {
+        KeyCode::Char('c') => {
+            log::debug!("C received");
+
+            if app.pending_command == Some('c') {
+                log::debug!("CC received, copying");
+                copy_input(app);
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('c');
+            }
+        }
+
         KeyCode::Char('q') => {
             app.popup = Popup::None;
         }
@@ -67,4 +137,3 @@ pub fn handle_keys (app: &mut App, key: KeyEvent) {
         _ => {}
     }
 }
-

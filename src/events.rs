@@ -110,7 +110,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 }
                 
                 Popup::Inbox(InboxPopup::InfoInboxItem) => {
-                    popup::inbox_item_add::handle_keys(app, key);
+                    popup::inbox_item_info::handle_keys(app, key);
                 }
             }
         }

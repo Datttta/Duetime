@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+arboard = { version = "3.6", features = ["wayland-data-control"] }
 chrono = "0.4.45"
 crossterm = "0.29.0"
 directories = "6.0.0"

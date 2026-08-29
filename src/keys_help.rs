@@ -1,4 +1,4 @@
-use crate::app::{App, Popup, Panel, TasksPopup, InboxPopup};
+use crate::app::{App, Popup, TasksPopup, InboxPopup};
 use ratatui::{
     style::{Modifier, Style},
     text::{Line, Span},
