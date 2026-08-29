@@ -56,8 +56,8 @@ impl Priority {
 
 pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     let columns = [
-        Constraint::Percentage(67), // inbox input
-        Constraint::Percentage(33), // priority (still don't now if i add it)
+        Constraint::Percentage(82), // inbox input
+        Constraint::Percentage(18), // priority (still don't now if i add it)
     ];
 
     let visual_start = app.n_visual_start;
@@ -88,8 +88,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         let mut row = Row::new(vec![
             Cell::from(format!("  {}", ellipsize(&item.input, 75))),
             Cell::from(
-                Line::from(item.priority.as_str())
-                    .alignment(Alignment::Center),
+                Line::from(item.priority.as_str()),
             ),
         ]);
 
@@ -122,3 +121,4 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         &mut app.inbox_table_state,
     );
 }
+
