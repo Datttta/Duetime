@@ -24,7 +24,7 @@ pub enum Priority {
     High,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Panel {
     Tasks,
     Inbox,
@@ -122,12 +122,15 @@ pub struct App {
     pub help_scroll: u16,
 
     pub focused_panel: Panel,
+    pub previous_panel: Panel,
 
     pub inbox_item: InputState,
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
     pub inbox_selected_feature: InboxSelectedFeature,
     pub priority: Priority,
+
+    pub is_change: bool,
 }
 
 impl App {
@@ -187,12 +190,15 @@ impl App {
             help_scroll: 0,
 
             focused_panel: Panel::Tasks,
+            previous_panel: Panel::Tasks,
 
             inbox_item: InputState::default(),
             inbox_items: storage_inbox::load_inbox(),
             inbox_table_state,
             inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
             priority: Priority::Low,
+
+            is_change: true,
         }
     }
 

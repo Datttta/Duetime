@@ -4,6 +4,9 @@ pub mod widgets;
 pub mod theme;
 pub mod inbox_header;
 
+use log::info;
+use std::time::Duration;
+
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
     ui::theme::unfocused_panel,
@@ -17,8 +20,6 @@ use ratatui::{
     style::{Color, Style},
     Frame,
 };
-
-use std::time::Duration;
 
 struct MainLayout {
     tasks: Rect,
@@ -136,9 +137,22 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     // Small terminal window: show only tasks
     if area.width < 100 || area.height < 30 {
+        if app.is_change {
+            info!("previous_panel before: {:?}", app.previous_panel);
+            app.previous_panel = app.focused_panel;
+            app.is_change = false;
+        }
+
         app.focused_panel = Panel::Tasks;
         draw_tasks_panel(frame, area, app);
+        info!("previous_panel after: {:?}", app.previous_panel);
     } else {
+        //focus on previous panel
+        if app.is_change == false {
+            app.focused_panel = app.previous_panel;
+            app.is_change = true;
+        }
+
         // Show all panels if in fullscreen
         let layout = draw_layout(frame);
         
@@ -201,3 +215,4 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
     }
 }
+
