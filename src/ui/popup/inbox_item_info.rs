@@ -58,73 +58,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     }
 }
 
-fn copy_input(app: &mut App) {
-    let Some(index) = app.inbox_table_state.selected() else {
-        app.set_status_message(
-            "No inbox item selected".to_string()
-        );
-
-        log::warn!("Could not copy inbox item: no item selected");
-        return;
-    };
-
-    let text = app.inbox_items[index].input.clone();
-
-    let Some(clipboard) = app.clipboard.as_mut() else {
-        app.set_status_message(
-            "Clipboard unavailable".to_string()
-        );
-
-        log::error!("Could not copy inbox item: clipboard unavailable");
-        return;
-    };
-
-    match clipboard.set_text(text.clone()) {
-        Ok(()) => {
-            log::debug!("Copied inbox item to clipboard: {:?}", text);
-
-            match clipboard.get_text() {
-                Ok(copied) => {
-                    log::debug!("Clipboard read-back: {:?}", copied);
-
-                    app.set_status_message(
-                        "Copied to clipboard".to_string()
-                    );
-                }
-
-                Err(error) => {
-                    log::error!(
-                        "Clipboard write succeeded, but read-back failed: {}",
-                        error
-                    );
-
-                    app.set_status_message(
-                        "Copied, but clipboard could not be verified".to_string()
-                    );
-                }
-            }
-        }
-
-        Err(error) => {
-            log::error!("Failed to copy inbox item: {}", error);
-
-            app.set_status_message(
-                format!("Copy failed: {}", error)
-            );
-        }
-    }
-}
-
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    log::debug!("inbox_item_info received key: {:?}", key);
-
     match key.code {
         KeyCode::Char('c') => {
-            log::debug!("C received");
-
             if app.pending_command == Some('c') {
-                log::debug!("CC received, copying");
-                copy_input(app);
+                app.copy_inbox_input();
                 app.pending_command = None;
             } else {
                 app.pending_command = Some('c');

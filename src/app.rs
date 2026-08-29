@@ -479,7 +479,7 @@ impl App {
 
     // ======================= UTILS  =========================
 
-    pub fn total_elapsed(&self) -> Duration {
+    pub fn total_elapsed(&mut self) -> Duration {
         self.tasks
             .iter()
             .map(|task| task.stopwatch.elapsed())
@@ -493,5 +493,63 @@ impl App {
             Priority::Low => 2,
         }
     }
+
+    pub fn copy_inbox_input(&mut self) {
+        let Some(index) = self.inbox_table_state.selected() else {
+            self.set_status_message(
+                "No inbox item selected".to_string()
+            );
+
+            log::warn!("Could not copy inbox item: no item selected");
+            return;
+        };
+
+        let text = self.inbox_items[index].input.clone();
+
+        let Some(clipboard) = self.clipboard.as_mut() else {
+            self.set_status_message(
+                "Clipboard unavailable".to_string()
+            );
+
+            log::error!("Could not copy inbox item: clipboard unavailable");
+            return;
+        };
+
+        match clipboard.set_text(text.clone()) {
+            Ok(()) => {
+                log::debug!("Copied inbox item to clipboard: {:?}", text);
+
+                match clipboard.get_text() {
+                    Ok(copied) => {
+                        log::debug!("Clipboard read-back: {:?}", copied);
+
+                        self.set_status_message(
+                            "Copied to clipboard".to_string()
+                        );
+                    }
+
+                    Err(error) => {
+                        log::error!(
+                            "Clipboard write succeeded, but read-back failed: {}",
+                            error
+                        );
+
+                        self.set_status_message(
+                            "Copied, but clipboard could not be verified".to_string()
+                        );
+                    }
+                }
+            }
+
+            Err(error) => {
+                log::error!("Failed to copy inbox item: {}", error);
+
+                self.set_status_message(
+                    format!("Copy failed: {}", error)
+                );
+            }
+        }
+    }
+
 }
 

@@ -512,6 +512,15 @@ fn handle_inbox_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             edit_inbox_item(app);
         }
+        
+        KeyCode::Char('c') => {
+            if app.pending_command == Some('c') {
+                app.copy_inbox_input();
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('c');
+            }
+        }
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {

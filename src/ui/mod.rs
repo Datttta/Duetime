@@ -162,15 +162,14 @@ fn draw_status_message(
 }
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let layout = Layout::vertical([
-        Constraint::Min(1),
-        Constraint::Length(1),
-        Constraint::Length(1),
-    ])
-    .split(frame.area());
+    let area = frame.area();
 
-    let area = layout[0];
-    let status_area = layout[1];
+    let status_area = Rect {
+        x: frame.area().x,
+        y: frame.area().bottom().saturating_sub(2),
+        width: frame.area().width,
+        height: 1,
+    };
 
     // Small terminal window: show only tasks
     if area.width < 140 {
