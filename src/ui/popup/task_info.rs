@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
-    widgets::{Clear, Block, Paragraph, Padding},
+    widgets::{Clear, Block, Paragraph, Padding, Wrap},
     text::{Line},
     Frame
 };
@@ -71,7 +71,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
                     task_preset.join(", ")
                 }
             ))
-        ]);
+        ])
+        .wrap(Wrap { trim: false });
     
         frame.render_widget(paragraph, inner);
     }
