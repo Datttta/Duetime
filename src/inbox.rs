@@ -21,13 +21,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Default)]
 pub struct InboxItemInfo {
     pub input: String,
-    pub priority: String,
+    pub priority: Priority,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct InboxItemInfoData {
     pub input: String,
-    pub priority: String,
+    pub priority: Priority,
 }
 
 impl InboxItemInfo {
@@ -42,6 +42,16 @@ impl InboxItemInfo {
         InboxItemInfo {
             input: data.input,
             priority: data.priority,
+        }
+    }
+}
+
+impl Priority {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Priority::Low => "LOW",
+            Priority::Medium => "MEDIUM",
+            Priority::High => "HIGH",
         }
     }
 }
@@ -79,7 +89,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
 
         let mut row = Row::new(vec![
             Cell::from(format!("  {}", ellipsize(&item.input, 75))),
-            Cell::from(item.priority.clone()),
+            Cell::from(item.priority.as_str()),
         ]);
 
         if !popup_open && visual_mode {

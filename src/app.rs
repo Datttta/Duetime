@@ -1,4 +1,5 @@
 use ratatui::widgets::{TableState, ListState};
+use serde::{Serialize, Deserialize};
 
 use crate::{
     vim_text::{InputState, InputMode},
@@ -15,8 +16,9 @@ use crate::{
 
 use std::time::{Duration};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum Priority {
+    #[default]
     Low,
     Medium,
     High,
@@ -77,6 +79,7 @@ pub enum SelectedInput {
 #[derive(PartialEq)]
 pub enum InboxSelectedInput {
     InboxItemInput,
+    Priority,
 }
 
 pub struct App {
@@ -121,10 +124,10 @@ pub struct App {
     pub focused_panel: Panel,
 
     pub inbox_item: InputState,
-    pub priority: InputState,
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
     pub inbox_selected_input: InboxSelectedInput,
+    pub priority: Priority,
 }
 
 impl App {
@@ -186,10 +189,10 @@ impl App {
             focused_panel: Panel::Tasks,
 
             inbox_item: InputState::default(),
-            priority: InputState::default(),
             inbox_items: storage_inbox::load_inbox(),
             inbox_table_state,
             inbox_selected_input: InboxSelectedInput::InboxItemInput,
+            priority: Priority::Low,
         }
     }
 
