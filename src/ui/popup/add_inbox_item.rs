@@ -11,7 +11,7 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputResult, InputMode},
-    app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
+    app::{App, Popup, InboxPopup, InboxSelectedFeature, Priority},
     models::InboxItem,
     inbox::InboxItemInfo,
     keys_help,
@@ -66,12 +66,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             .alignment(Alignment::Center);
     frame.render_widget(keys_help, vertical[1]);
 
+    let focused = app.inbox_selected_feature == InboxSelectedFeature::InboxItemInput;
+
     input::draw(
         frame,
         item_features[0],
         &app.inbox_item,
         "plan...",
-        true,
+        focused,
         app.mode,
     );
 
@@ -172,9 +174,20 @@ fn previous_priority(priority: Priority) -> Priority {
     }
 }
 
+fn close_popup(app: &mut App) {
+    if app.inbox_selected_feature == InboxSelectedFeature::InboxItemInput{
+        if app.mode == InputMode::Normal {
+            app.popup = Popup::None;
+        } 
+        return
+    }
+
+    app.popup = Popup::None;
+}
+
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    match app.inbox_selected_input {
-        InboxSelectedInput::InboxItemInput => {
+    match app.inbox_selected_feature {
+        InboxSelectedFeature::InboxItemInput => {
             let result = app.inbox_item.handle_key(
                 key,
                 &mut app.mode,
@@ -188,7 +201,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        InboxSelectedInput::Priority => {
+        InboxSelectedFeature::Priority => {
             match key.code {
                 KeyCode::Char('h') | KeyCode::Left => {
                     app.priority = previous_priority(app.priority);
@@ -207,13 +220,13 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Tab => {
-            app.inbox_selected_input = match app.inbox_selected_input {
-                InboxSelectedInput::InboxItemInput => {
-                    InboxSelectedInput::Priority
+            app.inbox_selected_feature = match app.inbox_selected_feature {
+                InboxSelectedFeature::InboxItemInput => {
+                    InboxSelectedFeature::Priority
                 }
 
-                InboxSelectedInput::Priority => {
-                    InboxSelectedInput::InboxItemInput
+                InboxSelectedFeature::Priority => {
+                    InboxSelectedFeature::InboxItemInput
                 }
             };
         }
@@ -223,9 +236,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('q') | KeyCode::Esc => {
-            if app.mode == InputMode::Normal {
-                app.popup = Popup::None;
-            } 
+            close_popup(app);
         }
  
         _ => {}

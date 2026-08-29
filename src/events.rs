@@ -1,5 +1,5 @@
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup, InboxSelectedInput},
+    app::{App, Popup, TaskDestination, NewPresetFocus, SelectedInput, Panel, TasksPopup, InboxPopup, InboxSelectedFeature},
     ui::popup,
     vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -142,7 +142,7 @@ fn edit_inbox_item(app: &mut App) {
 
         app.mode = InputMode::Normal;
         app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
-        app.inbox_selected_input = InboxSelectedInput::InboxItemInput;
+        app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
 
         app.pending_command = None;
     }

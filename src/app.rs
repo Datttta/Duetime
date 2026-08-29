@@ -77,7 +77,7 @@ pub enum SelectedInput {
 }
 
 #[derive(PartialEq)]
-pub enum InboxSelectedInput {
+pub enum InboxSelectedFeature {
     InboxItemInput,
     Priority,
 }
@@ -126,7 +126,7 @@ pub struct App {
     pub inbox_item: InputState,
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
-    pub inbox_selected_input: InboxSelectedInput,
+    pub inbox_selected_feature: InboxSelectedFeature,
     pub priority: Priority,
 }
 
@@ -191,7 +191,7 @@ impl App {
             inbox_item: InputState::default(),
             inbox_items: storage_inbox::load_inbox(),
             inbox_table_state,
-            inbox_selected_input: InboxSelectedInput::InboxItemInput,
+            inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
             priority: Priority::Low,
         }
     }
