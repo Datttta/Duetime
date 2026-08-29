@@ -89,7 +89,10 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
 
         let mut row = Row::new(vec![
             Cell::from(format!("  {}", ellipsize(&item.input, 75))),
-            Cell::from(item.priority.as_str()),
+            Cell::from(
+                Line::from(item.priority.as_str())
+                    .alignment(Alignment::Center),
+            ),
         ]);
 
         if !popup_open && visual_mode {

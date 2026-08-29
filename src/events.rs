@@ -141,7 +141,7 @@ fn edit_inbox_item(app: &mut App) {
         app.inbox_item.cursor = app.inbox_item.text.len();
 
         app.mode = InputMode::Normal;
-        app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
+        app.popup = Popup::Inbox(InboxPopup::EditInboxItem);
         app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
 
         app.pending_command = None;
