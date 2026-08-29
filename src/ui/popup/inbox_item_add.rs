@@ -31,9 +31,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(block, area);
 
-    fn centered_rect(frame: &mut Frame, _app: &mut App) -> Rect {
+    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(8),
+            Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -43,13 +44,16 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
+
+        let keys_help = Paragraph::new(keys_help::keys(app))
+                .alignment(Alignment::Center);
+        frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
     }
 
     let vertical = Layout::vertical([
         Constraint::Length(10), // input height
-        Constraint::Length(1), // keys_help
     ])
     .split(inner);
 
@@ -60,10 +64,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     ])
     .flex(Flex::Center)
     .split(vertical[0]);
-
-    let keys_help = Paragraph::new(keys_help::keys(app))
-            .alignment(Alignment::Center);
-    frame.render_widget(keys_help, vertical[1]);
 
     let focused = app.inbox_selected_feature == InboxSelectedFeature::InboxItemInput;
 
@@ -116,10 +116,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         },
     ]);
 
-    frame.render_widget(
-        Paragraph::new(priority_line),
-        item_features[2],
-    );
+    frame.render_widget(Paragraph::new(priority_line), item_features[2]);
 }
 
 fn save_inbox_item (app: &mut App) {
@@ -243,3 +240,4 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         _ => {}
     }
 }
+

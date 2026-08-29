@@ -136,7 +136,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
 
     // Small terminal window: show only tasks
-    info!("Width: {:?}", area.width);
     if area.width < 140 {
         // check the previous focused panel
         if app.is_change {
