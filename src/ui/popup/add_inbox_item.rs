@@ -4,6 +4,7 @@ use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Padding, Paragraph},
     text::{Line, Span},
+    style::{Style, Color, Modifier},
     Frame
 };
 
@@ -25,7 +26,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     let block = Block::bordered()
         .title("Add Item")
-        .padding(Padding::new(1, 1, 0, 0));
+        .padding(Padding::new(2, 2, 0, 0));
 
     let inner = block.inner(area);
 
@@ -78,23 +79,37 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Span::raw("Priority: "),
 
         if app.priority == Priority::Low {
-            Span::raw(" [Low] ")
+            Span::styled(
+                " Low ",
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            )
         } else {
             Span::raw(" Low ")
         },
 
-        Span::raw(" "),
-
         if app.priority == Priority::Medium {
-            Span::raw(" [Medium] ")
+            Span::styled(
+                " Medium ",
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            )
         } else {
             Span::raw(" Medium ")
         },
 
-        Span::raw(" "),
-        
         if app.priority == Priority::High {
-            Span::raw(" [High] ")
+            Span::styled(
+                " High ",
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            )
         } else {
             Span::raw(" High ")
         },
