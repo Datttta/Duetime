@@ -1,223 +1,16 @@
-use ratatui::widgets::{TableState, ListState};
-use serde::{Serialize, Deserialize};
+use std::time::Duration;
 
 use crate::{
-    vim_text::{InputState, InputMode},
-    vim_navigation::NavigationMode,
+    vim_text::{InputMode},
+    app::{NewPresetFocus, Popup, TasksPopup, TaskDestination, SelectedInput, Priority},
     tasks::TaskInfo,
-    inbox::InboxItemInfo,
-    models::{TaskTemplate, Preset, KnownTask},
-    move_items::MoveState,
+    models::{TaskTemplate, Preset},
     storage_current_tasks,
-    storage_known_tasks,
     storage_preset,
-    storage_inbox,
+    App,
 };
 
-use std::time::{Duration, Instant};
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
-pub enum Priority {
-    #[default]
-    Low,
-    Medium,
-    High,
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum Panel {
-    Tasks,
-    Inbox,
-}
-
-#[derive(PartialEq, Debug)]
-pub enum Popup {
-    None,
-    Tasks(TasksPopup),
-    Inbox(InboxPopup),
-}
-
-#[derive(PartialEq, Debug)]
-pub enum InboxPopup {
-    AddInboxItem,
-    EditInboxItem,
-    InfoInboxItem,
-}
-
-#[derive(PartialEq, Debug)]
-pub enum TasksPopup {
-    AddTask,
-    Presets,
-    EditTask,
-    NewPreset,
-    KnownTasks,
-    AddKnownTask,
-    EditKnownTask(usize),
-    TaskInfo,
-    Help,
-}
-
-#[derive(PartialEq)]
-pub enum NewPresetFocus {
-    Name,
-    Tasks,
-}
-
-pub enum TaskDestination {
-    AddTask,
-    Preset,
-    EditTask(usize),
-    EditPresetTask(usize),
-}
-
-#[derive(PartialEq)]
-pub enum SelectedInput {
-    TaskName,
-    PlannedStart,
-    PlannedEnd,
-}
-
-#[derive(PartialEq)]
-pub enum InboxSelectedFeature {
-    InboxItemInput,
-    Priority,
-}
-
-pub struct App {
-    pub popup: Popup,
-    pub pending_command: Option<char>,
-    pub running: bool,
-
-    pub task_name: InputState,
-    pub planned_start: InputState,
-    pub planned_end: InputState,
-
-    pub n_mode: NavigationMode,
-    pub n_visual_start: Option<usize>,
-
-    pub mode: InputMode,
-    pub selected_input: SelectedInput,
-
-    pub tasks: Vec<TaskInfo>,
-
-    pub table_state: TableState,
-    pub preset_task_state: ListState,
-
-    pub presets: Vec<Preset>,
-    pub edit_preset: Option<usize>,
-    pub preset_name: InputState,
-    pub preset_tasks: Vec<TaskTemplate>,
-    pub task_destination: TaskDestination,
-    pub next_id: u64,
-    pub new_preset_focus: NewPresetFocus,
-    pub preset_state: ListState,
-
-    pub known_tasks: Vec<KnownTask>,
-    pub known_task_name: InputState,
-    pub known_tasks_state: ListState,
-    pub suggestions: Vec<String>,
-    pub selected_suggestion: usize,
-
-    pub move_state: MoveState,
-
-    pub help_scroll: u16,
-
-    pub focused_panel: Panel,
-    pub previous_panel: Panel,
-
-    pub inbox_item: InputState,
-    pub inbox_items: Vec<InboxItemInfo>,
-    pub inbox_table_state: TableState,
-    pub inbox_selected_feature: InboxSelectedFeature,
-    pub priority: Priority,
-
-    pub is_change: bool,
-
-    pub clipboard: Option<arboard::Clipboard>,
-    pub status_message: Option<String>,
-    pub status_message_until: Option<Instant>,
-}
-
 impl App {
-    pub fn set_status_message(&mut self, message: String) {
-        self.status_message = Some(message);
-        self.status_message_until = Some(
-            Instant::now() + Duration::from_secs(1)
-        );
-    }
-
-    pub fn new() -> Self {
-        let mut table_state = TableState::default();
-        table_state.select(Some(0));
-
-        let mut preset_task_state = ListState::default();
-        preset_task_state.select(Some(0));
-
-        let mut preset_state = ListState::default();
-        preset_state.select(Some(0));
-
-        let mut known_tasks_state = ListState::default();
-        known_tasks_state.select(Some(0));
-        
-        let mut inbox_table_state = TableState::default();
-        inbox_table_state.select(Some(0));
-
-        Self {
-            pending_command: None,
-            popup: Popup::None,
-            running: true,
-
-            task_name: InputState::default(),
-            planned_start: InputState::default(),
-            planned_end: InputState::default(),
-
-            n_visual_start: Some(0),
-            n_mode: NavigationMode::Normal,
-            
-            mode: InputMode::Insert,
-            selected_input: SelectedInput::TaskName,
-
-            table_state,
-            preset_task_state,
-            
-            presets: storage_preset::load_presets(),
-            preset_tasks: Vec::new(),
-            preset_name: InputState::default(),
-            edit_preset: None,
-            task_destination: TaskDestination::AddTask,
-            next_id: 1,
-            new_preset_focus: NewPresetFocus::Name,
-            preset_state,
-
-            known_task_name: InputState::default(),
-            known_tasks_state,
-            suggestions: Vec::new(),
-            selected_suggestion: 0,
-            known_tasks: storage_known_tasks::load_known_tasks(),
-            
-            tasks: storage_current_tasks::load_current_tasks(),
-
-            move_state: MoveState::default(),
-
-            help_scroll: 0,
-
-            focused_panel: Panel::Tasks,
-            previous_panel: Panel::Tasks,
-
-            inbox_item: InputState::default(),
-            inbox_items: storage_inbox::load_inbox(),
-            inbox_table_state,
-            inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
-            priority: Priority::Low,
-
-            is_change: true,
-
-            clipboard: arboard::Clipboard::new().ok(),
-            status_message: None,
-            status_message_until: None,
-        }
-    }
-
     // =================== POPUPS =======================
 
     pub fn task_add (&mut self, destination: TaskDestination) {
@@ -513,7 +306,7 @@ impl App {
         match clipboard.set_text(text.clone()) {
             Ok(()) => {
                 match clipboard.get_text() {
-                    Ok(copied) => {
+                    Ok(_) => {
                         self.set_status_message(
                             "Copied to clipboard".to_string()
                         );
@@ -541,6 +334,5 @@ impl App {
             }
         }
     }
-
 }
 
