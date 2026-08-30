@@ -496,11 +496,6 @@ impl App {
 
     pub fn copy_inbox_input(&mut self) {
         let Some(index) = self.inbox_table_state.selected() else {
-            self.set_status_message(
-                "No inbox item selected".to_string()
-            );
-
-            log::warn!("Could not copy inbox item: no item selected");
             return;
         };
 
@@ -517,12 +512,8 @@ impl App {
 
         match clipboard.set_text(text.clone()) {
             Ok(()) => {
-                log::debug!("Copied inbox item to clipboard: {:?}", text);
-
                 match clipboard.get_text() {
                     Ok(copied) => {
-                        log::debug!("Clipboard read-back: {:?}", copied);
-
                         self.set_status_message(
                             "Copied to clipboard".to_string()
                         );

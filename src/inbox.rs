@@ -86,7 +86,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         // Draw insertion line before this task.
 
         let mut row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&item.input, 75))),
+            Cell::from(format!("  {}", ellipsize(&item.input, 77))),
             Cell::from(
                 Line::from(item.priority.as_str()),
             ),

@@ -119,24 +119,30 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(Paragraph::new(priority_line), item_features[2]);
 }
 
-fn save_inbox_item (app: &mut App) {
+fn save_inbox_item(app: &mut App) {
     match app.popup {
         Popup::Inbox(InboxPopup::AddInboxItem) => {
+            let input = app.inbox_item.text.clone();
+            let priority = app.priority;
+
             let item = InboxItemInfo {
-                    input: app.inbox_item.text.clone(),
-                    priority: app.priority,
-                };
+                input: input.clone(),
+                priority,
+            };
 
-                let position = match app.table_state.selected() {
-                    Some(index) => index + 1,
-                    None => 0
-                };
-                
-                app.inbox_items.insert(position.min(app.inbox_items.len()), item);
+            app.inbox_items.push(item);
 
-                app.inbox_table_state.select(Some(position.min(app.inbox_items.len() - 1)));
+            app.inbox_items.sort_by_key(|item| App::priority_rank(item.priority));
+
+            // Find the newly created item after sorting.
+            if let Some(index) = app.inbox_items
+                .iter()
+                .position(|item| item.input == input)
+            {
+                app.inbox_table_state.select(Some(index));
+            }
         }
-        
+
         Popup::Inbox(InboxPopup::EditInboxItem) => {
             if let Some(index) = app.inbox_table_state.selected() {
                 if let Some(item) = app.inbox_items.get_mut(index) {
@@ -144,15 +150,16 @@ fn save_inbox_item (app: &mut App) {
                     item.priority = app.priority;
                 }
             }
+
+            app.inbox_items.sort_by_key(|item| App::priority_rank(item.priority));
         }
 
-        _ => {},
+        _ => {}
     }
 
-    app.inbox_items.sort_by_key(|item| App::priority_rank(item.priority));
     crate::storage_inbox::save_inbox(&app.inbox_items).unwrap();
 
-    app.known_task_name.clear();
+    app.inbox_item.clear();
     app.popup = Popup::None;
 }
 
