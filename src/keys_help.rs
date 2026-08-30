@@ -65,14 +65,14 @@ pub fn keys(app: &App) -> Line<'static> {
             ])
         }
 
-        //Popup::Inbox(InboxPopup::AddInboxItem) | Popup::Inbox(InboxPopup::EditInboxItem) => {
-        //    Line::from(vec![
-        //        Span::styled("Enter", bold),
-        //        Span::raw(" Save  "),
-        //        Span::styled("Esc / q", bold),
-        //        Span::raw(" Cancel"),
-        //    ])
-        //}
+        Popup::Inbox(InboxPopup::InfoInboxItem) => {
+            Line::from(vec![
+                Span::styled("cc", bold),
+                Span::raw(" Copy text  "),
+                Span::styled("q", bold),
+                Span::raw(" Quit"),
+            ])
+        }
 
         Popup::None => {
             Vec::new().into()

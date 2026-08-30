@@ -1,16 +1,19 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex},
+    layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Paragraph, Padding, Wrap},
     text::{Line},
     Frame
 };
 
-use crate::app::{App, Popup};
+use crate::{
+    app::{App, Popup},
+    keys_help,
+};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = centered_rect(frame);
+    let area = centered_rect(frame, app);
 
     frame.render_widget(Clear, area);
 
@@ -20,7 +23,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(&block, area);
 
-    fn centered_rect(frame: &mut Frame) -> Rect {
+    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(23),
             Constraint::Length(1), // keys help
@@ -33,6 +36,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
+
+        let keys_help = Paragraph::new(keys_help::keys(app)) 
+            .alignment(Alignment::Center);
+        frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
     }
