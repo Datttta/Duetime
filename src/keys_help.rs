@@ -70,7 +70,7 @@ pub fn keys(app: &App) -> Line<'static> {
                 Span::styled("cc", bold),
                 Span::raw(" Copy text  "),
                 Span::styled("q", bold),
-                Span::raw(" Quit"),
+                Span::raw(" Close"),
             ])
         }
 

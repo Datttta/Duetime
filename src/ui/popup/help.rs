@@ -40,19 +40,21 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         ]),
         Line::from(vec![
             Span::styled("gg -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Go to first task", Style::default().fg(gray_color())),
+            Span::styled(" Go to first item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
             Span::styled("G -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Go to last task", Style::default().fg(gray_color())),
+            Span::styled(" Go to last item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
             Span::styled("v / V -", Style::default().fg(Color::Yellow)),
             Span::styled(" Visual mode", Style::default().fg(gray_color())),
         ]),
+
         Line::from(""),
         Line::from("Tasks"),
         Line::from(""),
+
         Line::from(vec![
             Span::styled("t -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add task", Style::default().fg(gray_color())),
@@ -60,6 +62,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(vec![
             Span::styled("e -", Style::default().fg(Color::Yellow)),
             Span::styled(" Edit task", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("P -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Presets", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("Ctrl+l -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Known tasks", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
             Span::styled("dd -", Style::default().fg(Color::Yellow)),
@@ -81,26 +91,44 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("r -", Style::default().fg(Color::Yellow)),
             Span::styled(" Reset task", Style::default().fg(gray_color())),
         ]),
-        Line::from(""),
-        Line::from("Other"),
-        Line::from(""),
         Line::from(vec![
-            Span::styled("P -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Presets", Style::default().fg(gray_color())),
+            Span::styled("R -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Hard reset task", Style::default().fg(gray_color())),
+        ]),
+
+        Line::from(""),
+        Line::from("Inbox"),
+        Line::from(""),
+
+        Line::from(vec![
+            Span::styled("ai -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Add inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("Ctrl+l -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Known tasks", Style::default().fg(gray_color())),
+            Span::styled("e -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Edit inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
             Span::styled("i -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Task information", Style::default().fg(gray_color())),
+            Span::styled(" Inbox item information", Style::default().fg(gray_color())),
         ]),
+        Line::from(vec![
+            Span::styled("cc -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Copy inbox item", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("dd -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Delete inbox item", Style::default().fg(gray_color())),
+        ]),
+
+        Line::from(""),
+        Line::from("Others"),
+        Line::from(""),
+
         Line::from(vec![
             Span::styled("q -", Style::default().fg(Color::Yellow)),
             Span::styled(" Quit", Style::default().fg(gray_color())),
         ]),
-        Line::from(""),
         Line::from(vec![
             Span::styled("Esc -", Style::default().fg(Color::Yellow)),
             Span::styled(" Close / cancel", Style::default().fg(gray_color())),
@@ -130,7 +158,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             .position(scroll as usize);
 
         let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
-            .thumb_symbol("█")
+            .thumb_symbol("▊") // variations: "▉", "▊"(current), "▋"
             .track_symbol(Some(""))
             .begin_symbol(Some(""))
             .end_symbol(Some(""));
