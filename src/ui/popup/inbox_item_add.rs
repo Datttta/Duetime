@@ -157,7 +157,7 @@ fn save_inbox_item(app: &mut App) {
         _ => {}
     }
 
-    crate::storage_inbox::save_inbox(&app.inbox_items).unwrap();
+    crate::storage::inbox::save_inbox(&app.inbox_items).unwrap();
 
     app.inbox_item.clear();
     app.popup = Popup::None;

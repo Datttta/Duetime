@@ -5,8 +5,7 @@ use crate::{
     app::{NewPresetFocus, Popup, TasksPopup, TaskDestination, SelectedInput, Priority},
     tasks::TaskInfo,
     models::{TaskTemplate, Preset},
-    storage_current_tasks,
-    storage_preset,
+    storage::{current_tasks, preset},
     App,
 };
 
@@ -166,7 +165,7 @@ impl App {
         self.suggestions.clear();
         self.selected_suggestion = 0;
             
-        storage_current_tasks::save_current_tasks(&self.tasks).unwrap();
+        current_tasks::save_current_tasks(&self.tasks).unwrap();
     }
 
     pub fn save_preset(&mut self) {
@@ -198,7 +197,7 @@ impl App {
             self.preset_state.select(Some(0));
         }
 
-        storage_preset::save_preset(&self.presets).unwrap();
+        preset::save_preset(&self.presets).unwrap();
     }
 
     pub fn close_popup(&mut self) {
@@ -245,7 +244,7 @@ impl App {
                 self.preset_state.select(Some(new_index));
             }
 
-            crate::storage_preset::save_preset(&self.presets).unwrap();
+            crate::storage::preset::save_preset(&self.presets).unwrap();
         }
 
         self.pending_command = None;
@@ -265,7 +264,7 @@ impl App {
                 self.known_tasks_state.select(Some(new_index));
             }
         }
-        crate::storage_known_tasks::save_known_tasks(&self.known_tasks).unwrap();
+        crate::storage::known_tasks::save_known_tasks(&self.known_tasks).unwrap();
 
         self.pending_command = None;
     }

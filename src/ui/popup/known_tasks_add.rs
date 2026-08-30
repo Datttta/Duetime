@@ -93,7 +93,7 @@ pub fn save_known_task(app: &mut App) {
         _ => return,
     }
 
-    crate::storage_known_tasks::save_known_tasks(&app.known_tasks).unwrap();
+    crate::storage::known_tasks::save_known_tasks(&app.known_tasks).unwrap();
 
     app.known_task_name.clear();
     app.popup = Popup::Tasks(TasksPopup::KnownTasks)

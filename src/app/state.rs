@@ -2,16 +2,13 @@ use ratatui::widgets::{TableState, ListState};
 
 use crate::{
     app::{Popup, SelectedInput, TaskDestination, NewPresetFocus, InboxSelectedFeature, Priority, Panel},
+    storage::{current_tasks, known_tasks, preset, inbox},
     vim_text::{InputState, InputMode},
     vim_navigation::NavigationMode,
     tasks::TaskInfo,
     inbox::InboxItemInfo,
     models::{TaskTemplate, Preset, KnownTask},
     move_items::MoveState,
-    storage_current_tasks,
-    storage_known_tasks,
-    storage_preset,
-    storage_inbox,
 };
 
 use std::time::{Duration, Instant};
@@ -113,7 +110,7 @@ impl App {
             planned_end: InputState::default(),
             selected_input: SelectedInput::TaskName,
 
-            tasks: storage_current_tasks::load_current_tasks(),
+            tasks: current_tasks::load_current_tasks(),
             table_state,
 
             // Navigation
@@ -122,7 +119,7 @@ impl App {
             mode: InputMode::Insert,
 
             // Presets
-            presets: storage_preset::load_presets(),
+            presets: preset::load_presets(),
             preset_tasks: Vec::new(),
             preset_name: InputState::default(),
             edit_preset: None,
@@ -136,14 +133,14 @@ impl App {
             known_tasks_state,
             suggestions: Vec::new(),
             selected_suggestion: 0,
-            known_tasks: storage_known_tasks::load_known_tasks(),
+            known_tasks: known_tasks::load_known_tasks(),
 
             // Move
             move_state: MoveState::default(),
 
             // Inbox
             inbox_item: InputState::default(),
-            inbox_items: storage_inbox::load_inbox(),
+            inbox_items: inbox::load_inbox(),
             inbox_table_state,
             inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
             priority: Priority::Low,

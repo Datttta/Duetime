@@ -13,11 +13,13 @@ use crate::{
     },
 
     ui::popup,
+    storage::{current_tasks, inbox},
     vim_navigation::NavigationMode,
     vim_text::InputMode,
     move_items::MoveTarget,
     models::TaskTemplate,
-    vim_navigation,storage_current_tasks, storage_inbox, move_items,
+    vim_navigation,
+    move_items,
 };
 
 use std::io;
@@ -250,7 +252,7 @@ fn delete_task(app: &mut App) {
         app.n_mode = NavigationMode::Normal;
         app.n_visual_start = None;
 
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 
     app.pending_command = None;
@@ -282,7 +284,7 @@ fn complete_task(app: &mut App) {
         task.actual_end = Some(SystemTime::now());
         task.status = "COMPLETED".into();
 
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
@@ -295,7 +297,7 @@ fn reset_task(app: &mut App) {
         task.actual_end = None;
         task.status = "PENDING".into();
         
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
@@ -310,7 +312,7 @@ fn hard_reset_task(app: &mut App) {
         task.planned_end = "".to_string();
         task.status = "PENDING".into();
         
-        storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
@@ -327,7 +329,7 @@ fn move_tasks(app: &mut App) {
 }
 
 fn quit(app: &mut App) {
-    storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+    current_tasks::save_current_tasks(&app.tasks).unwrap();
     app.running = false;
 }
 
@@ -357,7 +359,7 @@ fn delete_inbox_item(app: &mut App) {
         app.n_mode = NavigationMode::Normal;
         app.n_visual_start = None;
 
-        storage_inbox::save_inbox(&app.inbox_items).unwrap();
+        inbox::save_inbox(&app.inbox_items).unwrap();
     }
 }
 
@@ -376,7 +378,7 @@ fn handle_tasks_keys(app: &mut App, key: KeyEvent) {
 
         // Enter or Esc ended the move.
         if was_moving && !app.move_state.is_moving() {
-            storage_current_tasks::save_current_tasks(&app.tasks).unwrap();
+            current_tasks::save_current_tasks(&app.tasks).unwrap();
 
             app.n_mode = NavigationMode::Normal;
             app.n_visual_start = None;
