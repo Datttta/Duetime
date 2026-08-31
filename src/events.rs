@@ -7,9 +7,8 @@ use crate::{
     InboxPopup, 
     },
 
-    ui::popup,
     storage::{current_tasks},
-    tasks, inbox,
+    tasks, inbox, popup
 };
 
 use std::io;

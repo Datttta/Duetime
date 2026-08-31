@@ -1,5 +1,4 @@
 pub mod header;
-pub mod popup;
 pub mod widgets;
 pub mod theme;
 pub mod inbox_header;
