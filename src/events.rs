@@ -8,7 +8,7 @@ use crate::{
     },
 
     storage::{current_tasks},
-    tasks, inbox, popup
+    tasks_table, inbox, popup
 };
 
 use std::io;
@@ -55,7 +55,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
             match &app.popup {
                 Popup::None => {
                     match app.focused_panel {
-                        Panel::Tasks => tasks::keys::handle_keys(app, key),
+                        Panel::Tasks => tasks_table::keys::handle_keys(app, key),
                         Panel::Inbox => inbox::keys::handle_keys(app, key),
                     }
                 }

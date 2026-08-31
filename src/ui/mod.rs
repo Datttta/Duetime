@@ -22,7 +22,7 @@ use crate::{
     ui::theme::unfocused_panel,
     ui::widgets::status_message::draw_status_message,
     navigation::vim_navigation::NavigationMode,
-    tasks, inbox,
+    tasks_table, inbox,
 };
 
 use ratatui::{
@@ -93,7 +93,7 @@ fn draw_tasks_panel(
         && app.n_mode == NavigationMode::Visual;
 
     header::draw(frame, chunks[0]);
-    tasks::ui::draw(frame, chunks[2], app, is_visual);
+    tasks_table::ui::draw(frame, chunks[2], app, is_visual);
 
     if let Popup::None = app.popup {
         let status = Paragraph::new(format!(

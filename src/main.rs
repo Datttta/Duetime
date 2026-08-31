@@ -10,7 +10,7 @@ mod events;
 mod ui;
 mod vim_text;
 mod navigation;
-mod tasks;
+mod tasks_table;
 mod stopwatch;
 mod storage;
 mod models;

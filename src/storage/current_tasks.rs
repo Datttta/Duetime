@@ -2,7 +2,7 @@ use std::fs;
 
 use crate::{
     storage::config_location::config_dir,
-    tasks::ui::{TaskInfo, TaskInfoData},
+    tasks_table::ui::{TaskInfo, TaskInfoData},
 };
 
 const FILE_NAME: &str = "current_tasks.json";
