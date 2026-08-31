@@ -2,6 +2,7 @@ pub mod header;
 pub mod widgets;
 pub mod theme;
 pub mod inbox_header;
+pub mod help;
 
 //use log::info;
 use std::time::Duration;
@@ -23,9 +24,6 @@ use crate::{
         inbox_item_info,
     },
 
-    popup::{
-        help,
-    },
     ui::theme::unfocused_panel,
     ui::widgets::status_message::draw_status_message,
     navigation::vim_navigation::NavigationMode,

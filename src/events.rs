@@ -21,8 +21,9 @@ use crate::{
         inbox_item_info,
     },
 
-    storage::{current_tasks},
-    tasks_table, inbox, popup
+    storage::current_tasks,
+    ui::help,
+    tasks_table, inbox
 };
 
 use std::io;
@@ -109,7 +110,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 }
 
                 Popup::Tasks(TasksPopup::Help) => {
-                    popup::help::handle_keys(app, key);
+                    help::handle_keys(app, key);
                 }
 
                 // INBOX POPUPS

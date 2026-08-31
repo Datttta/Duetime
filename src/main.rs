@@ -17,7 +17,6 @@ mod models;
 mod keys_help;
 mod suggestions;
 mod inbox;
-mod popup;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
