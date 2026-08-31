@@ -16,6 +16,11 @@ use crate::{
         new_preset,
     },
 
+    inbox::popups::{
+        inbox_item_add,
+        inbox_item_info,
+    },
+
     storage::{current_tasks},
     tasks_table, inbox, popup
 };
@@ -110,15 +115,15 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 // INBOX POPUPS
 
                 Popup::Inbox(InboxPopup::AddInboxItem) => {
-                    popup::inbox_item_add::handle_keys(app, key);
+                    inbox_item_add::handle_keys(app, key);
                 }
 
                 Popup::Inbox(InboxPopup::EditInboxItem) => {
-                    popup::inbox_item_add::handle_keys(app, key);
+                    inbox_item_add::handle_keys(app, key);
                 }
                 
                 Popup::Inbox(InboxPopup::InfoInboxItem) => {
-                    popup::inbox_item_info::handle_keys(app, key);
+                    inbox_item_info::handle_keys(app, key);
                 }
             }
         }

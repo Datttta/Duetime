@@ -18,10 +18,13 @@ use crate::{
         new_preset,
     },
 
+    inbox::popups::{
+        inbox_item_add,
+        inbox_item_info,
+    },
+
     popup::{
         help,
-        inbox_item_add,
-        inbox_item_info
     },
     ui::theme::unfocused_panel,
     ui::widgets::status_message::draw_status_message,
