@@ -4,7 +4,7 @@ pub mod theme;
 pub mod inbox_header;
 
 //use log::info;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
@@ -20,12 +20,13 @@ use crate::{
         inbox_item_info
     },
     ui::theme::unfocused_panel,
+    ui::widgets::status_message::draw_status_message,
     navigation::vim_navigation::NavigationMode,
     tasks, inbox,
 };
 
 use ratatui::{
-    layout::{Constraint, Layout, Rect, Alignment},
+    layout::{Constraint, Layout, Rect},
     widgets::{Block, Padding, Paragraph},
     style::{Color, Style},
     Frame,
@@ -140,35 +141,6 @@ fn draw_inbox_panel (
 
     inbox_header::draw(frame, chunks[0]);
     inbox::ui::draw(frame, chunks[2], app, is_visual);
-}
-
-fn draw_status_message(
-    frame: &mut Frame,
-    app: &mut App,
-    area: Rect,
-) {
-    let Some(message) = &app.status_message else {
-        return;
-    };
-
-    let Some(expires) = app.status_message_until else {
-        return;
-    };
-
-    if Instant::now() >= expires {
-        app.status_message = None;
-        app.status_message_until = None;
-        return;
-    }
-
-    let paragraph = Paragraph::new(message.as_str())
-        .alignment(Alignment::Right)
-        .block(
-            Block::default()
-                .padding(Padding::new(0, 2, 0, 0))
-        );
-
-    frame.render_widget(paragraph, area);
 }
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
