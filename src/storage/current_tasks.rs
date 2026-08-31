@@ -1,30 +1,25 @@
 use std::fs;
-use directories::ProjectDirs;
 
-use crate::tasks::ui::{TaskInfoData, TaskInfo};
+use crate::{
+    storage::config_location::config_dir,
+    tasks::ui::{TaskInfo, TaskInfoData},
+};
 
 const FILE_NAME: &str = "current_tasks.json";
 
 fn current_tasks_path() -> std::path::PathBuf {
-    let proj_dirs = ProjectDirs::from("", "", "Duetime")
-        .expect("Could not determine config directory");
-
-    let config_dir = proj_dirs.config_dir();
-
-    fs::create_dir_all(config_dir)
-        .expect("Could not create config directory");
-
-    config_dir.join(FILE_NAME)
+    config_dir().join(FILE_NAME)
 }
 
 pub fn save_current_tasks(
     tasks: &[TaskInfo],
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let data: Vec<TaskInfoData> = tasks.iter().map(TaskInfo::to_data).collect();
+    let data: Vec<TaskInfoData> =
+        tasks.iter().map(TaskInfo::to_data).collect();
 
     let json = serde_json::to_string_pretty(&data)?;
     fs::write(current_tasks_path(), json)?;
-    
+
     Ok(())
 }
 

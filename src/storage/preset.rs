@@ -1,20 +1,14 @@
 use std::fs;
-use directories::ProjectDirs;
 
-use crate::models::Preset;
+use crate::{
+    models::Preset,
+    storage::config_location::config_dir,
+};
 
 const FILE_NAME: &str = "presets.json";
 
 fn presets_path() -> std::path::PathBuf {
-    let proj_dirs = ProjectDirs::from("", "", "Duetime")
-        .expect("Could not determine config directory");
-
-    let config_dir = proj_dirs.config_dir();
-
-    fs::create_dir_all(config_dir)
-        .expect("Could not create config directory");
-
-    config_dir.join(FILE_NAME)
+    config_dir().join(FILE_NAME)
 }
 
 pub fn save_preset(
@@ -22,6 +16,7 @@ pub fn save_preset(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let json = serde_json::to_string_pretty(presets)?;
     fs::write(presets_path(), json)?;
+
     Ok(())
 }
 
