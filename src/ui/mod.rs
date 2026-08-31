@@ -8,6 +8,17 @@ use std::time::{Duration, Instant};
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
+    popup::{
+        task_add, 
+        presets,
+        new_preset,
+        known_tasks,
+        known_tasks_add,
+        task_info,
+        help,
+        inbox_item_add,
+        inbox_item_info
+    },
     ui::theme::unfocused_panel,
     navigation::vim_navigation::NavigationMode,
     tasks, inbox,
@@ -199,39 +210,39 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::Tasks(popup) = &app.popup {
         match popup {
             TasksPopup::AddTask => {
-                popup::task_add::draw(frame, app);
+                task_add::draw(frame, app);
             }
 
             TasksPopup::EditTask => {
-                popup::task_add::draw(frame, app);
+                task_add::draw(frame, app);
             }
 
             TasksPopup::Presets => {
-                popup::presets::draw(frame, app);
+                presets::draw(frame, app);
             }
 
             TasksPopup::NewPreset => {
-                popup::new_preset::draw(frame, app);
+                new_preset::draw(frame, app);
             }
 
             TasksPopup::KnownTasks => {
-                popup::known_tasks::draw(frame, app);
+                known_tasks::draw(frame, app);
             }
 
             TasksPopup::AddKnownTask => {
-                popup::known_tasks_add::draw(frame, app);
+                known_tasks_add::draw(frame, app);
             }
 
             TasksPopup::EditKnownTask(_) => {
-                popup::known_tasks_add::draw(frame, app);
+                known_tasks_add::draw(frame, app);
             }
 
             TasksPopup::TaskInfo => {
-                popup::task_info::draw(frame, app);
+                task_info::draw(frame, app);
             }
 
             TasksPopup::Help => {
-                popup::help::draw(frame, app);
+                help::draw(frame, app);
             }
         }
     }
@@ -240,15 +251,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if let Popup::Inbox(popup) = &app.popup {
         match popup {
             InboxPopup::AddInboxItem => {
-                popup::inbox_item_add::draw(frame, app);
+                inbox_item_add::draw(frame, app);
             }
             
             InboxPopup::EditInboxItem => {
-                popup::inbox_item_add::draw(frame, app);
+                inbox_item_add::draw(frame, app);
             }
             
             InboxPopup::InfoInboxItem => {
-                popup::inbox_item_info::draw(frame, app);
+                inbox_item_info::draw(frame, app);
             }
         }
     }
