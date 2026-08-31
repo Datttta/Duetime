@@ -67,13 +67,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
-        KeyCode::Char('c') => {
-            if app.pending_command == Some('c') {
-                app.copy_inbox_input();
-                app.pending_command = None;
-            } else {
-                app.pending_command = Some('c');
-            }
+        KeyCode::Char('y') => {
+            app.copy_inbox_input();
         }
 
         KeyCode::Char('q') => {
