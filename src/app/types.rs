@@ -17,6 +17,7 @@ pub enum Panel {
 #[derive(PartialEq, Debug)]
 pub enum Popup {
     None,
+    Help,
     Tasks(TasksPopup),
     Inbox(InboxPopup),
 }
@@ -38,7 +39,6 @@ pub enum TasksPopup {
     AddKnownTask,
     EditKnownTask(usize),
     TaskInfo,
-    Help,
 }
 
 #[derive(PartialEq)]

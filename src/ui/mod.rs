@@ -183,6 +183,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         draw_inbox_panel(frame, layout.inbox, app);
     }
 
+    //help popup
+    if let Popup::Help = app.popup {
+        help::draw(frame, app);
+    }
+
     // Tasks-panel popups
     if let Popup::Tasks(popup) = &app.popup {
         match popup {
@@ -216,10 +221,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
             TasksPopup::TaskInfo => {
                 task_info::draw(frame, app);
-            }
-
-            TasksPopup::Help => {
-                help::draw(frame, app);
             }
         }
     }

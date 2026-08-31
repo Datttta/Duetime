@@ -36,6 +36,11 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
             // Panel switching only when no popup is open
             if matches!(app.popup, Popup::None) {
+                if key.code == KeyCode::Char('?') {
+                    app.popup = Popup::Help;
+                    return Ok(());
+                }
+
                 match key.code {
                     KeyCode::Char('L') => {
                         app.focused_panel = match app.focused_panel {
@@ -51,10 +56,6 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             Panel::Tasks => Panel::Tasks,
                         };
                         return Ok(());
-                    }
-
-                    KeyCode::Char('?') => {
-                        app.popup = Popup::Tasks(TasksPopup::Help);
                     }
                     
                     KeyCode::Char('q') => {
@@ -109,7 +110,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     task_info::handle_keys(app, key);
                 }
 
-                Popup::Tasks(TasksPopup::Help) => {
+                Popup::Help => {
                     help::handle_keys(app, key);
                 }
 
