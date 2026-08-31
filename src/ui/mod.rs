@@ -8,7 +8,7 @@ pub mod help;
 use std::time::Duration;
 
 use crate::{
-    app::{App, Popup, TasksPopup, Panel, InboxPopup},
+    app::{App, Popup, TasksTablePopup, Panel, InboxPopup},
     
     tasks_table::popups::{
         task_add,
@@ -71,7 +71,7 @@ fn draw_tasks_panel(
     area: Rect, 
     app: &mut App,
 ) {
-    let border_color = if app.focused_panel == Panel::Tasks {
+    let border_color = if app.focused_panel == Panel::TasksTable {
         Color::White
     } else {
         unfocused_panel()
@@ -94,7 +94,7 @@ fn draw_tasks_panel(
     ])
     .split(inner);
 
-    let is_visual = app.focused_panel == Panel::Tasks
+    let is_visual = app.focused_panel == Panel::TasksTable
         && app.n_mode == NavigationMode::Visual;
 
     header::draw(frame, chunks[0]);
@@ -166,7 +166,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.is_change = false;
         }
 
-        app.focused_panel = Panel::Tasks;
+        app.focused_panel = Panel::TasksTable;
         draw_tasks_panel(frame, area, app);
     } else {
         //focus on previous panel
@@ -188,38 +188,38 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         help::draw(frame, app);
     }
 
-    // Tasks-panel popups
-    if let Popup::Tasks(popup) = &app.popup {
+    // TasksTable-panel popups
+    if let Popup::TasksTable(popup) = &app.popup {
         match popup {
-            TasksPopup::AddTask => {
+            TasksTablePopup::AddTask => {
                 task_add::draw(frame, app);
             }
 
-            TasksPopup::EditTask => {
+            TasksTablePopup::EditTask => {
                 task_add::draw(frame, app);
             }
 
-            TasksPopup::Presets => {
+            TasksTablePopup::Presets => {
                 presets::draw(frame, app);
             }
 
-            TasksPopup::NewPreset => {
+            TasksTablePopup::NewPreset => {
                 new_preset::draw(frame, app);
             }
 
-            TasksPopup::KnownTasks => {
+            TasksTablePopup::KnownTasks => {
                 known_tasks::draw(frame, app);
             }
 
-            TasksPopup::AddKnownTask => {
+            TasksTablePopup::AddKnownTask => {
                 known_tasks_add::draw(frame, app);
             }
 
-            TasksPopup::EditKnownTask(_) => {
+            TasksTablePopup::EditKnownTask(_) => {
                 known_tasks_add::draw(frame, app);
             }
 
-            TasksPopup::TaskInfo => {
+            TasksTablePopup::TaskInfo => {
                 task_info::draw(frame, app);
             }
         }

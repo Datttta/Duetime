@@ -28,7 +28,7 @@ pub struct App {
     pub previous_panel: Panel,
     pub is_change: bool,
 
-    // Tasks
+    // TasksTable
     pub tasks: Vec<TaskInfo>,
     pub table_state: TableState,
 
@@ -104,7 +104,7 @@ impl App {
             popup: Popup::None,
             running: true,
 
-            // Tasks
+            // TasksTable
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
@@ -146,8 +146,8 @@ impl App {
             priority: Priority::Low,
 
             // Panel
-            focused_panel: Panel::Tasks,
-            previous_panel: Panel::Tasks,
+            focused_panel: Panel::TasksTable,
+            previous_panel: Panel::TasksTable,
             is_change: true,
 
             // Help

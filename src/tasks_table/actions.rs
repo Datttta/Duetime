@@ -5,7 +5,7 @@ use crate::{
     TaskDestination, 
     NewPresetFocus, 
     SelectedInput, 
-    TasksPopup, 
+    TasksTablePopup, 
     },
 
     storage::current_tasks,
@@ -36,7 +36,7 @@ pub fn edit_task(app: &mut App) {
         app.planned_end.cursor = app.planned_end.text.len();
 
         app.mode = InputMode::Normal;
-        app.popup = Popup::Tasks(TasksPopup::EditTask);
+        app.popup = Popup::TasksTable(TasksTablePopup::EditTask);
         app.selected_input = SelectedInput::TaskName;
 
         app.pending_command = None;
@@ -62,23 +62,23 @@ pub fn add_tasks_to_preset(app: &mut App) {
 
     app.preset_name.clear();
     app.new_preset_focus = NewPresetFocus::Name;
-    app.popup = Popup::Tasks(TasksPopup::NewPreset);
+    app.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
 
     app.pending_command = None;
 }
 
 pub fn open_presets_popup(app: &mut App) {
-    app.popup = Popup::Tasks(TasksPopup::Presets);
+    app.popup = Popup::TasksTable(TasksTablePopup::Presets);
 }
 
 pub fn task_info(app: &mut App) {
     if app.table_state.selected().is_some() {
-        app.popup = Popup::Tasks(TasksPopup::TaskInfo);
+        app.popup = Popup::TasksTable(TasksTablePopup::TaskInfo);
     }
 }
 
 pub fn open_known_tasks(app: &mut App) {
-    app.popup = Popup::Tasks(TasksPopup::KnownTasks);
+    app.popup = Popup::TasksTable(TasksTablePopup::KnownTasks);
 }
 
 pub fn delete_task(app: &mut App) {

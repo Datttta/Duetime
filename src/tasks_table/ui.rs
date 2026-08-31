@@ -86,7 +86,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
 
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open || app.focused_panel != Panel::Tasks {
+    let highlight_style = if popup_open || app.focused_panel != Panel::TasksTable {
         Style::default()
     } else if app.move_state.is_moving() {
         Style::default()

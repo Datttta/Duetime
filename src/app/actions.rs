@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use crate::{
     vim_text::{InputMode},
-    app::{NewPresetFocus, Popup, TasksPopup, TaskDestination, SelectedInput, Priority},
+    app::{NewPresetFocus, Popup, TasksTablePopup, TaskDestination, SelectedInput, Priority},
     tasks_table::ui::TaskInfo,
     models::{TaskTemplate, Preset},
     storage::{current_tasks, preset},
@@ -21,7 +21,7 @@ impl App {
 
         self.selected_input = SelectedInput::TaskName;
         self.mode = InputMode::Insert;
-        self.popup = Popup::Tasks(TasksPopup::AddTask);
+        self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
     }
 
     pub fn create_preset(&mut self) {
@@ -29,7 +29,7 @@ impl App {
         self.preset_tasks.clear();
 
         self.mode = InputMode::Insert;
-        self.popup = Popup::Tasks(TasksPopup::NewPreset);
+        self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
         self.new_preset_focus = NewPresetFocus::Name;
     }
 
@@ -44,7 +44,7 @@ impl App {
 
             self.preset_tasks = preset.tasks.clone();
 
-            self.popup = Popup::Tasks(TasksPopup::NewPreset);
+            self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             self.mode = InputMode::Normal;
             self.new_preset_focus = NewPresetFocus::Name;
         }
@@ -52,7 +52,7 @@ impl App {
 
     pub fn edit_preset_task(&mut self) {
         if let Some(index) = self.preset_task_state.selected() {
-            self.popup = Popup::Tasks(TasksPopup::AddTask);
+            self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
 
             self.task_destination = TaskDestination::EditPresetTask(index);
 
@@ -74,7 +74,7 @@ impl App {
     pub fn add_known_task(&mut self) {
         self.known_task_name.clear();
         self.mode = InputMode::Insert;
-        self.popup = Popup::Tasks(TasksPopup::AddKnownTask);
+        self.popup = Popup::TasksTable(TasksTablePopup::AddKnownTask);
     }
 
     pub fn edit_known_task(&mut self) {
@@ -85,7 +85,7 @@ impl App {
 
             self.known_task_name.text = suggestion.name.clone();
             self.mode = InputMode::Insert;
-            self.popup = Popup::Tasks(TasksPopup::EditKnownTask(index))
+            self.popup = Popup::TasksTable(TasksTablePopup::EditKnownTask(index))
         }
     }
 
@@ -115,7 +115,7 @@ impl App {
 
 
                 self.mode = InputMode::Normal;
-                self.popup = Popup::Tasks(TasksPopup::NewPreset);
+                self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             }
 
             TaskDestination::AddTask => {
@@ -152,7 +152,7 @@ impl App {
                     task.name = self.task_name.text.clone();
                     task.planned_start = Some(self.planned_start.text.clone());
                     task.planned_end = Some(self.planned_end.text.clone());
-                    self.popup = Popup::Tasks(TasksPopup::NewPreset);
+                    self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
                 }
             }
 
@@ -187,7 +187,7 @@ impl App {
         }
 
         self.preset_name.clear();
-        self.popup = Popup::Tasks(TasksPopup::Presets);
+        self.popup = Popup::TasksTable(TasksTablePopup::Presets);
 
         self.task_name.clear();
         self.planned_start.clear();
@@ -207,7 +207,7 @@ impl App {
             }
 
             TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
-                self.popup = Popup::Tasks(TasksPopup::NewPreset);
+                self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             }
         }
     }

@@ -52,7 +52,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         ]),
 
         Line::from(""),
-        Line::from("Tasks"),
+        Line::from("TasksTable"),
         Line::from(""),
 
         Line::from(vec![

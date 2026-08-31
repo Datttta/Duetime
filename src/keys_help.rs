@@ -1,4 +1,4 @@
-use crate::app::{App, Popup, TasksPopup, InboxPopup};
+use crate::app::{App, Popup, TasksTablePopup, InboxPopup};
 use ratatui::{
     style::{Modifier, Style},
     text::{Line, Span},
@@ -8,11 +8,11 @@ pub fn keys(app: &App) -> Line<'static> {
     let bold = Style::default().add_modifier(Modifier::BOLD);
 
     match &app.popup {
-        Popup::Tasks(
-            TasksPopup::AddTask
-            | TasksPopup::EditTask
-            | TasksPopup::AddKnownTask
-            | TasksPopup::EditKnownTask(_)
+        Popup::TasksTable(
+            TasksTablePopup::AddTask
+            | TasksTablePopup::EditTask
+            | TasksTablePopup::AddKnownTask
+            | TasksTablePopup::EditKnownTask(_)
         ) => {
             Line::from(vec![
                 Span::styled("Enter", bold),
@@ -22,7 +22,7 @@ pub fn keys(app: &App) -> Line<'static> {
             ])
         }
 
-        Popup::Tasks(TasksPopup::Presets) => {
+        Popup::TasksTable(TasksTablePopup::Presets) => {
             Line::from(vec![
                 Span::styled("a", bold),
                 Span::raw(" Add preset  "),
@@ -37,7 +37,7 @@ pub fn keys(app: &App) -> Line<'static> {
             ])
         }
 
-        Popup::Tasks(TasksPopup::NewPreset) => {
+        Popup::TasksTable(TasksTablePopup::NewPreset) => {
             Line::from(vec![
                 Span::styled("a", bold),
                 Span::raw(" Add Task  "),
@@ -52,7 +52,7 @@ pub fn keys(app: &App) -> Line<'static> {
             ])
         }
 
-        Popup::Tasks(TasksPopup::KnownTasks) => {
+        Popup::TasksTable(TasksTablePopup::KnownTasks) => {
             Line::from(vec![
                 Span::styled("a", bold),
                 Span::raw(" Add Task  "),

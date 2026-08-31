@@ -10,7 +10,7 @@ pub enum Priority {
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Panel {
-    Tasks,
+    TasksTable,
     Inbox,
 }
 
@@ -18,7 +18,7 @@ pub enum Panel {
 pub enum Popup {
     None,
     Help,
-    Tasks(TasksPopup),
+    TasksTable(TasksTablePopup),
     Inbox(InboxPopup),
 }
 
@@ -30,7 +30,7 @@ pub enum InboxPopup {
 }
 
 #[derive(PartialEq, Debug)]
-pub enum TasksPopup {
+pub enum TasksTablePopup {
     AddTask,
     Presets,
     EditTask,

@@ -9,7 +9,7 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputMode, InputResult},
-    app::{App, Popup, TasksPopup},
+    app::{App, Popup, TasksTablePopup},
     models::KnownTask,
     keys_help,
 };
@@ -71,7 +71,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
 pub fn save_known_task(app: &mut App) {
     match app.popup {
-        Popup::Tasks(TasksPopup::AddKnownTask) => {
+        Popup::TasksTable(TasksTablePopup::AddKnownTask) => {
             let id = app.next_id;
             app.next_id += 1;
 
@@ -84,7 +84,7 @@ pub fn save_known_task(app: &mut App) {
             }
         }
 
-        Popup::Tasks(TasksPopup::EditKnownTask(index)) => {
+        Popup::TasksTable(TasksTablePopup::EditKnownTask(index)) => {
             if let Some(task) = app.known_tasks.get_mut(index) {
                 task.name = app.known_task_name.text.clone();
             }
@@ -96,7 +96,7 @@ pub fn save_known_task(app: &mut App) {
     crate::storage::known_tasks::save_known_tasks(&app.known_tasks).unwrap();
 
     app.known_task_name.clear();
-    app.popup = Popup::Tasks(TasksPopup::KnownTasks)
+    app.popup = Popup::TasksTable(TasksTablePopup::KnownTasks)
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
@@ -111,7 +111,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Esc => {
             if app.mode == InputMode::Normal {
-                app.popup = Popup::Tasks(TasksPopup::KnownTasks)
+                app.popup = Popup::TasksTable(TasksTablePopup::KnownTasks)
             }
         }
 

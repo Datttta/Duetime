@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
-    app::{App, Popup, TaskDestination, NewPresetFocus, TasksPopup},
+    app::{App, Popup, TaskDestination, NewPresetFocus, TasksTablePopup},
     ui::widgets::{input},
     vim_text::InputMode,
     navigation::{
@@ -226,7 +226,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             }
 
                             KeyCode::Esc => {
-                                app.popup = Popup::Tasks(TasksPopup::Presets);
+                                app.popup = Popup::TasksTable(TasksTablePopup::Presets);
                             }
 
                             _ => {}
@@ -273,7 +273,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
 
                         KeyCode::Char('q') => {
-                            app.popup = Popup::Tasks(TasksPopup::Presets);
+                            app.popup = Popup::TasksTable(TasksTablePopup::Presets);
                         }
 
                         _ => {}
