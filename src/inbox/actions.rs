@@ -8,7 +8,7 @@ use crate::{
     },
 
     storage::inbox,
-    vim_navigation::NavigationMode,
+    navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
 };
 

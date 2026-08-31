@@ -10,7 +10,7 @@ use std::time::{Duration, Instant};
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
     ui::theme::unfocused_panel,
-    vim_navigation::NavigationMode,
+    navigation::vim_navigation::NavigationMode,
     tasks, inbox,
 };
 

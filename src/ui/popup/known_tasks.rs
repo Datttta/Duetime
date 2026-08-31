@@ -7,7 +7,7 @@ use ratatui::{
 
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::vim_navigation;
+use crate::navigation::vim_navigation;
 use crate::keys_help;
 use crate::app::{App, Popup};
 

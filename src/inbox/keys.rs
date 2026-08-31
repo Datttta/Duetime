@@ -1,6 +1,6 @@
 use crate::{
     app::App,
-    vim_navigation,
+    navigation::vim_navigation,
 };
 
 use super::actions;

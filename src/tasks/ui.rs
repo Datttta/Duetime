@@ -3,7 +3,7 @@ use crate::{
     stopwatch::{Stopwatch, StopwatchData},
     ui::widgets::input::ellipsize,
     ui::theme::task_selection_color,
-    move_items::MoveTarget
+    navigation::move_items::MoveTarget
 };
 
 use ratatui::{

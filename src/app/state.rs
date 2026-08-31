@@ -4,11 +4,11 @@ use crate::{
     app::{Popup, SelectedInput, TaskDestination, NewPresetFocus, InboxSelectedFeature, Priority, Panel},
     storage::{current_tasks, known_tasks, preset, inbox},
     vim_text::{InputState, InputMode},
-    vim_navigation::NavigationMode,
+    navigation::vim_navigation::NavigationMode,
     tasks::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
     models::{TaskTemplate, Preset, KnownTask},
-    move_items::MoveState,
+    navigation::move_items::MoveState,
 };
 
 use std::time::{Duration, Instant};

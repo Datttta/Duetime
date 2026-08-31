@@ -4,10 +4,12 @@ use crate::{
     app::{App, Popup, TaskDestination, NewPresetFocus, TasksPopup},
     ui::widgets::{input},
     vim_text::InputMode,
-    vim_navigation::NavigationMode,
-    move_items::MoveTarget,
-    move_items,
-    vim_navigation,
+    navigation::{
+        vim_navigation::NavigationMode,
+        move_items::MoveTarget,
+        move_items,
+        vim_navigation,
+    },
     keys_help,
 };
 

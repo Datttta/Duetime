@@ -8,7 +8,7 @@ use ratatui::{
 use crate::{
     app::{App, Popup},
     keys_help,
-    vim_navigation,
+    navigation,
 };
 
 use crossterm::event::{KeyCode, KeyEvent};
@@ -66,7 +66,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let mut selected = app.preset_state.selected();
 
-    if vim_navigation::handle(
+    if navigation::vim_navigation::handle(
         key,
         &mut app.pending_command,
         &mut selected,

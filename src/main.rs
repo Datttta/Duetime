@@ -9,14 +9,13 @@ mod app;
 mod events;
 mod ui;
 mod vim_text;
-mod vim_navigation;
+mod navigation;
 mod tasks;
 mod stopwatch;
 mod storage;
 mod models;
 mod keys_help;
 mod suggestions;
-mod move_items;
 mod inbox;
 
 fn main() -> io::Result<()> {

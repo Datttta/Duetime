@@ -9,11 +9,13 @@ use crate::{
     },
 
     storage::current_tasks,
-    vim_navigation::NavigationMode,
     vim_text::InputMode,
-    move_items::MoveTarget,
     models::TaskTemplate,
-    move_items,
+    navigation::{
+        move_items::MoveTarget,
+        vim_navigation::NavigationMode,
+        move_items,
+    },
 };
 
 use std::time::SystemTime;

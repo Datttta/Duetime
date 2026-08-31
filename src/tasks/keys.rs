@@ -5,9 +5,11 @@ use crate::{
     },
 
     storage::{current_tasks},
-    vim_navigation::NavigationMode,
-    vim_navigation,
-    move_items,
+    navigation::{
+        vim_navigation::NavigationMode,
+        vim_navigation,
+        move_items,
+    },
 };
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
