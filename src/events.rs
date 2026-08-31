@@ -7,6 +7,15 @@ use crate::{
     InboxPopup, 
     },
 
+    tasks_table::popups::{
+        task_add,
+        task_info,
+        known_tasks,
+        known_tasks_add,
+        presets,
+        new_preset,
+    },
+
     storage::{current_tasks},
     tasks_table, inbox, popup
 };
@@ -63,35 +72,35 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 // TASKS POPUPS
 
                 Popup::Tasks(TasksPopup::AddTask) => {
-                    popup::task_add::handle_keys(app, key);
+                    task_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::EditTask) => {
-                    popup::task_add::handle_keys(app, key);
+                    task_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::Presets) => {
-                    popup::presets::handle_keys(app, key);
+                    presets::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::NewPreset) => {
-                    popup::new_preset::handle_keys(app, key);
+                    new_preset::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::KnownTasks) => {
-                    popup::known_tasks::handle_keys(app, key);
+                    known_tasks::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::AddKnownTask) => {
-                    popup::known_tasks_add::handle_keys(app, key);
+                    known_tasks_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::EditKnownTask(_)) => {
-                    popup::known_tasks_add::handle_keys(app, key);
+                    known_tasks_add::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::TaskInfo) => {
-                    popup::task_info::handle_keys(app, key);
+                    task_info::handle_keys(app, key);
                 }
 
                 Popup::Tasks(TasksPopup::Help) => {

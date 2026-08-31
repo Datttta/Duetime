@@ -8,13 +8,17 @@ use std::time::Duration;
 
 use crate::{
     app::{App, Popup, TasksPopup, Panel, InboxPopup},
-    popup::{
-        task_add, 
+    
+    tasks_table::popups::{
+        task_add,
+        task_info, 
+        known_tasks,
+        known_tasks_add, 
         presets,
         new_preset,
-        known_tasks,
-        known_tasks_add,
-        task_info,
+    },
+
+    popup::{
         help,
         inbox_item_add,
         inbox_item_info
