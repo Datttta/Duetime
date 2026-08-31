@@ -12,7 +12,7 @@ use crate::{
     ui::widgets::input,
     vim_text::{InputResult, InputMode},
     app::{App, Popup, InboxPopup, InboxSelectedFeature, Priority},
-    inbox::InboxItemInfo,
+    inbox::ui::InboxItemInfo,
     keys_help,
 };
 

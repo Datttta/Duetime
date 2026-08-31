@@ -82,7 +82,7 @@ fn draw_tasks_panel(
         && app.n_mode == NavigationMode::Visual;
 
     header::draw(frame, chunks[0]);
-    tasks::draw(frame, chunks[2], app, is_visual);
+    tasks::ui::draw(frame, chunks[2], app, is_visual);
 
     if let Popup::None = app.popup {
         let status = Paragraph::new(format!(
@@ -129,7 +129,7 @@ fn draw_inbox_panel (
         && app.n_mode == NavigationMode::Visual;
 
     inbox_header::draw(frame, chunks[0]);
-    inbox::draw(frame, chunks[2], app, is_visual);
+    inbox::ui::draw(frame, chunks[2], app, is_visual);
 }
 
 fn draw_status_message(

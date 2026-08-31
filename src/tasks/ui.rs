@@ -180,7 +180,7 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     );
 }
 
-fn format_time(time: Option<SystemTime>) -> String {
+pub fn format_time(time: Option<SystemTime>) -> String {
     match time {
         Some(t) => {
             let datetime: DateTime<Local> = t.into();

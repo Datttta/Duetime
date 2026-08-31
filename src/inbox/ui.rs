@@ -121,4 +121,3 @@ pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
         &mut app.inbox_table_state,
     );
 }
-

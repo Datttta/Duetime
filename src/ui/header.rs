@@ -1,5 +1,3 @@
-// header.rs
-
 use ratatui::{
     layout::{Constraint, Flex, Layout, Rect},
     widgets::Paragraph,

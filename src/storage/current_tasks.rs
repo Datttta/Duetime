@@ -1,8 +1,7 @@
 use std::fs;
 use directories::ProjectDirs;
 
-use crate::tasks::TaskInfoData;
-use crate::tasks::TaskInfo;
+use crate::tasks::ui::{TaskInfoData, TaskInfo};
 
 const FILE_NAME: &str = "current_tasks.json";
 

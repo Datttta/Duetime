@@ -5,8 +5,8 @@ use crate::{
     storage::{current_tasks, known_tasks, preset, inbox},
     vim_text::{InputState, InputMode},
     vim_navigation::NavigationMode,
-    tasks::TaskInfo,
-    inbox::InboxItemInfo,
+    tasks::ui::TaskInfo,
+    inbox::ui::InboxItemInfo,
     models::{TaskTemplate, Preset, KnownTask},
     move_items::MoveState,
 };
