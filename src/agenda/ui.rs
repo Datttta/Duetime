@@ -17,10 +17,10 @@ use ratatui::{
 
 use serde::{Deserialize, Serialize};
 
-pub fn draw_agenda_panel (
+pub fn draw_agenda_panel(
     frame: &mut Frame,
     area: Rect,
-    app: &mut App
+    app: &mut App,
 ) {
     let border_color = if app.focused_panel == Panel::Agenda {
         Color::White
@@ -35,28 +35,20 @@ pub fn draw_agenda_panel (
         .title(" Agenda ")
         .border_style(Style::default().fg(border_color))
         .padding(Padding::new(0, 0, 1, 0));
-    
+
     let inner = border.inner(area);
 
     frame.render_widget(border, area);
 
-    draw(frame, inner, app, is_visual);
-}
-
-pub fn draw(
-    frame: &mut Frame,
-    area: Rect,
-    app: &mut App,
-    is_visual: bool,
-    ) {
     let chunks = Layout::vertical([
         Constraint::Length(1), // Today
         Constraint::Min(0),    // Today events
         Constraint::Length(1), // Upcoming
         Constraint::Min(0),    // Upcoming events
     ])
-    .split(area);
+    .split(inner);
 
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
+
     frame.render_widget(Paragraph::new("Upcoming"), chunks[2]);
 }
