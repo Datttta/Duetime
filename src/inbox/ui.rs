@@ -56,16 +56,6 @@ impl Priority {
 }
 
 pub fn header_draw (frame: &mut Frame, area: Rect) {
-    let columns = Layout::horizontal([
-        Constraint::Percentage(2), // extra
-        Constraint::Percentage(78), // Item    
-        Constraint::Percentage(20), // Priority
-    ])
-    .flex(Flex::Start)
-    .split(area);
-
-    frame.render_widget(Paragraph::new("Item"), columns[1]);
-    frame.render_widget(Paragraph::new("Priority"), columns[2]);
 }
 
 pub fn draw_inbox_panel (
@@ -98,7 +88,19 @@ pub fn draw_inbox_panel (
     let is_visual = app.focused_panel == Panel::Inbox
         && app.n_mode == NavigationMode::Visual;
 
-    header_draw(frame, chunks[0]);
+    // header
+    let columns = Layout::horizontal([
+        Constraint::Percentage(2), // extra
+        Constraint::Percentage(78), // Item    
+        Constraint::Percentage(20), // Priority
+    ])
+    .flex(Flex::Start)
+    .split(chunks[0]);
+
+    frame.render_widget(Paragraph::new("Item"), columns[1]);
+    frame.render_widget(Paragraph::new("Priority"), columns[2]);
+    
+    // draw
     draw(frame, chunks[2], app, is_visual);
 }
 
