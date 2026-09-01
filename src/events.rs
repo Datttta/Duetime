@@ -23,7 +23,7 @@ use crate::{
 
     storage::current_tasks,
     ui::help,
-    tasks_table, inbox
+    tasks_table, inbox, agenda
 };
 
 use std::io;
@@ -46,6 +46,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         app.focused_panel = match app.focused_panel {
                             Panel::TasksTable => Panel::Inbox,
                             Panel::Inbox => Panel::Inbox,
+                            Panel::Agenda => Panel::Agenda,
                         };
                         return Ok(());
                     }
@@ -53,6 +54,25 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     KeyCode::Char('H') => {
                         app.focused_panel = match app.focused_panel {
                             Panel::Inbox => Panel::TasksTable,
+                            Panel::TasksTable => Panel::TasksTable,
+                            Panel::Agenda => Panel::TasksTable,
+                        };
+                        return Ok(());
+                    }
+                    
+                    KeyCode::Char('J') => {
+                        app.focused_panel = match app.focused_panel {
+                            Panel::Inbox => Panel::Agenda,
+                            Panel::Agenda => Panel::Agenda,
+                            Panel::TasksTable => Panel::TasksTable,
+                        };
+                        return Ok(());
+                    }
+                    
+                    KeyCode::Char('K') => {
+                        app.focused_panel = match app.focused_panel {
+                            Panel::Agenda => Panel::Inbox,
+                            Panel::Inbox => Panel::Inbox,
                             Panel::TasksTable => Panel::TasksTable,
                         };
                         return Ok(());
@@ -73,6 +93,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     match app.focused_panel {
                         Panel::TasksTable => tasks_table::keys::handle_keys(app, key),
                         Panel::Inbox => inbox::keys::handle_keys(app, key),
+                        Panel::Agenda => {},
                     }
                 }
 

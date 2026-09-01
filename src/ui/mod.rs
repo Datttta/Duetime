@@ -27,7 +27,7 @@ use crate::{
     ui::theme::unfocused_panel,
     ui::widgets::status_message::draw_status_message,
     navigation::vim_navigation::NavigationMode,
-    tasks_table, inbox,
+    tasks_table, inbox, agenda
 };
 
 use ratatui::{
@@ -40,6 +40,7 @@ use ratatui::{
 struct MainLayout {
     tasks: Rect,
     inbox: Rect,
+    agenda: Rect,
 }
 
 fn format_duration(duration: Duration) -> String {
@@ -60,9 +61,16 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     ])
     .split(frame.area());
 
+    let right = Layout::vertical([
+        Constraint::Percentage(50),
+        Constraint::Percentage(50),
+    ])
+    .split(chunks[2]);
+
     MainLayout {
         tasks: chunks[0],
-        inbox: chunks[2],
+        inbox: right[0],
+        agenda: right[1],
     }
 }
 
@@ -148,6 +156,32 @@ fn draw_inbox_panel (
     inbox::ui::draw(frame, chunks[2], app, is_visual);
 }
 
+fn draw_agenda_panel (
+    frame: &mut Frame,
+    area: Rect,
+    app: &mut App
+) {
+    let border_color = if app.focused_panel == Panel::Agenda {
+        Color::White
+    } else {
+        unfocused_panel()
+    };
+
+    let is_visual = app.focused_panel == Panel::Agenda
+        && app.n_mode == NavigationMode::Visual;
+
+    let border = Block::bordered()
+        .title(" Agenda ")
+        .border_style(Style::default().fg(border_color))
+        .padding(Padding::new(0, 0, 1, 0));
+    
+    let inner = border.inner(area);
+
+    frame.render_widget(border, area);
+
+    agenda::ui::draw(frame, inner, app, is_visual);
+}
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
 
@@ -181,6 +215,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         // draw panels
         draw_tasks_panel(frame, layout.tasks, app);
         draw_inbox_panel(frame, layout.inbox, app);
+        draw_agenda_panel(frame, layout.agenda, app);
     }
 
     //help popup

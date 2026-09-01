@@ -17,7 +17,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
-        .title("Known TasksTable")
+        .title("Known Tasks")
         .padding(Padding::new(1,1,0,0));
 
     frame.render_widget(&block, area);

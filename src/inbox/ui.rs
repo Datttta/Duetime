@@ -54,7 +54,12 @@ impl Priority {
     }
 }
 
-pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
+pub fn draw(
+    frame: &mut Frame,
+    area: Rect,
+    app: &mut App,
+    is_visual: bool,
+    ) {
     let columns = [
         Constraint::Percentage(82), // inbox input
         Constraint::Percentage(18), // priority (still don't now if i add it)

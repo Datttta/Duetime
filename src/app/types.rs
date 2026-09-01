@@ -12,6 +12,7 @@ pub enum Priority {
 pub enum Panel {
     TasksTable,
     Inbox,
+    Agenda,
 }
 
 #[derive(PartialEq, Debug)]
