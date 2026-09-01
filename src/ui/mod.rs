@@ -19,9 +19,12 @@ use crate::{
         new_preset,
     },
 
-    inbox::popups::{
-        inbox_item_add,
-        inbox_item_info,
+    inbox::{
+        ui::draw_inbox_panel,
+        popups::{
+            inbox_item_add,
+            inbox_item_info,
+        },
     },
 
     ui::theme::unfocused_panel,
@@ -122,39 +125,6 @@ fn draw_tasks_panel(
     }
 }
 
-fn draw_inbox_panel (
-    frame: &mut Frame,
-    area: Rect,
-    app: &mut App
-) {
-    let border_color = if app.focused_panel == Panel::Inbox {
-        Color::White
-    } else {
-        unfocused_panel()
-    };
-
-    let border = Block::bordered()
-        .title(" Inbox ")
-        .border_style(Style::default().fg(border_color))
-        .padding(Padding::new(0, 0, 1, 0));
-    
-    let inner = border.inner(area);
-
-    frame.render_widget(border, area);
-
-    let chunks = Layout::vertical ([
-        Constraint::Length(1), // header
-        Constraint::Length(1), // spacing
-        Constraint::Min(0),    // tasks
-    ])
-    .split(inner);
-
-    let is_visual = app.focused_panel == Panel::Inbox
-        && app.n_mode == NavigationMode::Visual;
-
-    inbox_header::draw(frame, chunks[0]);
-    inbox::ui::draw(frame, chunks[2], app, is_visual);
-}
 
 fn draw_agenda_panel (
     frame: &mut Frame,

@@ -1,14 +1,15 @@
 use crate::{
     ui::{
         widgets::input::ellipsize,
-        theme::task_selection_color,
+        theme::{task_selection_color, unfocused_panel},
     },
     app::{App, Popup, Panel, Priority},
+    navigation::vim_navigation::NavigationMode,
 };
 
 use ratatui::{
-    layout::{Constraint, Rect},
-    widgets::{Row, Table, Cell},
+    layout::{Constraint, Rect, Layout, Flex},
+    widgets::{Row, Table, Cell, Paragraph, Padding, Block},
     style::{Style, Color},
     text::Line,
     Frame,
@@ -52,6 +53,53 @@ impl Priority {
             Priority::High => "HIGH",
         }
     }
+}
+
+pub fn header_draw (frame: &mut Frame, area: Rect) {
+    let columns = Layout::horizontal([
+        Constraint::Percentage(2), // extra
+        Constraint::Percentage(78), // Item    
+        Constraint::Percentage(20), // Priority
+    ])
+    .flex(Flex::Start)
+    .split(area);
+
+    frame.render_widget(Paragraph::new("Item"), columns[1]);
+    frame.render_widget(Paragraph::new("Priority"), columns[2]);
+}
+
+pub fn draw_inbox_panel (
+    frame: &mut Frame,
+    area: Rect,
+    app: &mut App
+) {
+    let border_color = if app.focused_panel == Panel::Inbox {
+        Color::White
+    } else {
+        unfocused_panel()
+    };
+
+    let border = Block::bordered()
+        .title(" Inbox ")
+        .border_style(Style::default().fg(border_color))
+        .padding(Padding::new(0, 0, 1, 0));
+    
+    let inner = border.inner(area);
+
+    frame.render_widget(border, area);
+
+    let chunks = Layout::vertical ([
+        Constraint::Length(1), // header
+        Constraint::Length(1), // spacing
+        Constraint::Min(0),    // tasks
+    ])
+    .split(inner);
+
+    let is_visual = app.focused_panel == Panel::Inbox
+        && app.n_mode == NavigationMode::Visual;
+
+    header_draw(frame, chunks[0]);
+    draw(frame, chunks[2], app, is_visual);
 }
 
 pub fn draw(
