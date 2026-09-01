@@ -1,23 +1,30 @@
 use crate::{
     app::{App, Popup, Panel},
     stopwatch::{Stopwatch, StopwatchData},
-    ui::widgets::input::ellipsize,
-    ui::theme::task_selection_color,
-    navigation::move_items::MoveTarget
+    ui::{
+        theme::{task_selection_color, unfocused_panel},
+        widgets::{
+            input::ellipsize,
+            duration::format_duration,
+        },
+    },
+    navigation::{
+        move_items::MoveTarget,
+        vim_navigation::NavigationMode,
+    },
 };
 
 use ratatui::{
-    layout::{Constraint, Rect, Alignment},
-    widgets::{Row, Table, Cell},
-    style::{Style, Color},
+    layout::{Alignment, Constraint, Flex, Layout, Rect},
+    widgets::{Block, Cell, Padding, Paragraph, Row, Table},
+    style::{Color, Style},
     text::Line,
     Frame,
 };
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use std::time::SystemTime;
-
+use std::time::{Duration, SystemTime};
 
 #[derive(Default)]
 pub struct TaskInfo {
@@ -68,7 +75,77 @@ impl TaskInfo {
     }
 }
 
-pub fn draw(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
+pub fn draw_tasks_panel(
+    frame: &mut Frame,
+    area: Rect, 
+    app: &mut App,
+) {
+    let border_color = if app.focused_panel == Panel::TasksTable {
+        Color::White
+    } else {
+        unfocused_panel()
+    };
+
+    let border = Block::bordered()
+        .title(" Tasks ")
+        .border_style(Style::default().fg(border_color))
+        .padding(Padding::new(0, 0, 1, 0));
+
+    let inner = border.inner(area);
+
+    frame.render_widget(border, area);
+
+    let chunks = Layout::vertical ([
+        Constraint::Length(1), // header
+        Constraint::Length(1), // spacing
+        Constraint::Min(0),    // tasks
+        Constraint::Length(2), // footer
+    ])
+    .split(inner);
+    
+    // header
+    let columns = Layout::horizontal([
+        Constraint::Length(11), // extra
+        Constraint::Length(16), // TO-DO: 5    
+        Constraint::Length(11), // Status: 6 
+        Constraint::Length(15), // Plan start: 10 
+        Constraint::Length(13), // Plan end: 8 
+        Constraint::Length(13), // Act start: 8 
+        Constraint::Length(11), // Act end: 6 
+        Constraint::Length(7),  // Elapsed: 7 
+    ])
+    .flex(Flex::Start)
+    .split(chunks[0]);
+
+    frame.render_widget(Paragraph::new("TO-DO"), columns[1]);
+    frame.render_widget(Paragraph::new("Status"), columns[2]);
+    frame.render_widget(Paragraph::new("Plan start"), columns[3]);
+    frame.render_widget(Paragraph::new("Plan end"), columns[4]);
+    frame.render_widget(Paragraph::new("Act start"), columns[5]);
+    frame.render_widget(Paragraph::new("Act end"), columns[6]);
+    frame.render_widget(Paragraph::new("Elapsed"), columns[7]);
+    ////
+
+    let is_visual = app.focused_panel == Panel::TasksTable
+        && app.n_mode == NavigationMode::Visual;
+
+    draw_tasks(frame, chunks[2], app, is_visual);
+
+    if let Popup::None = app.popup {
+        let status = Paragraph::new(format!(
+                " Total elapsed {}",
+                format_duration(app.total_elapsed())
+        ))
+        .block(
+            Block::default()
+                .padding(Padding::new(2, 0, 0, 0))
+        );
+
+        frame.render_widget(status, chunks[3]);
+    }
+}
+
+pub fn draw_tasks(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
     let columns = [
         Constraint::Length(24), // task name
         Constraint::Length(11), // status

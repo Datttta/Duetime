@@ -9,13 +9,16 @@ use std::time::Duration;
 use crate::{
     app::{App, Popup, TasksTablePopup, Panel, InboxPopup},
     
-    tasks_table::popups::{
-        task_add,
-        task_info, 
-        known_tasks,
-        known_tasks_add, 
-        presets,
-        new_preset,
+    tasks_table::{
+        ui::draw_tasks_panel,
+        popups::{
+            task_add,
+            task_info, 
+            known_tasks,
+            known_tasks_add, 
+            presets,
+            new_preset,
+        }
     },
 
     inbox::{
@@ -49,16 +52,6 @@ struct MainLayout {
     agenda: Rect,
 }
 
-fn format_duration(duration: Duration) -> String {
-    let total_seconds = duration.as_secs();
-
-    let hours = total_seconds / 3600;
-    let minutes = (total_seconds % 3600) / 60;
-    let seconds = total_seconds % 60;
-
-    format!("{:02}:{:02}:{:02}", hours, minutes, seconds)
-}
-
 fn draw_layout(frame: &mut Frame) -> MainLayout {
     let chunks = Layout::horizontal([
         Constraint::Percentage(50),
@@ -80,53 +73,6 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     }
 }
 
-fn draw_tasks_panel(
-    frame: &mut Frame,
-    area: Rect, 
-    app: &mut App,
-) {
-    let border_color = if app.focused_panel == Panel::TasksTable {
-        Color::White
-    } else {
-        unfocused_panel()
-    };
-
-    let border = Block::bordered()
-        .title(" Tasks ")
-        .border_style(Style::default().fg(border_color))
-        .padding(Padding::new(0, 0, 1, 0));
-
-    let inner = border.inner(area);
-
-    frame.render_widget(border, area);
-
-    let chunks = Layout::vertical ([
-        Constraint::Length(1), // header
-        Constraint::Length(1), // spacing
-        Constraint::Min(0),    // tasks
-        Constraint::Length(2), // footer
-    ])
-    .split(inner);
-
-    let is_visual = app.focused_panel == Panel::TasksTable
-        && app.n_mode == NavigationMode::Visual;
-
-    header::draw(frame, chunks[0]);
-    tasks_table::ui::draw(frame, chunks[2], app, is_visual);
-
-    if let Popup::None = app.popup {
-        let status = Paragraph::new(format!(
-                " Total elapsed {}",
-                format_duration(app.total_elapsed())
-        ))
-        .block(
-            Block::default()
-                .padding(Padding::new(2, 0, 0, 0))
-        );
-
-        frame.render_widget(status, chunks[3]);
-    }
-}
 
 
 

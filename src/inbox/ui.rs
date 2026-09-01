@@ -55,9 +55,6 @@ impl Priority {
     }
 }
 
-pub fn header_draw (frame: &mut Frame, area: Rect) {
-}
-
 pub fn draw_inbox_panel (
     frame: &mut Frame,
     area: Rect,
@@ -101,10 +98,10 @@ pub fn draw_inbox_panel (
     frame.render_widget(Paragraph::new("Priority"), columns[2]);
     
     // draw
-    draw(frame, chunks[2], app, is_visual);
+    draw_items(frame, chunks[2], app, is_visual);
 }
 
-pub fn draw(
+pub fn draw_items (
     frame: &mut Frame,
     area: Rect,
     app: &mut App,
