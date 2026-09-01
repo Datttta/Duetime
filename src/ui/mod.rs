@@ -1,7 +1,6 @@
 pub mod header;
 pub mod widgets;
 pub mod theme;
-pub mod inbox_header;
 pub mod help;
 
 //use log::info;
@@ -25,6 +24,10 @@ use crate::{
             inbox_item_add,
             inbox_item_info,
         },
+    },
+
+    agenda::{
+        ui::draw_agenda_panel,
     },
 
     ui::theme::unfocused_panel,
@@ -126,31 +129,6 @@ fn draw_tasks_panel(
 }
 
 
-fn draw_agenda_panel (
-    frame: &mut Frame,
-    area: Rect,
-    app: &mut App
-) {
-    let border_color = if app.focused_panel == Panel::Agenda {
-        Color::White
-    } else {
-        unfocused_panel()
-    };
-
-    let is_visual = app.focused_panel == Panel::Agenda
-        && app.n_mode == NavigationMode::Visual;
-
-    let border = Block::bordered()
-        .title(" Agenda ")
-        .border_style(Style::default().fg(border_color))
-        .padding(Padding::new(0, 0, 1, 0));
-    
-    let inner = border.inner(area);
-
-    frame.render_widget(border, area);
-
-    agenda::ui::draw(frame, inner, app, is_visual);
-}
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
