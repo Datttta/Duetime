@@ -109,7 +109,7 @@ pub fn draw_items (
     ) {
     let columns = [
         Constraint::Percentage(82), // inbox input
-        Constraint::Percentage(18), // priority (still don't now if i add it)
+        Constraint::Percentage(18), // priority 
     ];
 
     let visual_start = app.n_visual_start;

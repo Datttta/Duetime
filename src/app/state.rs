@@ -45,6 +45,9 @@ pub struct App {
     pub inbox_selected_feature: InboxSelectedFeature,
     pub priority: Priority,
 
+    // Agenda
+    pub agenda_table_state: TableState,
+
     // Presets
     pub presets: Vec<Preset>,
     pub preset_state: ListState,
@@ -113,6 +116,16 @@ impl App {
             tasks: current_tasks::load_current_tasks(),
             table_state,
 
+            // Inbox
+            inbox_item: InputState::default(),
+            inbox_items: inbox::load_inbox(),
+            inbox_table_state,
+            inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
+            priority: Priority::Low,
+
+            // Agenda
+            agenda_table_state: InputState::default(),
+            
             // Navigation
             n_mode: NavigationMode::Normal,
             n_visual_start: Some(0),
@@ -137,13 +150,6 @@ impl App {
 
             // Move
             move_state: MoveState::default(),
-
-            // Inbox
-            inbox_item: InputState::default(),
-            inbox_items: inbox::load_inbox(),
-            inbox_table_state,
-            inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
-            priority: Priority::Low,
 
             // Panel
             focused_panel: Panel::TasksTable,

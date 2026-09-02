@@ -145,7 +145,12 @@ pub fn draw_tasks_panel(
     }
 }
 
-pub fn draw_tasks(frame: &mut Frame, area: Rect, app: &mut App, is_visual: bool) {
+pub fn draw_tasks(
+    frame: &mut Frame,
+    area: Rect, 
+    app: &mut App, 
+    is_visual: bool
+    ) {
     let columns = [
         Constraint::Length(24), // task name
         Constraint::Length(11), // status
