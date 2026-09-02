@@ -1,8 +1,8 @@
 use crate::{
     ui::{
-        theme::{unfocused_panel},
+        theme::{unfocused_panel, task_selection_color},
     },
-    app::{App, Panel},
+    app::{App, Panel, Popup},
 };
 
 use ratatui::{

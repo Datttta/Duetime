@@ -101,6 +101,9 @@ impl App {
         let mut inbox_table_state = TableState::default();
         inbox_table_state.select(Some(0));
 
+        let mut agenda_table_state = TableState::default();
+        agenda_table_state.select(Some(0));
+
         Self {
             // Core
             pending_command: None,
@@ -124,7 +127,7 @@ impl App {
             priority: Priority::Low,
 
             // Agenda
-            agenda_table_state: InputState::default(),
+            agenda_table_state,
             
             // Navigation
             n_mode: NavigationMode::Normal,
