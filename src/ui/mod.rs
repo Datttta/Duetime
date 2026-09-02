@@ -1,10 +1,8 @@
-pub mod header;
 pub mod widgets;
 pub mod theme;
 pub mod help;
 
 //use log::info;
-use std::time::Duration;
 
 use crate::{
     app::{App, Popup, TasksTablePopup, Panel, InboxPopup},
@@ -33,16 +31,11 @@ use crate::{
         ui::draw_agenda_panel,
     },
 
-    ui::theme::unfocused_panel,
     ui::widgets::status_message::draw_status_message,
-    navigation::vim_navigation::NavigationMode,
-    tasks_table, inbox, agenda
 };
 
 use ratatui::{
     layout::{Constraint, Layout, Rect},
-    widgets::{Block, Padding, Paragraph},
-    style::{Color, Style},
     Frame,
 };
 
@@ -72,9 +65,6 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
         agenda: right[1],
     }
 }
-
-
-
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();

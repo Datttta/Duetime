@@ -1,21 +1,16 @@
 use crate::{
     ui::{
-        widgets::input::ellipsize,
-        theme::{task_selection_color, unfocused_panel},
+        theme::{unfocused_panel},
     },
-    app::{App, Popup, Panel, Priority},
-    navigation::vim_navigation::NavigationMode,
+    app::{App, Panel},
 };
 
 use ratatui::{
-    layout::{Constraint, Rect, Layout, Flex},
-    widgets::{Row, Table, Cell, Paragraph, Padding, Block},
+    layout::{Constraint, Rect, Layout},
+    widgets::{Paragraph, Padding, Block},
     style::{Style, Color},
-    text::Line,
     Frame,
 };
-
-use serde::{Deserialize, Serialize};
 
 pub fn draw_agenda_panel(
     frame: &mut Frame,
@@ -27,9 +22,6 @@ pub fn draw_agenda_panel(
     } else {
         unfocused_panel()
     };
-
-    let is_visual = app.focused_panel == Panel::Agenda
-        && app.n_mode == NavigationMode::Visual;
 
     let border = Block::bordered()
         .title(" Agenda ")
