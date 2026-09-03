@@ -75,6 +75,16 @@ impl TaskInfo {
     }
 }
 
+pub fn format_time(time: Option<SystemTime>) -> String {
+    match time {
+        Some(t) => {
+            let datetime: DateTime<Local> = t.into();
+            datetime.format("%H:%M").to_string()
+        }
+        None => "".to_string(),
+    }
+}
+
 pub fn draw_tasks_panel(
     frame: &mut Frame,
     area: Rect, 
@@ -149,7 +159,7 @@ pub fn draw_tasks(
     frame: &mut Frame,
     area: Rect, 
     app: &mut App, 
-    is_visual: bool
+    is_visual: bool,
     ) {
     let columns = [
         Constraint::Length(24), // task name
@@ -260,14 +270,4 @@ pub fn draw_tasks(
         area,
         &mut app.table_state,
     );
-}
-
-pub fn format_time(time: Option<SystemTime>) -> String {
-    match time {
-        Some(t) => {
-            let datetime: DateTime<Local> = t.into();
-            datetime.format("%H:%M").to_string()
-        }
-        None => "".to_string(),
-    }
 }
