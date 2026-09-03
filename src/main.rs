@@ -4,6 +4,7 @@ use std::{
 };
 use simplelog::{LevelFilter, WriteLogger}; 
 use crate::app::App;
+use chrono::{NaiveDate, NaiveTime, Local};
 
 mod app;
 mod events;
@@ -32,6 +33,15 @@ fn main() -> io::Result<()> {
     );
 
     while app.running {
+        let today = Local::now().date_naive();
+
+        if today != app.last_agenda_update {
+            agenda::actions::remove_expired_events(&mut app.events);
+            app.last_agenda_update = today;
+
+            crate::storage::agenda::save_agenda(&app.events).unwrap();
+        }
+
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
         
         if first_render {

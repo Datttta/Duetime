@@ -13,6 +13,8 @@ use crate::{
 };
 
 use std::time::{Duration, Instant};
+use chrono::{NaiveDate, NaiveTime, Local};
+
 pub struct App {
     // Core
     pub running: bool,
@@ -69,6 +71,7 @@ pub struct App {
     pub selected_suggestion: usize,
 
     // Misc
+    pub last_agenda_update: NaiveDate,
     pub move_state: MoveState,
     pub help_scroll: u16,
     pub next_id: u64,
@@ -154,18 +157,15 @@ impl App {
             selected_suggestion: 0,
             known_tasks: known_tasks::load_known_tasks(),
 
-            // Move
-            move_state: MoveState::default(),
-
             // Panel
             focused_panel: Panel::TasksTable,
             previous_panel: Panel::TasksTable,
             is_change: true,
 
-            // Help
+            // Misc
+            last_agenda_update: Local::now().date_naive(),
+            move_state: MoveState::default(),
             help_scroll: 0,
-
-            // Other
             next_id: 1,
 
             // Clipboard / status
