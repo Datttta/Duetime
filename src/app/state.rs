@@ -2,7 +2,7 @@ use ratatui::widgets::{TableState, ListState};
 
 use crate::{
     app::{Popup, SelectedInput, TaskDestination, NewPresetFocus, InboxSelectedFeature, Priority, Panel},
-    storage::{current_tasks, known_tasks, preset, inbox, agenda_events},
+    storage::{current_tasks, known_tasks, preset, inbox, agenda},
     vim_text::{InputState, InputMode},
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
@@ -129,6 +129,7 @@ impl App {
             priority: Priority::Low,
 
             // Agenda
+            events: agenda::load_agenda(),
             agenda_table_state,
             
             // Navigation

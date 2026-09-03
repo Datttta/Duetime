@@ -16,6 +16,7 @@ use crate::{
 };
 
 use chrono::{NaiveDate, NaiveTime, Local};
+use serde::{Deserialize, Serialize};
 use super::actions;
 
 #[derive(Default)]
@@ -26,7 +27,7 @@ pub struct AgendaEvent {
     pub repeat: bool,
 }
 
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct AgendaEventData {
     pub name: String,
     pub date: NaiveDate,
@@ -38,9 +39,9 @@ impl AgendaEvent {
     pub fn to_data(&self) -> AgendaEventData {
         AgendaEventData {
             name: self.name.clone(),
-            date: self.date.clone(),
-            time: self.time.clone(),
-            repeat: self.repeat.clone(),
+            date: self.date,
+            time: self.time,
+            repeat: self.repeat,
         }
     }
 
