@@ -171,7 +171,7 @@ fn close_popup(app: &mut App) {
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match app.agenda_selected_input {
         AgendaSelectedInput::Name => {
-            let result = app.inbox_item.handle_key(key, &mut app.mode, usize::MAX);
+            let result = app.event.handle_vim_mode(key, &mut app.mode, usize::MAX);
 
             match result {
                 InputResult::Consumed => return,

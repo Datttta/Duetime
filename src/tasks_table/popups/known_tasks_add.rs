@@ -101,7 +101,7 @@ pub fn save_known_task(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    if app.known_task_name.handle_key(key, &mut app.mode, (KNOWN_TASK_NAME_WIDTH - 6).into()) != InputResult::Ignored {
+    if app.known_task_name.handle_vim_mode(key, &mut app.mode, (KNOWN_TASK_NAME_WIDTH - 6).into()) != InputResult::Ignored {
         return;
     }
 

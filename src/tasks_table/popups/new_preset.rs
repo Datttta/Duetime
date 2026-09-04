@@ -234,7 +234,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
                     }
 
-                    app.preset_name.handle_key(key, &mut app.mode, (PRESET_NAME_WIDTH - 4).into());
+                    app.preset_name.handle_vim_mode(key, &mut app.mode, (PRESET_NAME_WIDTH - 4).into());
                 }
 
                 NewPresetFocus::Tasks => {

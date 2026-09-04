@@ -174,15 +174,15 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     let result = match app.tasks_selected_input {
         TaskSelectedInput::TaskName => {
-            app.task_name.handle_key(key, &mut app.mode, usize::MAX)
+            app.task_name.handle_vim_mode(key, &mut app.mode, usize::MAX)
         }
 
         TaskSelectedInput::PlannedStart => {
-            app.planned_start.handle_key(key, &mut app.mode, 5)
+            app.planned_start.handle_vim_mode(key, &mut app.mode, 5)
         }
 
         TaskSelectedInput::PlannedEnd => {
-            app.planned_end.handle_key(key, &mut app.mode, 5)
+            app.planned_end.handle_vim_mode(key, &mut app.mode, 5)
         }
     };
 

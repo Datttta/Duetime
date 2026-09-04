@@ -30,7 +30,7 @@ impl Default for InputState {
 }
 
 impl InputState {
-    pub fn handle_key(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) -> InputResult {
+    pub fn handle_vim_mode(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) -> InputResult {
         match *mode {
             InputMode::Normal => self.handle_normal(key, mode),
             InputMode::Insert => self.handle_insert(key, mode, max_len),
