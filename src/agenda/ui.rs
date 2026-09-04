@@ -32,6 +32,11 @@ pub struct AgendaEvent {
     pub repeat: bool,
 }
 
+pub enum AgendaSection {
+    Today,
+    Upcoming,
+}
+
 #[derive(Default, Serialize, Deserialize)]
 pub struct AgendaEventData {
     pub name: String,
@@ -200,14 +205,30 @@ pub fn draw_agenda_panel(
     .split(inner);
 
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
-
     frame.render_widget(Paragraph::new("Upcoming"), chunks[2]);
+
+    draw_events(
+        frame,
+        chunks[1],
+        app,
+        AgendaSection::Today,
+        false,
+    );
+
+    draw_events(
+        frame,
+        chunks[3],
+        app,
+        AgendaSection::Upcoming,
+        false,
+    );
 }
 
 pub fn draw_events (
     frame: &mut Frame,
     area: Rect, 
     app: &mut App, 
+    section: AgendaSection,
     is_visual: bool
     ) {
     let columns = [
@@ -221,11 +242,11 @@ pub fn draw_events (
 
     let visual_start = app.n_visual_start;
     let visual_mode = is_visual; 
-    let current = app.agenda_tasks_table_state.selected();
+    let current = app.agenda_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open || app.focused_panel != Panel::TasksTable {
+    let highlight_style = if popup_open || app.focused_panel != Panel::Agenda {
         Style::default()
     } else if app.move_state.is_moving() {
         Style::default()
@@ -289,6 +310,6 @@ pub fn draw_events (
     frame.render_stateful_widget(
         table,
         area,
-        &mut app.agenda_tasks_table_state,
+        &mut app.agenda_table_state,
     );
 }

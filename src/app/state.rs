@@ -61,7 +61,7 @@ pub struct App {
     // Agenda
     pub event: InputState,
     pub events: Vec<AgendaEvent>,
-    pub agenda_tasks_table_state: TableState,
+    pub agenda_table_state: TableState,
     pub agenda_selected_input: AgendaSelectedInput,
     pub event_date: DateTimeInput,
     pub event_time: DateTimeInput,
@@ -121,8 +121,8 @@ impl App {
         let mut inbox_tasks_table_state = TableState::default();
         inbox_tasks_table_state.select(Some(0));
 
-        let mut agenda_tasks_table_state = TableState::default();
-        agenda_tasks_table_state.select(Some(0));
+        let mut agenda_table_state = TableState::default();
+        agenda_table_state.select(Some(0));
 
         let today = Local::now().date_naive();
 
@@ -163,7 +163,7 @@ impl App {
             // Agenda
             event: InputState::default(),
             events: agenda::load_agenda(),
-            agenda_tasks_table_state,
+            agenda_table_state,
             agenda_selected_input: AgendaSelectedInput::Name,
             event_date,
             event_time,

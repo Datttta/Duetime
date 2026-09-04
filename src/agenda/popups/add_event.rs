@@ -106,47 +106,66 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 }
 
 pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    let name = app.event.text.trim().to_string();
+    match app.popup {
+        Popup::Agenda(AgendaPopup::AddEvent) => {
+            let name = app.event.text.trim().to_string();
 
-    if name.is_empty() {
-        app.set_status_message("Event name cannot be empty.".to_string());
-        return Ok(());
-    }
-
-    let date = match NaiveDate::parse_from_str(
-        &app.event_date.value,
-        "%d-%m-%y",
-    ) {
-        Ok(date) => date,
-        Err(_) => {
-            app.set_status_message("Invalid date.".to_string());
-            return Ok(());
-        }
-    };
-
-    let time = if app.event_time.value == "--:--" {
-        None
-    } else {
-        match NaiveTime::parse_from_str(
-            &app.event_time.value,
-            "%H:%M",
-        ) {
-            Ok(time) => Some(time),
-            Err(_) => {
-                app.set_status_message("Invalid time.".to_string());
+            if name.is_empty() {
+                app.set_status_message("Event name cannot be empty.".to_string());
                 return Ok(());
             }
+
+            let date = match NaiveDate::parse_from_str(
+                &app.event_date.value,
+                "%d-%m-%y",
+            ) {
+                Ok(date) => date,
+                Err(_) => {
+                    app.set_status_message("Invalid date.".to_string());
+                    return Ok(());
+                }
+            };
+
+            let time = if app.event_time.value == "--:--" {
+                None
+            } else {
+                match NaiveTime::parse_from_str(
+                    &app.event_time.value,
+                    "%H:%M",
+                ) {
+                    Ok(time) => Some(time),
+                    Err(_) => {
+                        app.set_status_message("Invalid time.".to_string());
+                        return Ok(());
+                    }
+                }
+            };
+
+            let event = AgendaEvent {
+                name: name.clone(),
+                date,
+                time,
+                repeat: app.event_repeat,
+            };
+
+            app.events.push(event);
+
+            app.events.sort_by(|a, b| {
+                a.date
+                    .cmp(&b.date)
+                    .then_with(|| a.time.cmp(&b.time))
+            });
+
+            if let Some(index) = app.events
+                .iter()
+                .position(|event| event.name == name)
+            {
+                app.agenda_table_state.select(Some(index));
+            }
         }
-    };
 
-    let event = AgendaEvent {
-        name,
-        date,
-        time,
-        repeat: app.event_repeat,
-    };
-
-    app.events.push(event);
+        _ => {}
+    }
 
     storage::agenda::save_agenda(&app.events).unwrap();
 
@@ -179,7 +198,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 InputResult::TextChanged => {}
             }
         }
-
 
         AgendaSelectedInput::Date => {
             match key.code {

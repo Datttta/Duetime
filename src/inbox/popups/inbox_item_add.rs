@@ -135,7 +135,7 @@ fn save_inbox_item(app: &mut App) {
 
             app.inbox_items.sort_by_key(|item| App::priority_rank(item.priority));
 
-            // Find the newly created item after sorting.
+            // selected created item by the item name/title
             if let Some(index) = app.inbox_items
                 .iter()
                 .position(|item| item.input == input)
