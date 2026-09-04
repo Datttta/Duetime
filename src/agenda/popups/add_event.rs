@@ -124,7 +124,7 @@ pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
-    let time = if app.event_time.value == "00:00" {
+    let time = if app.event_time.value == "--:--" {
         None
     } else {
         match NaiveTime::parse_from_str(

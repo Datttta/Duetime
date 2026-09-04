@@ -124,16 +124,16 @@ impl App {
         let mut agenda_tasks_table_state = TableState::default();
         agenda_tasks_table_state.select(Some(0));
 
-        let year = Local::now().format("%y").to_string();
+        let today = Local::now().date_naive();
 
         let event_date = DateTimeInput {
-            value: format!("00-00-{}", Local::now().format("%y")),
+            value: today.format("%d-%m-%y").to_string(),
             cursor: 0,
             editable_positions: &DATE_EDITABLE_POSITIONS,
         };
 
         let event_time = DateTimeInput {
-            value: "00:00".to_string(),
+            value: "--:--".to_string(),
             cursor: 0,
             editable_positions: TIME_EDITABLE_POSITIONS,
         };

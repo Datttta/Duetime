@@ -26,12 +26,8 @@ pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
 pub fn add_event(app: &mut App) {
     app.event.clear();
 
-    app.event_date.value = format!("00-00-{}", chrono::Local::now().format("%y"));
     app.event_date.cursor = 0;
-
-    app.event_time.value = "00:00".to_string();
     app.event_time.cursor = 0;
-
     app.event_repeat = false;
 
     app.mode = InputMode::Insert;
