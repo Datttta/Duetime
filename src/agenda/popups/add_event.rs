@@ -180,6 +180,43 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
+
+        AgendaSelectedInput::Date => {
+            match key.code {
+                KeyCode::Char(c) if c.is_ascii_digit() => {
+                    app.event_date.insert_digit(c);
+                }
+
+                KeyCode::Char('h') => {
+                    app.event_date.move_left();
+                }
+
+                KeyCode::Char('l') => {
+                    app.event_date.move_right();
+                }
+
+                _ => {}
+            }
+        }
+
+        AgendaSelectedInput::Time => {
+            match key.code {
+                KeyCode::Char(c) if c.is_ascii_digit() => {
+                    app.event_time.insert_digit(c);
+                }
+
+                KeyCode::Char('h') => {
+                    app.event_time.move_left();
+                }
+
+                KeyCode::Char('l') => {
+                    app.event_time.move_right();
+                }
+
+                _ => {}
+            }
+        }
+
         AgendaSelectedInput::Repeat => {
             match key.code {
                 KeyCode::Char(' ') | KeyCode::Enter => {
@@ -196,12 +233,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Tab | KeyCode::Char('j') => {
-            if key.code == KeyCode::Char('j') && app.mode == InputMode::Insert {
-                return
-            };
-
             app.agenda_selected_input = match app.agenda_selected_input {
-                AgendaSelectedInput::Name => AgendaSelectedInput::Date,
+                AgendaSelectedInput::Name if app.mode != InputMode::Insert => AgendaSelectedInput::Date,
+                AgendaSelectedInput::Name => AgendaSelectedInput::Name,
                 AgendaSelectedInput::Date => AgendaSelectedInput::Time,
                 AgendaSelectedInput::Time => AgendaSelectedInput::Repeat,
                 AgendaSelectedInput::Repeat => AgendaSelectedInput::Name
@@ -209,11 +243,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::BackTab | KeyCode::Char('k') => {
-            if key.code == KeyCode::Char('k') && app.mode == InputMode::Insert {
-                return
-            };
 
             app.agenda_selected_input = match app.agenda_selected_input {
+                AgendaSelectedInput::Name if app.mode != InputMode::Insert => AgendaSelectedInput::Repeat,
                 AgendaSelectedInput::Name => AgendaSelectedInput::Repeat,
                 AgendaSelectedInput::Repeat => AgendaSelectedInput::Time,
                 AgendaSelectedInput::Time => AgendaSelectedInput::Date,
