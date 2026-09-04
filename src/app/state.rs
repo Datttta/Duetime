@@ -17,7 +17,7 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
-    agenda::ui::{AgendaEvent, DateInput},
+    agenda::ui::{AgendaEvent, DateTimeInput, TIME_EDITABLE_POSITIONS, DATE_EDITABLE_POSITIONS},
     models::{TaskTemplate, Preset, KnownTask},
     navigation::move_items::MoveState,
 };
@@ -63,7 +63,8 @@ pub struct App {
     pub events: Vec<AgendaEvent>,
     pub agenda_tasks_table_state: TableState,
     pub agenda_selected_input: AgendaSelectedInput,
-    pub event_date: DateInput,
+    pub date_input: DateTimeInput,
+    pub time_input: DateTimeInput,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -124,9 +125,16 @@ impl App {
 
         let year = Local::now().format("%y").to_string();
 
-        let event_date = DateInput {
-            value: format!("00-00-{}", year),
+        let date_input = DateTimeInput {
+            value: format!("00-00-{}", Local::now().format("%y")),
             cursor: 0,
+            editable_positions: &DATE_EDITABLE_POSITIONS,
+        };
+
+        let time_input = DateTimeInput {
+            value: "00:00".to_string(),
+            cursor: 0,
+            editable_positions: TIME_EDITABLE_POSITIONS,
         };
 
         Self {
@@ -156,6 +164,8 @@ impl App {
             events: agenda::load_agenda(),
             agenda_tasks_table_state,
             agenda_selected_input: AgendaSelectedInput::Name,
+            date_input,
+            time_input,
             
             // Navigation
             n_mode: NavigationMode::Normal,

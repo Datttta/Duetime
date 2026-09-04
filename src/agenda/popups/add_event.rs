@@ -16,6 +16,8 @@ use crate::{
     keys_help,
 };
 
+use super::ui;
+
 const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -76,13 +78,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         true,
     );
 
-    input::draw(
+    ui::draw_date_input(
         frame,
         input[1],
-        &app.event,
-        app.data_input,
+        &app.event_date,
         app.agenda_selected_input == AgendaSelectedInput::Date,
-        app.mode,
-        false,
-    )
+    );
 }

@@ -1,25 +1,28 @@
 use ratatui::{
     layout::{Alignment, Constraint, Layout, Rect},
     widgets::{Block, Cell, Padding, Paragraph, Row, Table},
-    style::{Color, Style},
-    text::Line,
+    style::{Color, Style, Modifier},
+    text::{Line, Span},
     Frame,
 };
 
 use crate::{
     app::{App, Panel, Popup},
-    navigation::vim_navigation::NavigationMode,
+    
     ui::{
         theme::{task_selection_color, unfocused_panel},
         widgets::input::ellipsize,
     },
+    
+    navigation::vim_navigation::NavigationMode,
 };
 
 use chrono::{NaiveDate, NaiveTime, Local};
 use serde::{Deserialize, Serialize};
 use super::actions;
 
-const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
+pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
+pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
 
 #[derive(Default)]
 pub struct AgendaEvent {
@@ -37,30 +40,59 @@ pub struct AgendaEventData {
     pub repeat: bool,
 }
 
-pub struct DateInput {
+pub struct DateTimeInput {
     pub value: String,
     pub cursor: usize,
+    pub editable_positions: &'static [usize],
 }
 
-impl DateInput {
+pub fn draw_date_input(
+    frame: &mut Frame,
+    area: Rect,
+    date_input: &DateTimeInput,
+    selected: bool,
+) {
+    let mut spans = Vec::new();
+
+    for (index, character) in date_input.value.chars().enumerate() {
+        let mut style = Style::default();
+
+        if selected && index == date_input.cursor {
+            style = style
+                .fg(Color::Black)
+                .bg(Color::White)
+                .add_modifier(Modifier::BOLD);
+        }
+
+        spans.push(Span::styled(character.to_string(), style));
+    }
+
+    let paragraph = Paragraph::new(Line::from(spans));
+
+    frame.render_widget(paragraph, area);
+}
+
+impl DateTimeInput {
     pub fn move_left(&mut self) {
-        if let Some(position) = EDITABLE_POSITIONS
+        if let Some(position) = self
+            .editable_positions
             .iter()
             .position(|&pos| pos == self.cursor)
         {
             if position > 0 {
-                self.cursor = EDITABLE_POSITIONS[position - 1];
+                self.cursor = self.editable_positions[position - 1];
             }
         }
     }
 
     pub fn move_right(&mut self) {
-        if let Some(position) = EDITABLE_POSITIONS
+        if let Some(position) = self
+            .editable_positions
             .iter()
             .position(|&pos| pos == self.cursor)
         {
-            if position + 1 < EDITABLE_POSITIONS.len() {
-                self.cursor = EDITABLE_POSITIONS[position + 1];
+            if position + 1 < self.editable_positions.len() {
+                self.cursor = self.editable_positions[position + 1];
             }
         }
     }
