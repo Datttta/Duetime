@@ -178,7 +178,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 InputResult::Ignored => {}
                 InputResult::TextChanged => {}
             }
+        }
 
+        AgendaSelectedInput::Repeat => {
             match key.code {
                 KeyCode::Char(' ') | KeyCode::Enter => {
                     app.event_repeat = !app.event_repeat;
@@ -186,12 +188,39 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                 _ => {}
             }
+
         }
 
         _ => {}
     }
 
     match key.code {
+        KeyCode::Tab | KeyCode::Char('j') => {
+            if key.code == KeyCode::Char('j') && app.mode == InputMode::Insert {
+                return
+            };
+
+            app.agenda_selected_input = match app.agenda_selected_input {
+                AgendaSelectedInput::Name => AgendaSelectedInput::Date,
+                AgendaSelectedInput::Date => AgendaSelectedInput::Time,
+                AgendaSelectedInput::Time => AgendaSelectedInput::Repeat,
+                AgendaSelectedInput::Repeat => AgendaSelectedInput::Name
+            }
+        }
+
+        KeyCode::BackTab | KeyCode::Char('k') => {
+            if key.code == KeyCode::Char('k') && app.mode == InputMode::Insert {
+                return
+            };
+
+            app.agenda_selected_input = match app.agenda_selected_input {
+                AgendaSelectedInput::Name => AgendaSelectedInput::Repeat,
+                AgendaSelectedInput::Repeat => AgendaSelectedInput::Time,
+                AgendaSelectedInput::Time => AgendaSelectedInput::Date,
+                AgendaSelectedInput::Date => AgendaSelectedInput::Name,
+            }
+        }
+
         KeyCode::Enter => {
             save_event(app);
         }
