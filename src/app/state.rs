@@ -1,7 +1,17 @@
 use ratatui::widgets::{TableState, ListState};
 
 use crate::{
-    app::{Popup, TaskSelectedInput, TaskDestination, NewPresetFocus, InboxSelectedInput, Priority, Panel},
+    app::{
+        Popup,
+        TaskSelectedInput,
+        TaskDestination,
+        NewPresetFocus,
+        InboxSelectedInput,
+        Priority,
+        Panel,
+        AgendaSelectedInput
+    },
+
     storage::{current_tasks, known_tasks, preset, inbox, agenda},
     vim_text::{InputState, InputMode},
     navigation::vim_navigation::NavigationMode,
@@ -38,7 +48,7 @@ pub struct App {
     pub task_name: InputState,
     pub planned_start: InputState,
     pub planned_end: InputState,
-    pub selected_input: TaskSelectedInput,
+    pub tasks_selected_input: TaskSelectedInput,
 
     // Inbox
     pub inbox_items: Vec<InboxItemInfo>,
@@ -51,6 +61,7 @@ pub struct App {
     // Agenda
     pub events: Vec<AgendaEvent>,
     pub agenda_tasks_table_state: TableState,
+    pub agenda_selected_input: AgendaSelectedInput,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -119,7 +130,7 @@ impl App {
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
-            selected_input: TaskSelectedInput::TaskName,
+            tasks_selected_input: TaskSelectedInput::TaskName,
 
             tasks: current_tasks::load_current_tasks(),
             tasks_table_state,
@@ -134,6 +145,7 @@ impl App {
             // Agenda
             events: agenda::load_agenda(),
             agenda_tasks_table_state,
+            agenda_selected_input: AgendaSelectedInput::Name,
             
             // Navigation
             n_mode: NavigationMode::Normal,

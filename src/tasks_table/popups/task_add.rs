@@ -92,7 +92,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         tasks_colums[0],
         &app.task_name,
         "Task name",
-        app.selected_input == TaskSelectedInput::TaskName,
+        app.tasks_selected_input == TaskSelectedInput::TaskName,
         app.mode,
     );
 
@@ -101,7 +101,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         tasks_colums[2],
         &app.planned_start,
         "planned start (e.g. 14:00)",
-        app.selected_input == TaskSelectedInput::PlannedStart,
+        app.tasks_selected_input == TaskSelectedInput::PlannedStart,
         app.mode,
     );
 
@@ -112,7 +112,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         tasks_colums[4],
         &app.planned_end,
         "planned end (e.g. 15:00)",
-        app.selected_input == TaskSelectedInput::PlannedEnd,
+        app.tasks_selected_input == TaskSelectedInput::PlannedEnd,
         app.mode,
     );
 }
@@ -128,7 +128,7 @@ fn update_suggestions(app: &mut App) {
 }
 
 fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
-    if app.selected_input != TaskSelectedInput::TaskName {
+    if app.tasks_selected_input != TaskSelectedInput::TaskName {
         return false;
     }
 
@@ -169,7 +169,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         return;
     }
 
-    let result = match app.selected_input {
+    let result = match app.tasks_selected_input {
         TaskSelectedInput::TaskName => {
             app.task_name.handle_key(key, &mut app.mode, usize::MAX)
         }
@@ -185,7 +185,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match result {
         InputResult::TextChanged => {
-            if app.selected_input == TaskSelectedInput::TaskName {
+            if app.tasks_selected_input == TaskSelectedInput::TaskName {
                 update_suggestions(app);
             }
             return;
@@ -205,7 +205,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Tab => {
-            app.selected_input = match app.selected_input {
+            app.tasks_selected_input = match app.tasks_selected_input {
                 TaskSelectedInput::TaskName => TaskSelectedInput::PlannedStart,
                 TaskSelectedInput::PlannedStart => TaskSelectedInput::PlannedEnd,
                 TaskSelectedInput::PlannedEnd => TaskSelectedInput::TaskName
@@ -213,7 +213,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::BackTab => {
-            app.selected_input = match app.selected_input {
+            app.tasks_selected_input = match app.tasks_selected_input {
                 TaskSelectedInput::TaskName => TaskSelectedInput::PlannedEnd,
                 TaskSelectedInput::PlannedEnd => TaskSelectedInput::PlannedStart,
                 TaskSelectedInput::PlannedStart => TaskSelectedInput::TaskName

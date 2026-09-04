@@ -19,7 +19,7 @@ impl App {
         self.planned_start.clear();
         self.planned_end.clear();
 
-        self.selected_input = TaskSelectedInput::TaskName;
+        self.tasks_selected_input = TaskSelectedInput::TaskName;
         self.mode = InputMode::Insert;
         self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
     }
@@ -67,7 +67,7 @@ impl App {
             self.planned_end.cursor = self.planned_end.text.len();
 
             self.mode = InputMode::Normal;
-            self.selected_input = TaskSelectedInput::TaskName;
+            self.tasks_selected_input = TaskSelectedInput::TaskName;
         }
     }
 

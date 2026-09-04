@@ -55,7 +55,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     ])
     .split(inner);
 
-    let item_features = Layout::vertical([
+    let inputs = Layout::vertical([
         Constraint::Length(3), // event name
         Constraint::Length(1), // event date
         Constraint::Length(1), // event time
@@ -64,5 +64,23 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical[0]);
 
-    let focused = app.agenda_selected_feature == AgendaSelectedInput::InboxItemInput;
+
+    input::draw(
+        frame,
+        inputs[0],
+        &app.inbox_item,
+        "event...",
+        app.agenda_selected_input == AgendaSelectedInput::Name,
+        app.mode,
+    );
+    
+    input::draw(
+        frame,
+        inputs[0],
+        &app.inbox_item,
+        "event...",
+        app.agenda_selected_input == AgendaSelectedInput::Name,
+        app.mode,
+    );
+
 }

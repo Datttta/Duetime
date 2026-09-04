@@ -37,7 +37,7 @@ pub fn edit_task(app: &mut App) {
 
         app.mode = InputMode::Normal;
         app.popup = Popup::TasksTable(TasksTablePopup::EditTask);
-        app.selected_input = TaskSelectedInput::TaskName;
+        app.tasks_selected_input = TaskSelectedInput::TaskName;
 
         app.pending_command = None;
     }
