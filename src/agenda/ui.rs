@@ -19,6 +19,8 @@ use chrono::{NaiveDate, NaiveTime, Local};
 use serde::{Deserialize, Serialize};
 use super::actions;
 
+const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
+
 #[derive(Default)]
 pub struct AgendaEvent {
     pub name: String,
@@ -33,6 +35,46 @@ pub struct AgendaEventData {
     pub date: NaiveDate,
     pub time: Option<NaiveTime>,
     pub repeat: bool,
+}
+
+pub struct DateInput {
+    pub value: String,
+    pub cursor: usize,
+}
+
+impl DateInput {
+    pub fn move_left(&mut self) {
+        if let Some(position) = EDITABLE_POSITIONS
+            .iter()
+            .position(|&pos| pos == self.cursor)
+        {
+            if position > 0 {
+                self.cursor = EDITABLE_POSITIONS[position - 1];
+            }
+        }
+    }
+
+    pub fn move_right(&mut self) {
+        if let Some(position) = EDITABLE_POSITIONS
+            .iter()
+            .position(|&pos| pos == self.cursor)
+        {
+            if position + 1 < EDITABLE_POSITIONS.len() {
+                self.cursor = EDITABLE_POSITIONS[position + 1];
+            }
+        }
+    }
+
+    pub fn insert_digit(&mut self, digit: char) {
+        if !digit.is_ascii_digit() {
+            return;
+        }
+
+        self.value
+            .replace_range(self.cursor..self.cursor + 1, &digit.to_string());
+
+        self.move_right();
+    }
 }
 
 impl AgendaEvent {
@@ -183,7 +225,6 @@ pub fn draw_events (
     let table = Table::new(rows, columns)
         .highlight_symbol("> ")
         .row_highlight_style(highlight_style);
-
 
     frame.render_stateful_widget(
         table,

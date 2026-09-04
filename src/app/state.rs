@@ -17,7 +17,7 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
-    agenda::ui::AgendaEvent,
+    agenda::ui::{AgendaEvent, DateInput},
     models::{TaskTemplate, Preset, KnownTask},
     navigation::move_items::MoveState,
 };
@@ -59,9 +59,11 @@ pub struct App {
     pub priority: Priority,
 
     // Agenda
+    pub event: InputState,
     pub events: Vec<AgendaEvent>,
     pub agenda_tasks_table_state: TableState,
     pub agenda_selected_input: AgendaSelectedInput,
+    pub event_date: DateInput,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -120,6 +122,13 @@ impl App {
         let mut agenda_tasks_table_state = TableState::default();
         agenda_tasks_table_state.select(Some(0));
 
+        let year = Local::now().format("%y").to_string();
+
+        let event_date = DateInput {
+            value: format!("00-00-{}", year),
+            cursor: 0,
+        };
+
         Self {
             // Core
             pending_command: None,
@@ -143,6 +152,7 @@ impl App {
             priority: Priority::Low,
 
             // Agenda
+            event: InputState::default(),
             events: agenda::load_agenda(),
             agenda_tasks_table_state,
             agenda_selected_input: AgendaSelectedInput::Name,

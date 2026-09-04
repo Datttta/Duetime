@@ -16,6 +16,8 @@ use crate::{
     keys_help,
 };
 
+const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
 
@@ -55,7 +57,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     ])
     .split(inner);
 
-    let inputs = Layout::vertical([
+    let input = Layout::vertical([
         Constraint::Length(3), // event name
         Constraint::Length(1), // event date
         Constraint::Length(1), // event time
@@ -64,15 +66,23 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical[0]);
 
+    input::draw(
+        frame,
+        input[0],
+        &app.event,
+        "Event name",
+        app.agenda_selected_input == AgendaSelectedInput::Name,
+        app.mode,
+        true,
+    );
 
     input::draw(
         frame,
-        inputs[0],
-        &app.inbox_item,
-        "event...",
-        app.agenda_selected_input == AgendaSelectedInput::Name,
+        input[1],
+        &app.event,
+        app.data_input,
+        app.agenda_selected_input == AgendaSelectedInput::Date,
         app.mode,
         false,
-    );
-    
+    )
 }
