@@ -221,6 +221,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             match key.code {
                 KeyCode::Char(' ') | KeyCode::Enter => {
                     app.event_repeat = !app.event_repeat;
+                    return;
                 }
 
                 _ => {}
@@ -234,7 +235,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Tab | KeyCode::Char('j') => {
             app.agenda_selected_input = match app.agenda_selected_input {
-                AgendaSelectedInput::Name if app.mode != InputMode::Insert => AgendaSelectedInput::Date,
+                AgendaSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::Tab => AgendaSelectedInput::Date,
                 AgendaSelectedInput::Name => AgendaSelectedInput::Name,
                 AgendaSelectedInput::Date => AgendaSelectedInput::Time,
                 AgendaSelectedInput::Time => AgendaSelectedInput::Repeat,
@@ -245,8 +246,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::BackTab | KeyCode::Char('k') => {
 
             app.agenda_selected_input = match app.agenda_selected_input {
-                AgendaSelectedInput::Name if app.mode != InputMode::Insert => AgendaSelectedInput::Repeat,
-                AgendaSelectedInput::Name => AgendaSelectedInput::Repeat,
+                AgendaSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::BackTab => AgendaSelectedInput::Repeat,
+                AgendaSelectedInput::Name => AgendaSelectedInput::Name,
                 AgendaSelectedInput::Repeat => AgendaSelectedInput::Time,
                 AgendaSelectedInput::Time => AgendaSelectedInput::Date,
                 AgendaSelectedInput::Date => AgendaSelectedInput::Name,
