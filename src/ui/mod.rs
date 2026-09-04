@@ -5,7 +5,7 @@ pub mod help;
 //use log::info;
 
 use crate::{
-    app::{App, Popup, TasksTablePopup, Panel, InboxPopup},
+    app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup},
     
     tasks_table::{
         ui::draw_tasks_panel,
@@ -29,6 +29,9 @@ use crate::{
 
     agenda::{
         ui::draw_agenda_panel,
+        popups::{
+            add_event,
+        },
     },
 
     ui::widgets::status_message::draw_status_message,
@@ -157,6 +160,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             InboxPopup::InfoInboxItem => {
                 inbox_item_info::draw(frame, app);
+            }
+        }
+    }
+
+    // agenda-panel popups
+    if let Popup::Agenda(popup) = &app.popup {
+        match popup {
+            AgendaPopup::AddEvent => {
+                add_event::draw(frame, app);
             }
         }
     }
