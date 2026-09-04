@@ -72,15 +72,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         "event...",
         app.agenda_selected_input == AgendaSelectedInput::Name,
         app.mode,
+        false,
     );
     
-    input::draw(
-        frame,
-        inputs[0],
-        &app.inbox_item,
-        "event...",
-        app.agenda_selected_input == AgendaSelectedInput::Name,
-        app.mode,
-    );
-
 }

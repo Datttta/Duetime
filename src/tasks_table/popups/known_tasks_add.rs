@@ -66,6 +66,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         "Task name",
         true,
         app.mode,
+        true,
     );
 }
 

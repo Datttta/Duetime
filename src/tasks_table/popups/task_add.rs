@@ -94,6 +94,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         "Task name",
         app.tasks_selected_input == TaskSelectedInput::TaskName,
         app.mode,
+        true,
     );
 
     input::draw(
@@ -103,6 +104,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         "planned start (e.g. 14:00)",
         app.tasks_selected_input == TaskSelectedInput::PlannedStart,
         app.mode,
+        true,
     );
 
     frame.render_widget(separator, tasks_colums[3]);
@@ -114,6 +116,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         "planned end (e.g. 15:00)",
         app.tasks_selected_input == TaskSelectedInput::PlannedEnd,
         app.mode,
+        true,
     );
 }
 

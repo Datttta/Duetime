@@ -74,6 +74,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         "I plan to...",
         focused,
         app.mode,
+        true,
     );
 
     let priority_line = Line::from(vec![

@@ -19,7 +19,8 @@ pub fn draw(
     input: &InputState,
     placeholder: &str,
     is_selected: bool,
-    mode: InputMode
+    mode: InputMode,
+    bordered: bool,
 ) {
     let visible_width = area.width.saturating_sub(3) as usize;
 
@@ -41,6 +42,12 @@ pub fn draw(
         )
     } else {
         Line::from(visible)
+    };
+
+    let block = if bordered {
+        Block::bordered()
+    } else {
+        Block::default()
     };
 
     let paragraph = Paragraph::new(line).block(

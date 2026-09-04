@@ -122,6 +122,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         "Preset name",
         app.new_preset_focus == NewPresetFocus::Name,
         app.mode,
+        true
     );
     
     let highlight_style = if app.move_state.is_moving() {
