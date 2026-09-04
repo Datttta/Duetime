@@ -21,6 +21,7 @@ pub enum Popup {
     Help,
     TasksTable(TasksTablePopup),
     Inbox(InboxPopup),
+    Agenda(AgendaPopup),
 }
 
 #[derive(PartialEq, Debug)]
@@ -40,6 +41,11 @@ pub enum TasksTablePopup {
     AddKnownTask,
     EditKnownTask(usize),
     TaskInfo,
+}
+
+#[derive(PartialEq, Debug)]
+pub enum AgendaPopup {
+    AddEvent,
 }
 
 #[derive(PartialEq)]

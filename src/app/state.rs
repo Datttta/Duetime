@@ -65,6 +65,7 @@ pub struct App {
     pub agenda_selected_input: AgendaSelectedInput,
     pub date_input: DateTimeInput,
     pub time_input: DateTimeInput,
+    pub event_repeat: bool,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -166,6 +167,7 @@ impl App {
             agenda_selected_input: AgendaSelectedInput::Name,
             date_input,
             time_input,
+            event_repeat: false,
             
             // Navigation
             n_mode: NavigationMode::Normal,

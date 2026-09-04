@@ -5,6 +5,7 @@ use crate::{
     Panel, 
     TasksTablePopup, 
     InboxPopup, 
+    AgendaPopup,
     },
 
     tasks_table::popups::{
@@ -19,6 +20,10 @@ use crate::{
     inbox::popups::{
         inbox_item_add,
         inbox_item_info,
+    },
+
+    agenda::popups::{
+        add_event,
     },
 
     storage::current_tasks,
@@ -93,7 +98,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     match app.focused_panel {
                         Panel::TasksTable => tasks_table::keys::handle_keys(app, key),
                         Panel::Inbox => inbox::keys::handle_keys(app, key),
-                        Panel::Agenda => {},
+                        Panel::Agenda => agenda::keys::handle_keys(app, key),
                     }
                 }
 
@@ -147,6 +152,12 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::Inbox(InboxPopup::InfoInboxItem) => {
                     inbox_item_info::handle_keys(app, key);
+                }
+
+                // AGENDA POPUPS
+
+                Popup::Agenda(AgendaPopup::AddEvent) => {
+                    add_event::handle_keys(app, key);
                 }
             }
         }

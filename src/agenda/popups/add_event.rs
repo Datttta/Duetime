@@ -11,12 +11,16 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputResult, InputMode},
-    app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
-    inbox::ui::InboxItemInfo,
+    app::{App, Popup, AgendaPopup, AgendaSelectedInput},
+    agenda::{
+        ui::AgendaEvent,
+        ui,
+    },
+    storage,
     keys_help,
 };
 
-use super::ui;
+use chrono::{Local, NaiveDate, NaiveTime};
 
 const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 
@@ -78,10 +82,107 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         true,
     );
 
-    ui::draw_date_input(
+    ui::draw_date_time_input(
         frame,
         input[1],
         &app.event_date,
         app.agenda_selected_input == AgendaSelectedInput::Date,
     );
+    
+    ui::draw_date_time_input(
+        frame,
+        input[2],
+        &app.event_time,
+        app.agenda_selected_input == AgendaSelectedInput::Time,
+    );
+    
+    ui::draw_repeat_input(
+        frame,
+        input[3],
+        &app.event_repeat,
+        app.agenda_selected_input == AgendaSelectedInput::Repeat,
+    );
+}
+
+pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+    let name = app.event.value.trim().to_string();
+
+    if name.is_empty() {
+        app.set_status_message("Event name cannot be empty.".to_string());
+        return Ok(());
+    }
+
+    let date = match NaiveDate::parse_from_str(
+        &app.event_date.value,
+        "%d-%m-%y",
+    ) {
+        Ok(date) => date,
+        Err(_) => {
+            app.set_status_message("Invalid date.".to_string());
+            return Ok(());
+        }
+    };
+
+    let time = if app.event_time.value == "00:00" {
+        None
+    } else {
+        match NaiveTime::parse_from_str(
+            &app.event_time.value,
+            "%H:%M",
+        ) {
+            Ok(time) => Some(time),
+            Err(_) => {
+                app.set_status_message("Invalid time.".to_string());
+                return Ok(());
+            }
+        }
+    };
+
+    let event = AgendaEvent {
+        name,
+        date,
+        time,
+        repeat: app.event_repeat,
+    };
+
+    app.events.push(event);
+
+    storage::agenda::save_agenda(&app.events).unwrap();
+
+    app.popup = Popup::None;
+
+    Ok(())
+}
+
+fn close_popup(app: &mut App) {
+    if app.agenda_selected_input == AgendaSelectedInput::Name{
+        if app.mode == InputMode::Normal {
+            app.popup = Popup::None;
+        } 
+        return
+    }
+
+    app.popup = Popup::None;
+}
+
+pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    match app.agenda_selected_input {
+        AgendaSelectedInput::Repeat => {
+            match key.code {
+                KeyCode::Char(' ') | KeyCode::Enter => {
+                    app.event_repeat = !app.event_repeat;
+                }
+            }
+        }
+    }
+
+    match key.code {
+        KeyCode::Enter => {
+            save_event(app);
+        }
+
+        KeyCode::Char('q') | KeyCode::Esc => {
+            close_popup(app);
+        }
+    }
 }

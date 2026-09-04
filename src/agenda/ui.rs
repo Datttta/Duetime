@@ -46,32 +46,6 @@ pub struct DateTimeInput {
     pub editable_positions: &'static [usize],
 }
 
-pub fn draw_date_input(
-    frame: &mut Frame,
-    area: Rect,
-    date_input: &DateTimeInput,
-    selected: bool,
-) {
-    let mut spans = Vec::new();
-
-    for (index, character) in date_input.value.chars().enumerate() {
-        let mut style = Style::default();
-
-        if selected && index == date_input.cursor {
-            style = style
-                .fg(Color::Black)
-                .bg(Color::White)
-                .add_modifier(Modifier::BOLD);
-        }
-
-        spans.push(Span::styled(character.to_string(), style));
-    }
-
-    let paragraph = Paragraph::new(Line::from(spans));
-
-    frame.render_widget(paragraph, area);
-}
-
 impl DateTimeInput {
     pub fn move_left(&mut self) {
         if let Some(position) = self
@@ -141,6 +115,60 @@ fn format_countdown(date: NaiveDate) -> String {
         -1 => "Yesterday".to_string(),
         days => format!("{} days ago", days.abs()),
     }
+}
+
+pub fn draw_date_time_input(
+    frame: &mut Frame,
+    area: Rect,
+    input: &DateTimeInput,
+    selected: bool,
+) {
+    let spans = input
+        .value
+        .chars()
+        .enumerate()
+        .map(|(index, character)| {
+            let style = if selected && index == input.cursor {
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::White)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default()
+            };
+
+            Span::styled(character.to_string(), style)
+        })
+        .collect::<Vec<_>>();
+
+    let paragraph = Paragraph::new(Line::from(spans));
+
+    frame.render_widget(paragraph, area);
+}
+
+pub fn draw_repeat_input(
+    frame: &mut Frame,
+    area: Rect,
+    repeat: bool,
+    selected: bool,
+) {
+    let checkbox = if repeat { "☑" } else { "☐" };
+
+    let style = if selected {
+        Style::default()
+            .fg(Color::Black)
+            .bg(Color::White)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default()
+    };
+
+    let line = Line::from(vec![
+        Span::styled(checkbox, style),
+        Span::raw(" Repeat"),
+    ]);
+
+    frame.render_widget(Paragraph::new(line), area);
 }
 
 pub fn draw_agenda_panel(
