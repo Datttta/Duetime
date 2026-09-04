@@ -56,14 +56,14 @@ pub enum TaskDestination {
 }
 
 #[derive(PartialEq)]
-pub enum SelectedInput {
+pub enum TaskSelectedInput {
     TaskName,
     PlannedStart,
     PlannedEnd,
 }
 
 #[derive(PartialEq)]
-pub enum InboxSelectedFeature {
+pub enum InboxSelectedInput {
     InboxItemInput,
     Priority,
 }

@@ -111,10 +111,10 @@ pub fn draw_events (
     let columns = [
         Constraint::Length(20), // event name
         Constraint::Length(10), // event date
-        Constraint::Length(2), // space
-        Constraint::Length(5), // time of the event
-        Constraint::Length(2), // space
-        Constraint::Length(7), // countdown
+        Constraint::Length(2),  // space
+        Constraint::Length(5),  // time of the event
+        Constraint::Length(2),  // space
+        Constraint::Length(7),  // countdown
     ];
 
     let visual_start = app.n_visual_start;

@@ -3,7 +3,7 @@ use crate::{
     App,
     Popup, 
     InboxPopup, 
-    InboxSelectedFeature,
+    InboxSelectedInput,
     Priority
     },
 
@@ -23,7 +23,7 @@ pub fn edit_inbox_item(app: &mut App) {
 
         app.mode = InputMode::Normal;
         app.popup = Popup::Inbox(InboxPopup::EditInboxItem);
-        app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
+        app.inbox_selected_feature = InboxSelectedInput::InboxItemInput;
 
         app.pending_command = None;
     }
@@ -39,7 +39,7 @@ pub fn inbox_item_add_popup(app: &mut App) {
     app.inbox_item.clear();
     app.priority = Priority::Low;
     app.mode = InputMode::Insert;
-    app.inbox_selected_feature = InboxSelectedFeature::InboxItemInput;
+    app.inbox_selected_feature = InboxSelectedInput::InboxItemInput;
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
 }
 

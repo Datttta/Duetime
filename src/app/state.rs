@@ -1,7 +1,7 @@
 use ratatui::widgets::{TableState, ListState};
 
 use crate::{
-    app::{Popup, SelectedInput, TaskDestination, NewPresetFocus, InboxSelectedFeature, Priority, Panel},
+    app::{Popup, TaskSelectedInput, TaskDestination, NewPresetFocus, InboxSelectedInput, Priority, Panel},
     storage::{current_tasks, known_tasks, preset, inbox, agenda},
     vim_text::{InputState, InputMode},
     navigation::vim_navigation::NavigationMode,
@@ -38,14 +38,14 @@ pub struct App {
     pub task_name: InputState,
     pub planned_start: InputState,
     pub planned_end: InputState,
-    pub selected_input: SelectedInput,
+    pub selected_input: TaskSelectedInput,
 
     // Inbox
     pub inbox_items: Vec<InboxItemInfo>,
     pub inbox_table_state: TableState,
 
     pub inbox_item: InputState,
-    pub inbox_selected_feature: InboxSelectedFeature,
+    pub inbox_selected_feature: InboxSelectedInput,
     pub priority: Priority,
 
     // Agenda
@@ -119,7 +119,7 @@ impl App {
             task_name: InputState::default(),
             planned_start: InputState::default(),
             planned_end: InputState::default(),
-            selected_input: SelectedInput::TaskName,
+            selected_input: TaskSelectedInput::TaskName,
 
             tasks: current_tasks::load_current_tasks(),
             table_state,
@@ -128,7 +128,7 @@ impl App {
             inbox_item: InputState::default(),
             inbox_items: inbox::load_inbox(),
             inbox_table_state,
-            inbox_selected_feature: InboxSelectedFeature::InboxItemInput,
+            inbox_selected_feature: InboxSelectedInput::InboxItemInput,
             priority: Priority::Low,
 
             // Agenda

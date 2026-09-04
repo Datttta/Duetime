@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use crate::{
     vim_text::{InputMode},
-    app::{NewPresetFocus, Popup, TasksTablePopup, TaskDestination, SelectedInput, Priority},
+    app::{NewPresetFocus, Popup, TasksTablePopup, TaskDestination, TaskSelectedInput, Priority},
     tasks_table::ui::TaskInfo,
     models::{TaskTemplate, Preset},
     storage::{current_tasks, preset},
@@ -19,7 +19,7 @@ impl App {
         self.planned_start.clear();
         self.planned_end.clear();
 
-        self.selected_input = SelectedInput::TaskName;
+        self.selected_input = TaskSelectedInput::TaskName;
         self.mode = InputMode::Insert;
         self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
     }
@@ -67,7 +67,7 @@ impl App {
             self.planned_end.cursor = self.planned_end.text.len();
 
             self.mode = InputMode::Normal;
-            self.selected_input = SelectedInput::TaskName;
+            self.selected_input = TaskSelectedInput::TaskName;
         }
     }
 

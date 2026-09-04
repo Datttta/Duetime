@@ -11,7 +11,7 @@ use ratatui::{
 use crate::{
     ui::widgets::input,
     vim_text::{InputResult, InputMode},
-    app::{App, Popup, InboxPopup, InboxSelectedFeature, Priority},
+    app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
     inbox::ui::InboxItemInfo,
     keys_help,
 };
@@ -65,7 +65,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical[0]);
 
-    let focused = app.inbox_selected_feature == InboxSelectedFeature::InboxItemInput;
+    let focused = app.inbox_selected_feature == InboxSelectedInput::InboxItemInput;
 
     input::draw(
         frame,
@@ -180,7 +180,7 @@ fn previous_priority(priority: Priority) -> Priority {
 }
 
 fn close_popup(app: &mut App) {
-    if app.inbox_selected_feature == InboxSelectedFeature::InboxItemInput{
+    if app.inbox_selected_feature == InboxSelectedInput::InboxItemInput{
         if app.mode == InputMode::Normal {
             app.popup = Popup::None;
         } 
@@ -192,7 +192,7 @@ fn close_popup(app: &mut App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match app.inbox_selected_feature {
-        InboxSelectedFeature::InboxItemInput => {
+        InboxSelectedInput::InboxItemInput => {
             let result = app.inbox_item.handle_key(
                 key,
                 &mut app.mode,
@@ -206,7 +206,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        InboxSelectedFeature::Priority => {
+        InboxSelectedInput::Priority => {
             match key.code {
                 KeyCode::Char('h') | KeyCode::Left => {
                     app.priority = previous_priority(app.priority);
@@ -226,12 +226,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Tab => {
             app.inbox_selected_feature = match app.inbox_selected_feature {
-                InboxSelectedFeature::InboxItemInput => {
-                    InboxSelectedFeature::Priority
+                InboxSelectedInput::InboxItemInput => {
+                    InboxSelectedInput::Priority
                 }
 
-                InboxSelectedFeature::Priority => {
-                    InboxSelectedFeature::InboxItemInput
+                InboxSelectedInput::Priority => {
+                    InboxSelectedInput::InboxItemInput
                 }
             };
         }
