@@ -64,5 +64,5 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical[0]);
 
-    let focused = app.agenda_selected_feature == InboxSelectedInput::InboxItemInput;
+    let focused = app.agenda_selected_feature == AgendaSelectedInput::InboxItemInput;
 }

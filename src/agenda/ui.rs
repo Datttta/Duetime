@@ -119,7 +119,7 @@ pub fn draw_events (
 
     let visual_start = app.n_visual_start;
     let visual_mode = is_visual; 
-    let current = app.agenda_table_state.selected();
+    let current = app.agenda_tasks_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 
@@ -188,6 +188,6 @@ pub fn draw_events (
     frame.render_stateful_widget(
         table,
         area,
-        &mut app.agenda_table_state,
+        &mut app.agenda_tasks_table_state,
     );
 }

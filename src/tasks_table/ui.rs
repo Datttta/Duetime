@@ -174,7 +174,7 @@ pub fn draw_tasks(
 
     let visual_start = app.n_visual_start;
     let visual_mode = is_visual; 
-    let current = app.table_state.selected();
+    let current = app.tasks_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 
@@ -268,6 +268,6 @@ pub fn draw_tasks(
     frame.render_stateful_widget(
         table,
         area,
-        &mut app.table_state,
+        &mut app.tasks_table_state,
     );
 }

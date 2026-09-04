@@ -48,7 +48,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     frame.render_widget(block, area);
     
-    if let Some(index) = app.inbox_table_state.selected() {
+    if let Some(index) = app.inbox_tasks_table_state.selected() {
         let item = &app.inbox_items[index];
 
         let priority = app.priority;

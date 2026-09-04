@@ -33,7 +33,7 @@ pub struct App {
 
     // TasksTable
     pub tasks: Vec<TaskInfo>,
-    pub table_state: TableState,
+    pub tasks_table_state: TableState,
 
     pub task_name: InputState,
     pub planned_start: InputState,
@@ -42,15 +42,15 @@ pub struct App {
 
     // Inbox
     pub inbox_items: Vec<InboxItemInfo>,
-    pub inbox_table_state: TableState,
+    pub inbox_tasks_table_state: TableState,
 
     pub inbox_item: InputState,
-    pub inbox_selected_feature: InboxSelectedInput,
+    pub inbox_selected_input: InboxSelectedInput,
     pub priority: Priority,
 
     // Agenda
     pub events: Vec<AgendaEvent>,
-    pub agenda_table_state: TableState,
+    pub agenda_tasks_table_state: TableState,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -91,8 +91,8 @@ impl App {
     }
 
     pub fn new() -> Self {
-        let mut table_state = TableState::default();
-        table_state.select(Some(0));
+        let mut tasks_table_state = TableState::default();
+        tasks_table_state.select(Some(0));
 
         let mut preset_task_state = ListState::default();
         preset_task_state.select(Some(0));
@@ -103,11 +103,11 @@ impl App {
         let mut known_tasks_state = ListState::default();
         known_tasks_state.select(Some(0));
         
-        let mut inbox_table_state = TableState::default();
-        inbox_table_state.select(Some(0));
+        let mut inbox_tasks_table_state = TableState::default();
+        inbox_tasks_table_state.select(Some(0));
 
-        let mut agenda_table_state = TableState::default();
-        agenda_table_state.select(Some(0));
+        let mut agenda_tasks_table_state = TableState::default();
+        agenda_tasks_table_state.select(Some(0));
 
         Self {
             // Core
@@ -122,18 +122,18 @@ impl App {
             selected_input: TaskSelectedInput::TaskName,
 
             tasks: current_tasks::load_current_tasks(),
-            table_state,
+            tasks_table_state,
 
             // Inbox
             inbox_item: InputState::default(),
             inbox_items: inbox::load_inbox(),
-            inbox_table_state,
-            inbox_selected_feature: InboxSelectedInput::InboxItemInput,
+            inbox_tasks_table_state,
+            inbox_selected_input: InboxSelectedInput::InboxItemInput,
             priority: Priority::Low,
 
             // Agenda
             events: agenda::load_agenda(),
-            agenda_table_state,
+            agenda_tasks_table_state,
             
             // Navigation
             n_mode: NavigationMode::Normal,

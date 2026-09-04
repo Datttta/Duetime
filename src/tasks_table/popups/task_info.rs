@@ -41,7 +41,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     frame.render_widget(block, area);
     
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &app.tasks[index];
 
         let in_known_tasks = app.known_tasks

@@ -8,7 +8,7 @@ use super::actions;
 use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let mut selected = app.inbox_table_state.selected();
+    let mut selected = app.inbox_tasks_table_state.selected();
 
     let handled = vim_navigation::handle(
         key,
@@ -19,7 +19,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         &mut app.n_visual_start,
     );
 
-    app.inbox_table_state.select(selected);
+    app.inbox_tasks_table_state.select(selected);
 
     if handled {
         return;

@@ -23,7 +23,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         move_items::handle_keys(
             &mut app.move_state,
             &mut app.tasks,
-            &mut app.table_state,
+            &mut app.tasks_table_state,
             &mut app.pending_command,
             key,
         );
@@ -39,7 +39,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         return;
     }
 
-    let mut selected = app.table_state.selected();
+    let mut selected = app.tasks_table_state.selected();
 
     let handled = vim_navigation::handle(
         key,
@@ -50,7 +50,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         &mut app.n_visual_start,
     );
 
-    app.table_state.select(selected);
+    app.tasks_table_state.select(selected);
 
     if handled {
         return;

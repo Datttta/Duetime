@@ -13,7 +13,7 @@ use crate::{
 };
 
 pub fn edit_inbox_item(app: &mut App) {
-    if let Some(index) = app.inbox_table_state.selected() {
+    if let Some(index) = app.inbox_tasks_table_state.selected() {
         let item = &app.inbox_items[index];
 
         // Load task data into inputs
@@ -23,14 +23,14 @@ pub fn edit_inbox_item(app: &mut App) {
 
         app.mode = InputMode::Normal;
         app.popup = Popup::Inbox(InboxPopup::EditInboxItem);
-        app.inbox_selected_feature = InboxSelectedInput::InboxItemInput;
+        app.inbox_selected_input = InboxSelectedInput::InboxItemInput;
 
         app.pending_command = None;
     }
 }
 
 pub fn inbox_item_info(app: &mut App) {
-    if app.inbox_table_state.selected().is_some() {
+    if app.inbox_tasks_table_state.selected().is_some() {
         app.popup = Popup::Inbox(InboxPopup::InfoInboxItem);
     }
 }
@@ -39,12 +39,12 @@ pub fn inbox_item_add_popup(app: &mut App) {
     app.inbox_item.clear();
     app.priority = Priority::Low;
     app.mode = InputMode::Insert;
-    app.inbox_selected_feature = InboxSelectedInput::InboxItemInput;
+    app.inbox_selected_input = InboxSelectedInput::InboxItemInput;
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
 }
 
 pub fn delete_inbox_item(app: &mut App) {
-    if let Some(current) = app.inbox_table_state.selected() {
+    if let Some(current) = app.inbox_tasks_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
             if let Some(start) = app.n_visual_start {
                 (start.min(current), start.max(current))
@@ -58,10 +58,10 @@ pub fn delete_inbox_item(app: &mut App) {
         app.inbox_items.drain(first..=last);
 
         if app.inbox_items.is_empty() {
-            app.inbox_table_state.select(None);
+            app.inbox_tasks_table_state.select(None);
         } else {
             let new_index = first.min(app.inbox_items.len() - 1);
-            app.inbox_table_state.select(Some(new_index));
+            app.inbox_tasks_table_state.select(Some(new_index));
         }
 
         app.n_mode = NavigationMode::Normal;

@@ -21,7 +21,7 @@ use crate::{
 use std::time::SystemTime;
 
 pub fn edit_task(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &app.tasks[index];
 
         app.task_destination = TaskDestination::EditTask(index);
@@ -72,7 +72,7 @@ pub fn open_presets_popup(app: &mut App) {
 }
 
 pub fn task_info(app: &mut App) {
-    if app.table_state.selected().is_some() {
+    if app.tasks_table_state.selected().is_some() {
         app.popup = Popup::TasksTable(TasksTablePopup::TaskInfo);
     }
 }
@@ -82,7 +82,7 @@ pub fn open_known_tasks(app: &mut App) {
 }
 
 pub fn delete_task(app: &mut App) {
-    if let Some(current) = app.table_state.selected() {
+    if let Some(current) = app.tasks_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
             if let Some(start) = app.n_visual_start {
                 (start.min(current), start.max(current))
@@ -96,10 +96,10 @@ pub fn delete_task(app: &mut App) {
         app.tasks.drain(first..=last);
 
         if app.tasks.is_empty() {
-            app.table_state.select(None);
+            app.tasks_table_state.select(None);
         } else {
             let new_index = first.min(app.tasks.len() - 1);
-            app.table_state.select(Some(new_index));
+            app.tasks_table_state.select(Some(new_index));
         }
 
         app.n_mode = NavigationMode::Normal;
@@ -112,7 +112,7 @@ pub fn delete_task(app: &mut App) {
 }
 
 pub fn start_stop(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &mut app.tasks[index];
 
         if task.stopwatch.running() {
@@ -130,7 +130,7 @@ pub fn start_stop(app: &mut App) {
 }
 
 pub fn complete_task(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &mut app.tasks[index];
 
         task.stopwatch.stop();
@@ -142,7 +142,7 @@ pub fn complete_task(app: &mut App) {
 }
 
 pub fn reset_task(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &mut app.tasks[index];
 
         task.stopwatch.reset();
@@ -155,7 +155,7 @@ pub fn reset_task(app: &mut App) {
 }
 
 pub fn hard_reset_task(app: &mut App) {
-    if let Some(index) = app.table_state.selected() {
+    if let Some(index) = app.tasks_table_state.selected() {
         let task = &mut app.tasks[index];
 
         task.stopwatch.reset();
@@ -173,7 +173,7 @@ pub fn move_tasks(app: &mut App) {
     if app.n_mode == NavigationMode::Visual {
         move_items::start(
             &mut app.move_state,
-            app.table_state.selected(),
+            app.tasks_table_state.selected(),
             app.n_visual_start,
             app.tasks.len(),
             MoveTarget::Tasks,

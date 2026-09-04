@@ -114,7 +114,7 @@ pub fn draw_items (
 
     let visual_start = app.n_visual_start;
     let visual_mode = is_visual;
-    let current = app.inbox_table_state.selected();
+    let current = app.inbox_tasks_table_state.selected();
 
     let popup_open = !matches!(app.popup, Popup::None);
 
@@ -170,6 +170,6 @@ pub fn draw_items (
     frame.render_stateful_widget(
         table,
         area,
-        &mut app.inbox_table_state,
+        &mut app.inbox_tasks_table_state,
     );
 }

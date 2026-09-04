@@ -127,14 +127,14 @@ impl App {
                     ..Default::default()
                 };
 
-                let position = match self.table_state.selected() {
+                let position = match self.tasks_table_state.selected() {
                     Some(index) => index + 1,
                     None => 0
                 };
                 
                 self.tasks.insert(position.min(self.tasks.len()), task);
 
-                self.table_state.select(Some(position.min(self.tasks.len() - 1)));
+                self.tasks_table_state.select(Some(position.min(self.tasks.len() - 1)));
             }
 
             TaskDestination::EditTask(index) => {
@@ -287,7 +287,7 @@ impl App {
     }
 
     pub fn copy_inbox_input(&mut self) {
-        let Some(index) = self.inbox_table_state.selected() else {
+        let Some(index) = self.inbox_tasks_table_state.selected() else {
             return;
         };
 

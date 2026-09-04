@@ -65,7 +65,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .flex(Flex::Center)
     .split(vertical[0]);
 
-    let focused = app.inbox_selected_feature == InboxSelectedInput::InboxItemInput;
+    let focused = app.inbox_selected_input == InboxSelectedInput::InboxItemInput;
 
     input::draw(
         frame,
@@ -139,12 +139,12 @@ fn save_inbox_item(app: &mut App) {
                 .iter()
                 .position(|item| item.input == input)
             {
-                app.inbox_table_state.select(Some(index));
+                app.inbox_tasks_table_state.select(Some(index));
             }
         }
 
         Popup::Inbox(InboxPopup::EditInboxItem) => {
-            if let Some(index) = app.inbox_table_state.selected() {
+            if let Some(index) = app.inbox_tasks_table_state.selected() {
                 if let Some(item) = app.inbox_items.get_mut(index) {
                     item.input = app.inbox_item.text.clone();
                     item.priority = app.priority;
@@ -180,7 +180,7 @@ fn previous_priority(priority: Priority) -> Priority {
 }
 
 fn close_popup(app: &mut App) {
-    if app.inbox_selected_feature == InboxSelectedInput::InboxItemInput{
+    if app.inbox_selected_input == InboxSelectedInput::InboxItemInput{
         if app.mode == InputMode::Normal {
             app.popup = Popup::None;
         } 
@@ -191,7 +191,7 @@ fn close_popup(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    match app.inbox_selected_feature {
+    match app.inbox_selected_input {
         InboxSelectedInput::InboxItemInput => {
             let result = app.inbox_item.handle_key(
                 key,
@@ -225,7 +225,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Tab => {
-            app.inbox_selected_feature = match app.inbox_selected_feature {
+            app.inbox_selected_input = match app.inbox_selected_input {
                 InboxSelectedInput::InboxItemInput => {
                     InboxSelectedInput::Priority
                 }
