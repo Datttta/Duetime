@@ -99,13 +99,13 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     ui::draw_repeat_input(
         frame,
         input[3],
-        &app.event_repeat,
+        app.event_repeat,
         app.agenda_selected_input == AgendaSelectedInput::Repeat,
     );
 }
 
 pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
-    let name = app.event.value.trim().to_string();
+    let name = app.event.text.trim().to_string();
 
     if name.is_empty() {
         app.set_status_message("Event name cannot be empty.".to_string());
@@ -172,8 +172,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 KeyCode::Char(' ') | KeyCode::Enter => {
                     app.event_repeat = !app.event_repeat;
                 }
+
+                _ => {}
             }
         }
+
+        _ => {}
     }
 
     match key.code {
@@ -184,5 +188,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('q') | KeyCode::Esc => {
             close_popup(app);
         }
+
+        _ => {}
     }
 }

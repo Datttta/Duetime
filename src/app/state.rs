@@ -63,8 +63,8 @@ pub struct App {
     pub events: Vec<AgendaEvent>,
     pub agenda_tasks_table_state: TableState,
     pub agenda_selected_input: AgendaSelectedInput,
-    pub date_input: DateTimeInput,
-    pub time_input: DateTimeInput,
+    pub event_date: DateTimeInput,
+    pub event_time: DateTimeInput,
     pub event_repeat: bool,
 
     // Presets
@@ -126,13 +126,13 @@ impl App {
 
         let year = Local::now().format("%y").to_string();
 
-        let date_input = DateTimeInput {
+        let event_date = DateTimeInput {
             value: format!("00-00-{}", Local::now().format("%y")),
             cursor: 0,
             editable_positions: &DATE_EDITABLE_POSITIONS,
         };
 
-        let time_input = DateTimeInput {
+        let event_time = DateTimeInput {
             value: "00:00".to_string(),
             cursor: 0,
             editable_positions: TIME_EDITABLE_POSITIONS,
@@ -165,8 +165,8 @@ impl App {
             events: agenda::load_agenda(),
             agenda_tasks_table_state,
             agenda_selected_input: AgendaSelectedInput::Name,
-            date_input,
-            time_input,
+            event_date,
+            event_time,
             event_repeat: false,
             
             // Navigation
