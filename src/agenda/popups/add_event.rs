@@ -21,6 +21,7 @@ use crate::{
 };
 
 use chrono::{Local, NaiveDate, NaiveTime};
+use log::info;
 
 const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 
@@ -155,6 +156,8 @@ pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn close_popup(app: &mut App) {
+    info!("Selecte input: {:?}", app.agenda_selected_input);
+    info!("app mode: {:?}", app.mode);
     if app.agenda_selected_input == AgendaSelectedInput::Name{
         if app.mode == InputMode::Normal {
             app.popup = Popup::None;
@@ -167,7 +170,15 @@ fn close_popup(app: &mut App) {
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match app.agenda_selected_input {
-        AgendaSelectedInput::Repeat => {
+        AgendaSelectedInput::Name => {
+            let result = app.inbox_item.handle_key(key, &mut app.mode, usize::MAX);
+
+            match result {
+                InputResult::Consumed => return,
+                InputResult::Ignored => {}
+                InputResult::TextChanged => {}
+            }
+
             match key.code {
                 KeyCode::Char(' ') | KeyCode::Enter => {
                     app.event_repeat = !app.event_repeat;

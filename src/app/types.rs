@@ -74,7 +74,7 @@ pub enum InboxSelectedInput {
     Priority,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum AgendaSelectedInput {
     Name,
     Date,
