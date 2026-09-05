@@ -28,14 +28,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
-            app.pending_command = Some('a');
+            actions::add_event(app);
         }
 
         KeyCode::Char('e') => {
-            if app.pending_command == Some('a') {
-                actions::add_event(app);
-            } 
-            app.pending_command == None;
+            actions::edit_event(app);
         }
 
         KeyCode::Char('d') => {

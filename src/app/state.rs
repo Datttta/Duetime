@@ -59,7 +59,7 @@ pub struct App {
     pub priority: Priority,
 
     // Agenda
-    pub event: InputState,
+    pub event_name: InputState,
     pub events: Vec<AgendaEvent>,
     pub agenda_table_state: TableState,
     pub agenda_selected_input: AgendaSelectedInput,
@@ -161,7 +161,7 @@ impl App {
             priority: Priority::Low,
 
             // Agenda
-            event: InputState::default(),
+            event_name: InputState::default(),
             events: agenda::load_agenda(),
             agenda_table_state,
             agenda_selected_input: AgendaSelectedInput::Name,

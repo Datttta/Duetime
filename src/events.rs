@@ -159,6 +159,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 Popup::Agenda(AgendaPopup::AddEvent) => {
                     add_event::handle_keys(app, key);
                 }
+                
+                Popup::Agenda(AgendaPopup::EditEvent) => {
+                    add_event::handle_keys(app, key);
+                }
             }
         }
     }

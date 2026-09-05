@@ -25,7 +25,7 @@ pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
 }
 
 pub fn add_event(app: &mut App) {
-    app.event.clear();
+    app.event_name.clear();
 
     app.event_time.cursor = 0;
     app.event_time.value = "--:--".to_string();
@@ -35,10 +35,31 @@ pub fn add_event(app: &mut App) {
 
     app.event_repeat = false;
 
+    app.event_name.cursor = app.event_name.text.len();
+
     app.mode = InputMode::Insert;
     app.agenda_selected_input = AgendaSelectedInput::Name;
     app.popup = Popup::Agenda(AgendaPopup::AddEvent);
 }
+
+pub fn edit_event(app: &mut App) {
+    if let Some(index) = app.agenda_table_state.selected() {
+        let item = &app.events[index];
+
+        // Load task data into inputs
+        app.event_name.text = item.name.clone();
+        
+        app.event_time.cursor = 0;
+        app.event_date.cursor = 0;
+       
+        app.mode = InputMode::Normal;
+        app.popup = Popup::Agenda(AgendaPopup::EditEvent);
+        app.agenda_selected_input = AgendaSelectedInput::Name;
+
+        app.pending_command = None;
+    }
+}
+
 
 pub fn delete_event(app: &mut App) {
     if let Some(current) = app.agenda_table_state.selected() {

@@ -170,6 +170,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             AgendaPopup::AddEvent => {
                 add_event::draw(frame, app);
             }
+            
+            AgendaPopup::EditEvent => {
+                add_event::draw(frame, app);
+            }
         }
     }
 
