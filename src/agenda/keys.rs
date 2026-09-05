@@ -38,6 +38,15 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             } 
         }
 
+        KeyCode::Char('d') => {
+            if app.pending_command == Some('d') {
+                actions::delete_event(app);
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('d')
+            }
+        }
+
         _ => {}
     }
 }

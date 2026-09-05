@@ -32,11 +32,6 @@ pub struct AgendaEvent {
     pub repeat: bool,
 }
 
-pub enum AgendaSection {
-    Today,
-    Upcoming,
-}
-
 #[derive(Default, Serialize, Deserialize)]
 pub struct AgendaEventData {
     pub name: String,
@@ -193,44 +188,43 @@ pub fn draw_agenda_panel(
         .padding(Padding::new(2, 0, 1, 0));
 
     let inner = border.inner(area);
-
     frame.render_widget(border, area);
 
+    let today = Local::now().date_naive();
+
+    // Partition index maps for events array
+    let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+        (0..app.events.len()).partition(|&i| app.events[i].date <= today);
+
+    // Dynamic height constraints based on section item counts
+    let today_height = (today_indices.len() as u16).max(1);
+    let upcoming_height = (upcoming_indices.len() as u16).max(1);
+
     let chunks = Layout::vertical([
-        Constraint::Length(1), // Today
-        Constraint::Min(0),    // Today events
-        Constraint::Length(1), // Upcoming
-        Constraint::Min(0),    // Upcoming events
+        Constraint::Length(1),              // "Today" Header
+        Constraint::Length(today_height),   // Today events list
+        Constraint::Length(1),              // "Upcoming" Header
+        Constraint::Length(upcoming_height),// Upcoming events list
     ])
     .split(inner);
 
+    let is_visual = app.focused_panel == Panel::Agenda
+        && app.n_mode == NavigationMode::Visual;
+
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
+    draw_events_section(frame, chunks[1], app, &today_indices, is_visual);
+
     frame.render_widget(Paragraph::new("Upcoming"), chunks[2]);
-
-    draw_events(
-        frame,
-        chunks[1],
-        app,
-        AgendaSection::Today,
-        false,
-    );
-
-    draw_events(
-        frame,
-        chunks[3],
-        app,
-        AgendaSection::Upcoming,
-        false,
-    );
+    draw_events_section(frame, chunks[3], app, &upcoming_indices, is_visual);
 }
 
-pub fn draw_events (
+pub fn draw_events_section(
     frame: &mut Frame,
-    area: Rect, 
-    app: &mut App, 
-    section: AgendaSection,
-    is_visual: bool
-    ) {
+    area: Rect,
+    app: &App,
+    section_indices: &[usize],
+    is_visual: bool,
+) {
     let columns = [
         Constraint::Length(20), // event name
         Constraint::Length(10), // event date
@@ -241,28 +235,25 @@ pub fn draw_events (
     ];
 
     let visual_start = app.n_visual_start;
-    let visual_mode = is_visual; 
+    let visual_mode = is_visual;
     let current = app.agenda_table_state.selected();
-
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open || app.focused_panel != Panel::Agenda {
+    let base_highlight_style = if popup_open || app.focused_panel != Panel::Agenda {
         Style::default()
     } else if app.move_state.is_moving() {
         Style::default()
     } else if visual_mode {
-        Style::default()
-            .fg(Color::Black)
-            .bg(Color::White)
+        Style::default().fg(Color::Black).bg(Color::White)
     } else {
-        Style::default()
-            .bg(task_selection_color())
-            .fg(Color::Black)
+        Style::default().bg(task_selection_color()).fg(Color::Black)
     };
 
     let mut rows = Vec::new();
 
-    for (index, event) in app.events.iter().enumerate() {
+    for &global_index in section_indices {
+        let event = &app.events[global_index];
+
         let time = event
             .time
             .map(|time| time.format("%H:%M").to_string())
@@ -270,8 +261,11 @@ pub fn draw_events (
 
         let countdown = format_countdown(event.date);
 
+        let is_selected = current == Some(global_index);
+        let prefix = if is_selected { "> " } else { "  " };
+
         let mut row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&event.name, 22))),
+            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, 20))),
             Cell::from(
                 Line::from(event.date.format("%d-%m-%y").to_string())
                     .alignment(Alignment::Center),
@@ -285,12 +279,14 @@ pub fn draw_events (
             ),
         ]);
 
+
+        // Apply visual selection range highlighting across global indices
         if !popup_open && visual_mode {
             if let (Some(start), Some(end)) = (visual_start, current) {
                 let first = start.min(end);
                 let last = start.max(end);
 
-                if index >= first && index <= last {
+                if global_index >= first && global_index <= last {
                     row = row.style(
                         Style::default()
                             .fg(Color::Black)
@@ -303,13 +299,7 @@ pub fn draw_events (
         rows.push(row);
     }
 
-    let table = Table::new(rows, columns)
-        .highlight_symbol("> ")
-        .row_highlight_style(highlight_style);
+    let table = Table::new(rows, columns);
 
-    frame.render_stateful_widget(
-        table,
-        area,
-        &mut app.agenda_table_state,
-    );
+    frame.render_widget(table, area);
 }
