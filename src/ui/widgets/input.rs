@@ -45,19 +45,22 @@ pub fn draw(
     };
 
     let block = if bordered {
-        Block::bordered()
-    } else {
-        Block::default()
-    };
-
-    let paragraph = Paragraph::new(line).block(
         Block::bordered().padding(Padding {
             left: 1,
             right: 1,
             top: 0,
             bottom: 0,
         })
-    );
+    } else {
+        Block::new().padding(Padding {
+            left: 1,
+            right: 1,
+            top: 0,
+            bottom: 0,
+        })
+    };
+
+    let paragraph = Paragraph::new(line).block(block);
 
     frame.render_widget(paragraph, area);
     

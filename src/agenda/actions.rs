@@ -6,7 +6,6 @@ use crate::{
     AgendaSelectedInput,
     },
 
-    storage::agenda,
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
     storage,

@@ -3,8 +3,6 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Padding, Paragraph},
-    text::{Line, Span},
-    style::{Style, Color, Modifier},
     Frame
 };
 
@@ -20,10 +18,8 @@ use crate::{
     keys_help,
 };
 
-use chrono::{Local, NaiveDate, NaiveTime};
+use chrono::{NaiveDate, NaiveTime};
 use log::info;
-
-const EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -115,21 +111,21 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 }
 
-pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+pub fn save_event(app: &mut App) {
     match app.popup {
         Popup::Agenda(AgendaPopup::AddEvent) | Popup::Agenda(AgendaPopup::EditEvent) => {
             // 1. Validate inputs
             let name = app.event_name.text.trim().to_string();
             if name.is_empty() {
                 app.set_status_message("Event name cannot be empty.".to_string());
-                return Ok(());
+                return;
             }
 
             let date = match NaiveDate::parse_from_str(&app.event_date.value, "%d-%m-%y") {
                 Ok(date) => date,
                 Err(_) => {
                     app.set_status_message("Invalid date.".to_string());
-                    return Ok(());
+                    return;
                 }
             };
 
@@ -140,7 +136,7 @@ pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
                     Ok(time) => Some(time),
                     Err(_) => {
                         app.set_status_message("Invalid time.".to_string());
-                        return Ok(());
+                        return;
                     }
                 }
             };
@@ -181,8 +177,6 @@ pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
 
     storage::agenda::save_agenda(&app.events).unwrap();
     app.popup = Popup::None;
-
-    Ok(())
 }
 
 fn close_popup(app: &mut App) {
@@ -257,8 +251,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
 
         }
-
-        _ => {}
     }
 
     match key.code {

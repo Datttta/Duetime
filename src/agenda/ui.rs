@@ -10,7 +10,7 @@ use crate::{
     app::{App, Panel, Popup},
     
     ui::{
-        theme::{task_selection_color, unfocused_panel},
+        theme::{unfocused_panel},
         widgets::input::ellipsize,
     },
     
@@ -19,7 +19,6 @@ use crate::{
 
 use chrono::{NaiveDate, NaiveTime, Local};
 use serde::{Deserialize, Serialize};
-use super::actions;
 
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
@@ -111,8 +110,6 @@ fn format_countdown(date: NaiveDate) -> String {
     match days {
         1 => "1 day".to_string(),
         days  => format!("{} days", days),
-        -1 => "Yesterday".to_string(),
-        days => format!("{} days ago", days.abs()),
     }
 }
 
@@ -238,16 +235,6 @@ pub fn draw_events(
     let visual_mode = is_visual;
     let current = app.agenda_table_state.selected();
     let popup_open = !matches!(app.popup, Popup::None);
-
-    let base_highlight_style = if popup_open || app.focused_panel != Panel::Agenda {
-        Style::default()
-    } else if app.move_state.is_moving() {
-        Style::default()
-    } else if visual_mode {
-        Style::default().fg(Color::Black).bg(Color::White)
-    } else {
-        Style::default().bg(task_selection_color()).fg(Color::Black)
-    };
 
     let mut rows = Vec::new();
 

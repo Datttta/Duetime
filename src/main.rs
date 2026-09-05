@@ -4,7 +4,7 @@ use std::{
 };
 use simplelog::{LevelFilter, WriteLogger}; 
 use crate::app::App;
-use chrono::{NaiveDate, NaiveTime, Local};
+use chrono::Local;
 
 mod app;
 mod events;

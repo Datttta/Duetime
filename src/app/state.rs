@@ -23,7 +23,7 @@ use crate::{
 };
 
 use std::time::{Duration, Instant};
-use chrono::{NaiveDate, NaiveTime, Local};
+use chrono::{NaiveDate, Local};
 
 pub struct App {
     // Core
