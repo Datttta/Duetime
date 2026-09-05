@@ -227,11 +227,11 @@ pub fn draw_events(
     is_visual: bool,
 ) {
     let columns = [
-        Constraint::Length(20), // event name
-        Constraint::Length(10), // event date
-        Constraint::Length(2),  // space
+        Constraint::Length(40), // event name
         Constraint::Length(5),  // time of the event
-        Constraint::Length(2),  // space
+        Constraint::Length(1), // space
+        Constraint::Length(10), // event date
+        Constraint::Length(1), // space
         Constraint::Length(7),  // countdown
     ];
 
@@ -266,18 +266,15 @@ pub fn draw_events(
         let prefix = if is_selected { "> " } else { "  " };
 
         let mut row = Row::new(vec![
-            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, 20))),
+            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, 40))),
+            Cell::from(Line::from(time).alignment(Alignment::Center)),
+            Cell::from(String::new()),
             Cell::from(
                 Line::from(event.date.format("%a, %b %-d").to_string())
                     .alignment(Alignment::Center),
             ),
             Cell::from(String::new()),
-            Cell::from(time),
-            Cell::from(String::new()),
-            Cell::from(
-                Line::from(countdown)
-                    .alignment(Alignment::Center),
-            ),
+            Cell::from(Line::from(countdown)),
         ]);
 
 
