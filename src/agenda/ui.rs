@@ -70,6 +70,20 @@ impl DateTimeInput {
         }
     }
 
+    pub fn data_backspace(&mut self) {
+        self.value
+            .replace_range(self.cursor..self.cursor + 1, &0.to_string());
+
+        self.move_left();
+    }
+    
+    pub fn time_backspace(&mut self) {
+        self.value
+            .replace_range(self.cursor..self.cursor + 1, &'-'.to_string());
+
+        self.move_left();
+    }
+
     pub fn insert_digit(&mut self, digit: char) {
         if !digit.is_ascii_digit() {
             return;

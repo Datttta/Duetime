@@ -218,6 +218,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     app.event_date.move_right();
                 }
 
+                KeyCode::Backspace => {
+                    app.event_date.data_backspace(); 
+                }
+
                 _ => {}
             }
         }
@@ -234,6 +238,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                 KeyCode::Char('l') => {
                     app.event_time.move_right();
+                }
+                
+                KeyCode::Backspace => {
+                    app.event_time.time_backspace(); 
                 }
 
                 _ => {}
