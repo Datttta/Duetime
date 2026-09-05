@@ -39,7 +39,8 @@ pub struct App {
     // Panels
     pub focused_panel: Panel,
     pub previous_panel: Panel,
-    pub is_change: bool,
+    pub already_focused_on_previous: bool,
+    pub already_set_previous: bool,
 
     // TasksTable
     pub tasks: Vec<TaskInfo>,
@@ -194,7 +195,8 @@ impl App {
             // Panel
             focused_panel: Panel::TasksTable,
             previous_panel: Panel::TasksTable,
-            is_change: true,
+            already_set_previous: false,
+            already_focused_on_previous: false,
 
             // Misc
             last_agenda_update: Local::now().date_naive(),

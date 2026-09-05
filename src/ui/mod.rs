@@ -2,7 +2,7 @@ pub mod widgets;
 pub mod theme;
 pub mod help;
 
-//use log::info;
+use log::info;
 
 use crate::{
     app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup},
@@ -48,6 +48,11 @@ struct MainLayout {
     agenda: Rect,
 }
 
+struct HalfHeightLayout {
+    tasks: Rect,
+    inbox: Rect,
+}
+
 fn draw_layout(frame: &mut Frame) -> MainLayout {
     let chunks = Layout::horizontal([
         Constraint::Percentage(50),
@@ -69,6 +74,20 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     }
 }
 
+fn draw_half_height_layout(frame: &mut Frame) -> HalfHeightLayout {
+    let chunks = Layout::horizontal([
+        Constraint::Percentage(50),
+        Constraint::Length(1),
+        Constraint::Percentage(50),
+    ])
+    .split(frame.area());
+
+    HalfHeightLayout {
+        tasks: chunks[0],
+        inbox: chunks[2],
+    }
+}
+
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = frame.area();
 
@@ -79,21 +98,38 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         height: 1,
     };
 
-    // Small terminal window: show only tasks
+    info!("area width: {:?}", area.width);
+    info!("area height: {:?}", area.height);
     if area.width < 140 {
         // check the previous focused panel
-        if app.is_change {
+        if !app.already_set_previous {
             app.previous_panel = app.focused_panel;
-            app.is_change = false;
+            
+            app.already_focused_on_previous = false;
+            app.already_set_previous = true;
         }
 
         app.focused_panel = Panel::TasksTable;
         draw_tasks_panel(frame, area, app);
+    } else if area.width > 200 && area.height < 25{
+        if !app.already_focused_on_previous {
+            app.focused_panel = app.previous_panel;
+            app.already_focused_on_previous = true;
+            app.already_set_previous = false;
+        } 
+
+        let layout = draw_half_height_layout(frame);
+        
+        // draw panels
+        draw_tasks_panel(frame, layout.tasks, app);
+        draw_inbox_panel(frame, layout.inbox, app);
+
     } else {
         //focus on previous panel
-        if !app.is_change {
+        if !app.already_focused_on_previous {
             app.focused_panel = app.previous_panel;
-            app.is_change = true;
+            app.already_focused_on_previous = true;
+            app.already_set_previous = false;
         }
 
         // Show all panels if in fullscreen
