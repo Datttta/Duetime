@@ -40,7 +40,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(15),
+            Constraint::Length(10),
             Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
@@ -59,11 +59,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
-    let vertical = Layout::vertical([
-        Constraint::Length(10), // input height
-    ])
-    .split(inner);
-
     let input = Layout::vertical([
         Constraint::Length(3), // event name
         Constraint::Length(1), // event date
@@ -71,7 +66,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Constraint::Length(1), // repeat
     ])
     .flex(Flex::Center)
-    .split(vertical[0]);
+    .split(inner);
 
     input::draw(
         frame,
