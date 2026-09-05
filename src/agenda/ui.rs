@@ -109,9 +109,8 @@ fn format_countdown(date: NaiveDate) -> String {
     let days = (date - today).num_days();
 
     match days {
-        0 => "Today".to_string(),
         1 => "1 day".to_string(),
-        days if days > 1 => format!("{} days", days),
+        days  => format!("{} days", days),
         -1 => "Yesterday".to_string(),
         days => format!("{} days ago", days.abs()),
     }
