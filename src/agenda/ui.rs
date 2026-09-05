@@ -203,6 +203,7 @@ pub fn draw_agenda_panel(
     let chunks = Layout::vertical([
         Constraint::Length(1),              // "Today" Header
         Constraint::Length(today_height),   // Today events list
+        Constraint::Length(1),              // "space
         Constraint::Length(1),              // "Upcoming" Header
         Constraint::Length(upcoming_height),// Upcoming events list
     ])
@@ -212,13 +213,13 @@ pub fn draw_agenda_panel(
         && app.n_mode == NavigationMode::Visual;
 
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
-    draw_events_section(frame, chunks[1], app, &today_indices, is_visual);
+    draw_events(frame, chunks[1], app, &today_indices, is_visual);
 
-    frame.render_widget(Paragraph::new("Upcoming"), chunks[2]);
-    draw_events_section(frame, chunks[3], app, &upcoming_indices, is_visual);
+    frame.render_widget(Paragraph::new("Upcoming"), chunks[3]);
+    draw_events(frame, chunks[4], app, &upcoming_indices, is_visual);
 }
 
-pub fn draw_events_section(
+pub fn draw_events(
     frame: &mut Frame,
     area: Rect,
     app: &App,
@@ -267,7 +268,7 @@ pub fn draw_events_section(
         let mut row = Row::new(vec![
             Cell::from(format!("{}{}", prefix, ellipsize(&event.name, 20))),
             Cell::from(
-                Line::from(event.date.format("%d-%m-%y").to_string())
+                Line::from(event.date.format("%a, %b %-d").to_string())
                     .alignment(Alignment::Center),
             ),
             Cell::from(String::new()),

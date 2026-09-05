@@ -34,8 +34,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             if app.pending_command == Some('a') {
                 actions::add_event(app);
-                app.pending_command == None;
             } 
+            app.pending_command == None;
         }
 
         KeyCode::Char('d') => {

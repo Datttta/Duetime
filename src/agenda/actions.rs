@@ -27,8 +27,12 @@ pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
 pub fn add_event(app: &mut App) {
     app.event.clear();
 
-    app.event_date.cursor = 0;
     app.event_time.cursor = 0;
+    app.event_time.value = "--:--".to_string();
+    
+    app.event_date.cursor = 0;
+    app.event_date.value = Local::now().date_naive().format("%d-%m-%y").to_string();
+
     app.event_repeat = false;
 
     app.mode = InputMode::Insert;

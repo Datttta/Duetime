@@ -153,7 +153,16 @@ pub fn save_event(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
             app.events.sort_by(|a, b| {
                 a.date
                     .cmp(&b.date)
-                    .then_with(|| a.time.cmp(&b.time))
+                    .then_with(|| match (a.time, b.time) {
+                        // Both have times: sort chronologically
+                        (Some(t1), Some(t2)) => t1.cmp(&t2),
+                        // Event 'a' has a time, 'b' does not -> 'a' comes first
+                        (Some(_), None) => std::cmp::Ordering::Less,
+                        // Event 'b' has a time, 'a' does not -> 'b' comes first
+                        (None, Some(_)) => std::cmp::Ordering::Greater,
+                        // Neither has a time: treat as equal
+                        (None, None) => std::cmp::Ordering::Equal,
+                    })
             });
 
             if let Some(index) = app.events
