@@ -164,8 +164,8 @@ pub fn draw_repeat_input(
     };
 
     let line = Line::from(vec![
+        Span::raw("Repeat "),
         Span::styled(checkbox, style),
-        Span::raw(" Repeat"),
     ]);
 
     frame.render_widget(Paragraph::new(line), area);
