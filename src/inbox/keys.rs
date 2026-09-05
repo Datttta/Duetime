@@ -27,16 +27,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
-            app.pending_command = Some('a');
+            actions::inbox_item_add_popup(app);
         }
 
         KeyCode::Char('i') => {
-            if app.pending_command == Some('a') {
-                actions::inbox_item_add_popup(app);
-                app.pending_command = None;
-            } else {
-                actions::inbox_item_info(app);
-            }
+            actions::inbox_item_info(app);
         }
 
         KeyCode::Char('e') => {

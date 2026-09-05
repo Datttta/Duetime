@@ -152,7 +152,7 @@ pub fn draw_repeat_input(
     repeat: bool,
     selected: bool,
 ) {
-    let checkbox = if repeat { "☑" } else { "☐" };
+    let checkbox = if repeat { "" } else { "" };
 
     let style = if selected {
         Style::default()

@@ -78,16 +78,31 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         true,
     );
 
+    let date_row = Layout::horizontal([
+        Constraint::Length(6), // Width for label text
+        Constraint::Min(0),
+    ])
+    .split(input[1]);
+
+    frame.render_widget(Paragraph::new("Date:"), date_row[0]);
     ui::draw_date_time_input(
         frame,
-        input[1],
+        date_row[1],
         &app.event_date,
         app.agenda_selected_input == AgendaSelectedInput::Date,
     );
     
+    let time_row = Layout::horizontal([
+        Constraint::Length(6), // Width for label text
+        Constraint::Min(0),
+    ])
+    .split(input[2]);
+
+    frame.render_widget(Paragraph::new("Time:"), time_row[0]);
+    
     ui::draw_date_time_input(
         frame,
-        input[2],
+        time_row[1],
         &app.event_time,
         app.agenda_selected_input == AgendaSelectedInput::Time,
     );
