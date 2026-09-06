@@ -175,6 +175,7 @@ pub fn save_event(app: &mut App) {
         _ => {}
     }
 
+    ui::update_repeating_events(&mut app.events);
     storage::agenda::save_agenda(&app.events).unwrap();
     app.popup = Popup::None;
 }

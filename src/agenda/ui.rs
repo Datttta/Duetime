@@ -116,27 +116,49 @@ impl AgendaEvent {
     }
 }
 
-fn format_countdown(event: &AgendaEvent) -> String {
+fn format_countdown(date: NaiveDate) -> String {
     let today = Local::now().date_naive();
 
-    let mut next_date = event.date;
-
-    if event.repeat {
-        next_date = next_date.with_year(today.year()).unwrap();
-
-        if next_date < today {
-            next_date = next_date
-                .with_year(today.year() + 1)
-                .unwrap();
-        }
-    }
-
-    let days = (next_date - today).num_days();
+    let days = (date - today).num_days();
 
     match days {
         1 => "1 day".to_string(),
         days  => format!("{} days", days),
     }
+}
+
+pub fn update_repeating_events(events: &mut Vec<AgendaEvent>) {
+    let today = Local::now().date_naive();
+
+    for event in events.iter_mut() {
+        if !event.repeat {
+            continue;
+        }
+
+        while event.date < today {
+            let next_year = event.date.year() + 1;
+
+            event.date = match event.date.with_year(next_year) {
+                Some(date) => date,
+                None => {
+                    // February 29 → February 28 in non-leap years
+                    event.date
+                        .with_day(28)
+                        .unwrap()
+                        .with_year(next_year)
+                        .unwrap()
+                }
+            };
+        }
+    }
+}
+
+pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
+    let today = Local::now().date_naive();
+
+    events.retain(|event| {
+        event.repeat || event.date >= today
+    });
 }
 
 pub fn draw_date_time_input(
@@ -272,7 +294,7 @@ pub fn draw_events(
             .map(|time| time.format("%H:%M").to_string())
             .unwrap_or_default();
 
-        let countdown = format_countdown(event);
+        let countdown = format_countdown(event.date);
 
         let is_selected = current == Some(global_index);
         let prefix = if is_selected { "> " } else { "  " };

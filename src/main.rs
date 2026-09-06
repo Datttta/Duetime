@@ -36,7 +36,8 @@ fn main() -> io::Result<()> {
         let today = Local::now().date_naive();
 
         if today != app.last_agenda_update {
-            agenda::actions::remove_expired_events(&mut app.events);
+            agenda::ui::remove_expired_events(&mut app.events);
+            agenda::ui::update_repeating_events(&mut app.events);
             app.last_agenda_update = today;
 
             crate::storage::agenda::save_agenda(&app.events).unwrap();
