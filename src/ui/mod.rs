@@ -111,7 +111,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         app.focused_panel = Panel::TasksTable;
         draw_tasks_panel(frame, area, app);
-    } else if area.width > 200 && area.height < 25{
+    } else if area.width > 200 && area.height < 45{
         if !app.already_focused_on_previous {
             app.focused_panel = app.previous_panel;
             app.already_focused_on_previous = true;

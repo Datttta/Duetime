@@ -17,7 +17,7 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
 };
 
-use chrono::{NaiveDate, NaiveTime, Local};
+use chrono::{NaiveDate, NaiveTime, Local, Datelike};
 use serde::{Deserialize, Serialize};
 
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
@@ -116,10 +116,22 @@ impl AgendaEvent {
     }
 }
 
-fn format_countdown(date: NaiveDate) -> String {
+fn format_countdown(event: &AgendaEvent) -> String {
     let today = Local::now().date_naive();
 
-    let days = (date - today).num_days();
+    let mut next_date = event.date;
+
+    if event.repeat {
+        next_date = next_date.with_year(today.year()).unwrap();
+
+        if next_date < today {
+            next_date = next_date
+                .with_year(today.year() + 1)
+                .unwrap();
+        }
+    }
+
+    let days = (next_date - today).num_days();
 
     match days {
         1 => "1 day".to_string(),
@@ -242,7 +254,7 @@ pub fn draw_events(
         Constraint::Length(1), // space
         Constraint::Length(10), // event date
         Constraint::Length(1), // space
-        Constraint::Length(7),  // countdown
+        Constraint::Length(8),  // countdown
     ];
 
     let visual_start = app.n_visual_start;
@@ -260,7 +272,7 @@ pub fn draw_events(
             .map(|time| time.format("%H:%M").to_string())
             .unwrap_or_default();
 
-        let countdown = format_countdown(event.date);
+        let countdown = format_countdown(event);
 
         let is_selected = current == Some(global_index);
         let prefix = if is_selected { "> " } else { "  " };

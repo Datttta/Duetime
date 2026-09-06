@@ -8,6 +8,7 @@ pub fn keys(app: &App) -> Line<'static> {
     let bold = Style::default().add_modifier(Modifier::BOLD);
 
     match &app.popup {
+        // TasksTable
         Popup::TasksTable(
             TasksTablePopup::AddTask
             | TasksTablePopup::EditTask
@@ -65,6 +66,7 @@ pub fn keys(app: &App) -> Line<'static> {
             ])
         }
 
+        // Inbox
         Popup::Inbox(InboxPopup::InfoInboxItem) => {
             Line::from(vec![
                 Span::styled("cc", bold),
@@ -73,6 +75,8 @@ pub fn keys(app: &App) -> Line<'static> {
                 Span::raw(" Close"),
             ])
         }
+
+        // Agenda
 
         Popup::None => {
             Vec::new().into()

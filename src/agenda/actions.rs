@@ -43,14 +43,26 @@ pub fn add_event(app: &mut App) {
 
 pub fn edit_event(app: &mut App) {
     if let Some(index) = app.agenda_table_state.selected() {
-        let item = &app.events[index];
+        let event = &app.events[index];
 
-        // Load task data into inputs
-        app.event_name.text = item.name.clone();
-        
-        app.event_time.cursor = 0;
+        // Load event data into inputs
+        app.event_name.text = event.name.clone();
+
+        app.event_date.value =
+            event.date.format("%d-%m-%y").to_string();
+
+        app.event_time.value = event
+            .time
+            .map(|time| time.format("%H:%M").to_string())
+            .unwrap_or_else(|| "--:--".to_string());
+
+        app.event_repeat = event.repeat;
+
+        // Reset cursors
+        app.event_name.cursor = 0;
         app.event_date.cursor = 0;
-       
+        app.event_time.cursor = 0;
+
         app.mode = InputMode::Normal;
         app.popup = Popup::Agenda(AgendaPopup::EditEvent);
         app.agenda_selected_input = AgendaSelectedInput::Name;
@@ -58,7 +70,6 @@ pub fn edit_event(app: &mut App) {
         app.pending_command = None;
     }
 }
-
 
 pub fn delete_event(app: &mut App) {
     if let Some(current) = app.agenda_table_state.selected() {

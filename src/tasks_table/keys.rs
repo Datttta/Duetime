@@ -64,11 +64,15 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('p') => {
             if app.pending_command == Some('a') {
                 actions::add_tasks_to_preset(app);
+                app.pending_command = None;
             } 
         }
 
         KeyCode::Char('t') => {
-            app.task_add(TaskDestination::AddTask);
+            if app.pending_command == Some('a') {
+                app.task_add(TaskDestination::AddTask);
+                app.pending_command = None;
+            }
         }
 
         KeyCode::Char('e') => {
