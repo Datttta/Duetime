@@ -13,8 +13,6 @@ use crate::{
 
 use chrono::Local;
 
-use super::ui::AgendaEvent;
-
 pub fn add_event(app: &mut App) {
     app.event_name.clear();
 

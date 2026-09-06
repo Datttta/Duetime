@@ -16,13 +16,13 @@ use crate::{
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
-    let area = centered_rect(frame, 40, 30);
+    let area = centered_rect(frame, 45, 30);
 
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
         .title(" Help ")
-        .padding(Padding::new(2, 2, 1, 1))
+        .padding(Padding::new(3, 2, 1, 1))
         .border_style(Style::default().fg(Color::White));
 
     frame.render_widget(&block, area);
@@ -31,23 +31,23 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from("Navigation"),
         Line::from(""),
         Line::from(vec![
-            Span::styled("j -", Style::default().fg(Color::Yellow)),
+            Span::styled("  j -", Style::default().fg(Color::Yellow)),
             Span::styled(" Move down", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("k -", Style::default().fg(Color::Yellow)),
+            Span::styled("  k -", Style::default().fg(Color::Yellow)),
             Span::styled(" Move up", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("gg -", Style::default().fg(Color::Yellow)),
+            Span::styled("  gg -", Style::default().fg(Color::Yellow)),
             Span::styled(" Go to first item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("G -", Style::default().fg(Color::Yellow)),
+            Span::styled("  G -", Style::default().fg(Color::Yellow)),
             Span::styled(" Go to last item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("v / V -", Style::default().fg(Color::Yellow)),
+            Span::styled("  v / V -", Style::default().fg(Color::Yellow)),
             Span::styled(" Visual mode", Style::default().fg(gray_color())),
         ]),
 
@@ -56,43 +56,43 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(""),
 
         Line::from(vec![
-            Span::styled("t -", Style::default().fg(Color::Yellow)),
+            Span::styled("  t -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("e -", Style::default().fg(Color::Yellow)),
+            Span::styled("  e -", Style::default().fg(Color::Yellow)),
             Span::styled(" Edit task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("P -", Style::default().fg(Color::Yellow)),
+            Span::styled("  P -", Style::default().fg(Color::Yellow)),
             Span::styled(" Presets", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("Ctrl+l -", Style::default().fg(Color::Yellow)),
+            Span::styled("  Ctrl+l -", Style::default().fg(Color::Yellow)),
             Span::styled(" Known tasks", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("dd -", Style::default().fg(Color::Yellow)),
+            Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("x -", Style::default().fg(Color::Yellow)),
+            Span::styled("  x -", Style::default().fg(Color::Yellow)),
             Span::styled(" Move task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("s -", Style::default().fg(Color::Yellow)),
+            Span::styled("  s -", Style::default().fg(Color::Yellow)),
             Span::styled(" Start/stop task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("c -", Style::default().fg(Color::Yellow)),
+            Span::styled("  c -", Style::default().fg(Color::Yellow)),
             Span::styled(" Complete task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("r -", Style::default().fg(Color::Yellow)),
+            Span::styled("  r -", Style::default().fg(Color::Yellow)),
             Span::styled(" Reset task", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("R -", Style::default().fg(Color::Yellow)),
+            Span::styled("  R -", Style::default().fg(Color::Yellow)),
             Span::styled(" Hard reset task", Style::default().fg(gray_color())),
         ]),
 
@@ -101,24 +101,41 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(""),
 
         Line::from(vec![
-            Span::styled("ai -", Style::default().fg(Color::Yellow)),
+            Span::styled("  a -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("e -", Style::default().fg(Color::Yellow)),
+            Span::styled("  e -", Style::default().fg(Color::Yellow)),
             Span::styled(" Edit inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("i -", Style::default().fg(Color::Yellow)),
+            Span::styled("  i -", Style::default().fg(Color::Yellow)),
             Span::styled(" Inbox item information", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("cc -", Style::default().fg(Color::Yellow)),
+            Span::styled("  cc -", Style::default().fg(Color::Yellow)),
             Span::styled(" Copy inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("dd -", Style::default().fg(Color::Yellow)),
+            Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete inbox item", Style::default().fg(gray_color())),
+        ]),
+        
+        Line::from(""),
+        Line::from("Agenda"),
+        Line::from(""),
+
+        Line::from(vec![
+            Span::styled("  a -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Add event", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  e -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Edit event", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  dd -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Delete event", Style::default().fg(gray_color())),
         ]),
 
         Line::from(""),
@@ -126,11 +143,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(""),
 
         Line::from(vec![
-            Span::styled("q -", Style::default().fg(Color::Yellow)),
+            Span::styled("  q -", Style::default().fg(Color::Yellow)),
             Span::styled(" Quit", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("Esc -", Style::default().fg(Color::Yellow)),
+            Span::styled("  Esc -", Style::default().fg(Color::Yellow)),
             Span::styled(" Close / cancel", Style::default().fg(gray_color())),
         ]),
     ];
