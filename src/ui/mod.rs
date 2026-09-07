@@ -31,6 +31,7 @@ use crate::{
         ui::draw_agenda_panel,
         popups::{
             add_event,
+            all_events,
         },
     },
 
@@ -209,6 +210,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             AgendaPopup::EditEvent => {
                 add_event::draw(frame, app);
+            }
+            
+            AgendaPopup::AllEvents => {
+                all_events::draw(frame, app);
             }
         }
     }

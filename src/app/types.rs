@@ -47,6 +47,7 @@ pub enum TasksTablePopup {
 pub enum AgendaPopup {
     AddEvent,
     EditEvent,
+    AllEvents,
 }
 
 #[derive(PartialEq)]

@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
+const EVENT_NAME_LENGHT: u16 = 45;
 
 #[derive(Default)]
 pub struct AgendaEvent {
@@ -280,7 +281,8 @@ pub fn draw_events(
     is_visual: bool,
 ) {
     let columns = [
-        Constraint::Length(40), // event name
+        Constraint::Length(EVENT_NAME_LENGHT), // event name
+        Constraint::Length(3),  // sapce
         Constraint::Length(5),  // time of the event
         Constraint::Length(1), // space
         Constraint::Length(10), // event date
@@ -309,7 +311,8 @@ pub fn draw_events(
         let prefix = if is_selected { "> " } else { "  " };
 
         let mut row = Row::new(vec![
-            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, 40))),
+            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGHT - 2).into()))),
+            Cell::from(String::new()),
             Cell::from(Line::from(time).alignment(Alignment::Center)),
             Cell::from(String::new()),
             Cell::from(
