@@ -134,6 +134,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Edit event", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
+            Span::styled("  i -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Event information", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete event", Style::default().fg(gray_color())),
         ]),

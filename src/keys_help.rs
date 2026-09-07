@@ -1,4 +1,4 @@
-use crate::app::{App, Popup, TasksTablePopup, InboxPopup};
+use crate::app::{App, Popup, TasksTablePopup, InboxPopup, AgendaPopup};
 use ratatui::{
     style::{Modifier, Style},
     text::{Line, Span},
@@ -77,6 +77,20 @@ pub fn keys(app: &App) -> Line<'static> {
         }
 
         // Agenda
+        Popup::Agenda(AgendaPopup::AllEvents) => {
+            Line::from(vec![
+                Span::styled("a", bold),
+                Span::raw(" Add event  "),
+                Span::styled("e", bold),
+                Span::raw(" Edit event  "),
+                Span::styled("dd", bold),
+                Span::raw(" Delete event  "),
+                Span::styled("i", bold),
+                Span::raw(" Event info  "),
+                Span::styled("q", bold),
+                Span::raw(" Close"),
+            ])
+        }
 
         Popup::None => {
             Vec::new().into()
