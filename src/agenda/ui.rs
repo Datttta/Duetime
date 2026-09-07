@@ -17,7 +17,7 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
 };
 
-use chrono::{NaiveDate, NaiveTime, Local, Datelike};
+use chrono::{NaiveDate, NaiveTime, Local, Datelike, Duration};
 use serde::{Deserialize, Serialize};
 
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
@@ -235,10 +235,19 @@ pub fn draw_agenda_panel(
     frame.render_widget(border, area);
 
     let today = Local::now().date_naive();
+    let max_date = today + Duration::days(30);
 
-    // Partition index maps for events array
+    let visible_indices: Vec<usize> = (0..app.events.len())
+        .filter(|&i| {
+            let date = app.events[i].date;
+            date >= today && date <= max_date
+        })
+        .collect();
+
     let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
-        (0..app.events.len()).partition(|&i| app.events[i].date <= today);
+        visible_indices
+            .into_iter()
+            .partition(|&i| app.events[i].date == today);
 
     // Dynamic height constraints based on section item counts
     let today_height = (today_indices.len() as u16).max(1);
