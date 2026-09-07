@@ -51,6 +51,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             actions::edit_event(app);
         }
         
+        KeyCode::Char('i') => {
+            actions::event_info(app);
+        }
+        
         KeyCode::Char('l') => {
             actions::all_events(app);
         }

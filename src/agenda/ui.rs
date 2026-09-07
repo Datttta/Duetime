@@ -117,7 +117,7 @@ impl AgendaEvent {
     }
 }
 
-fn format_countdown(date: NaiveDate) -> String {
+pub fn format_countdown(date: NaiveDate) -> String {
     let today = Local::now().date_naive();
 
     let days = (date - today).num_days();

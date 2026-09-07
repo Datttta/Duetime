@@ -48,6 +48,7 @@ pub enum AgendaPopup {
     AddEvent,
     EditEvent,
     AllEvents,
+    EventInfo,
 }
 
 #[derive(PartialEq)]

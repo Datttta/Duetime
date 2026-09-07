@@ -65,6 +65,10 @@ pub fn all_events(app: &mut App) {
     app.popup = Popup::Agenda(AgendaPopup::AllEvents);
 }
 
+pub fn event_info(app: &mut App) {
+    app.popup = Popup::Agenda(AgendaPopup::EventInfo);
+}
+
 pub fn delete_event(app: &mut App) {
     if let Some(current) = app.agenda_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {

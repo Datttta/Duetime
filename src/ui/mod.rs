@@ -32,6 +32,7 @@ use crate::{
         popups::{
             add_event,
             all_events,
+            event_info,
         },
     },
 
@@ -99,8 +100,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         height: 1,
     };
 
-    info!("area width: {:?}", area.width);
-    info!("area height: {:?}", area.height);
+    //info!("area width: {:?}", area.width);
+    //info!("area height: {:?}", area.height);
     if area.width < 140 {
         // check the previous focused panel
         if !app.already_set_previous {
@@ -214,6 +215,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             AgendaPopup::AllEvents => {
                 all_events::draw(frame, app);
+            }
+            
+            AgendaPopup::EventInfo => {
+                event_info::draw(frame, app);
             }
         }
     }

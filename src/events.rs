@@ -25,6 +25,7 @@ use crate::{
     agenda::popups::{
         add_event,
         all_events,
+        event_info,
     },
 
     storage::current_tasks,
@@ -167,6 +168,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::Agenda(AgendaPopup::AllEvents) => {
                     all_events::handle_keys(app, key);
+                }
+                
+                Popup::Agenda(AgendaPopup::EventInfo) => {
+                    event_info::handle_keys(app, key);
                 }
             }
         }
