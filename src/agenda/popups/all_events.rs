@@ -6,12 +6,16 @@ use ratatui::{
 
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::navigation::{
-    vim_navigation,
-    vim_navigation::NavigationMode,
+use crate::{
+    navigation::{
+        vim_navigation::NavigationMode,
+        vim_navigation,
+    },
+
+    app::{App, Popup},
+    agenda::actions,
+    keys_help,
 };
-use crate::keys_help;
-use crate::app::{App, Popup};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -79,6 +83,27 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     }
 
     match key.code {
+        KeyCode::Char('a') => {
+            actions::add_event(app);
+        }
+
+        KeyCode::Char('e') => {
+            actions::edit_event(app);
+        }
+        
+        KeyCode::Char('l') => {
+            actions::all_events(app);
+        }
+
+        KeyCode::Char('d') => {
+            if app.pending_command == Some('d') {
+                actions::delete_event(app);
+                app.pending_command = None;
+            } else {
+                app.pending_command = Some('d')
+            }
+        }
+        
         KeyCode::Char('q') => {
             app.popup = Popup::None
         }

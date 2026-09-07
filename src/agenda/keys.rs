@@ -1,4 +1,3 @@
-
 use crate::{
     app::App,
     navigation::vim_navigation,
