@@ -113,7 +113,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Inbox item information", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("  cc -", Style::default().fg(Color::Yellow)),
+            Span::styled("  y -", Style::default().fg(Color::Yellow)),
             Span::styled(" Copy inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
