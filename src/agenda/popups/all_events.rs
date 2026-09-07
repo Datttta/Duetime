@@ -84,10 +84,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
+            app.last_popup = app.popup.clone();
             actions::add_event(app);
         }
 
         KeyCode::Char('e') => {
+            app.last_popup = app.popup.clone();
             actions::edit_event(app);
         }
         

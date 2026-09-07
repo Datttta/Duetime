@@ -15,7 +15,7 @@ pub enum Panel {
     Agenda,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum Popup {
     None,
     Help,
@@ -24,14 +24,14 @@ pub enum Popup {
     Agenda(AgendaPopup),
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum InboxPopup {
     AddInboxItem,
     EditInboxItem,
     InfoInboxItem,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum TasksTablePopup {
     AddTask,
     Presets,
@@ -43,7 +43,7 @@ pub enum TasksTablePopup {
     TaskInfo,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum AgendaPopup {
     AddEvent,
     EditEvent,

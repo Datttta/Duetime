@@ -185,12 +185,12 @@ fn close_popup(app: &mut App) {
     info!("app mode: {:?}", app.mode);
     if app.agenda_selected_input == AgendaSelectedInput::Name{
         if app.mode == InputMode::Normal {
-            app.popup = Popup::None;
+            app.popup = app.last_popup.clone();
         } 
         return
     }
 
-    app.popup = Popup::None;
+    app.popup = app.last_popup.clone();
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {

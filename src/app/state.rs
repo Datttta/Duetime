@@ -29,6 +29,7 @@ pub struct App {
     // Core
     pub running: bool,
     pub popup: Popup,
+    pub last_popup: Popup,
     pub pending_command: Option<char>,
 
     // Vim modes
@@ -143,6 +144,7 @@ impl App {
             // Core
             pending_command: None,
             popup: Popup::None,
+            last_popup: Popup::None,
             running: true,
 
             // TasksTable
