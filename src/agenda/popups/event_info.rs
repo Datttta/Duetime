@@ -8,7 +8,7 @@ use ratatui::{
 };
 
 use crate::{
-    app::{App, Popup},
+    app::{App},
     agenda::ui::format_countdown,
 };
 

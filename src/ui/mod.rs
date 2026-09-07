@@ -2,8 +2,6 @@ pub mod widgets;
 pub mod theme;
 pub mod help;
 
-use log::info;
-
 use crate::{
     app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup},
     
@@ -43,6 +41,9 @@ use ratatui::{
     layout::{Constraint, Layout, Rect},
     Frame,
 };
+
+//use log::info;
+
 
 struct MainLayout {
     tasks: Rect,
