@@ -17,6 +17,8 @@ use ratatui::{
 
 use serde::{Deserialize, Serialize};
 
+const ITEM_NAME_LENGHT: u16 = 84;
+
 #[derive(Default)]
 pub struct InboxItemInfo {
     pub input: String,
@@ -87,9 +89,9 @@ pub fn draw_inbox_panel (
 
     // header
     let columns = Layout::horizontal([
-        Constraint::Percentage(2), // extra
-        Constraint::Percentage(78), // Item    
-        Constraint::Percentage(20), // Priority
+        Constraint::Length(2), // extra
+        Constraint::Length(85), // Item    
+        Constraint::Length(10), // Priority
     ])
     .flex(Flex::Start)
     .split(chunks[0]);
@@ -108,8 +110,9 @@ pub fn draw_items (
     is_visual: bool,
     ) {
     let columns = [
-        Constraint::Percentage(82), // inbox input
-        Constraint::Percentage(18), // priority 
+        Constraint::Length(ITEM_NAME_LENGHT), // inbox input
+        Constraint::Length(3), // space
+        Constraint::Length(6), // priority 
     ];
 
     let visual_start = app.n_visual_start;
@@ -138,7 +141,8 @@ pub fn draw_items (
         // Draw insertion line before this task.
 
         let mut row = Row::new(vec![
-            Cell::from(format!("  {}", ellipsize(&item.input, 77))),
+            Cell::from(format!("  {}", ellipsize(&item.input, (ITEM_NAME_LENGHT - 3).into()))),
+            Cell::from(String::new()),
             Cell::from(
                 Line::from(item.priority.as_str()),
             ),

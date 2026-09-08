@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
+
 const EVENT_NAME_LENGHT: u16 = 45;
 
 #[derive(Default)]
@@ -285,7 +286,7 @@ pub fn draw_events(
         Constraint::Length(3),  // sapce
         Constraint::Length(5),  // time of the event
         Constraint::Length(1), // space
-        Constraint::Length(10), // event date
+        Constraint::Length(11), // event date
         Constraint::Length(1), // space
         Constraint::Length(8),  // countdown
     ];
