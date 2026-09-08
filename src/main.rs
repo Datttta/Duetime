@@ -19,6 +19,7 @@ mod keys_help;
 mod suggestions;
 mod inbox;
 mod agenda;
+mod timers;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

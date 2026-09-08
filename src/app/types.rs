@@ -13,6 +13,7 @@ pub enum Panel {
     TasksTable,
     Inbox,
     Agenda,
+    Timers,
 }
 
 #[derive(PartialEq, Debug, Clone)]

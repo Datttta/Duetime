@@ -34,6 +34,10 @@ use crate::{
         },
     },
 
+    timers::{
+        ui::draw_timers_panel,
+    },
+
     ui::widgets::status_message::draw_status_message,
 };
 
@@ -44,16 +48,16 @@ use ratatui::{
 
 //use log::info;
 
-
 struct MainLayout {
     tasks: Rect,
     inbox: Rect,
     agenda: Rect,
+    timers: Rect,
 }
 
 struct HalfHeightLayout {
     tasks: Rect,
-    inbox: Rect,
+    agenda: Rect,
 }
 
 fn draw_layout(frame: &mut Frame) -> MainLayout {
@@ -70,10 +74,17 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     ])
     .split(chunks[2]);
 
+    let left = Layout::vertical([
+        Constraint::Percentage(50),
+        Constraint::Percentage(50),
+    ])
+    .split(chunks[0]);
+
     MainLayout {
-        tasks: chunks[0],
-        inbox: right[0],
-        agenda: right[1],
+        tasks: left[0],
+        inbox: left[1],
+        agenda: right[0],
+        timers: right[1],
     }
 }
 
@@ -87,7 +98,7 @@ fn draw_half_height_layout(frame: &mut Frame) -> HalfHeightLayout {
 
     HalfHeightLayout {
         tasks: chunks[0],
-        inbox: chunks[2],
+        agenda: chunks[2],
     }
 }
 
@@ -125,7 +136,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         
         // draw panels
         draw_tasks_panel(frame, layout.tasks, app);
-        draw_inbox_panel(frame, layout.inbox, app);
+        draw_agenda_panel(frame, layout.agenda, app);
 
     } else {
         //focus on previous panel
@@ -142,6 +153,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         draw_tasks_panel(frame, layout.tasks, app);
         draw_inbox_panel(frame, layout.inbox, app);
         draw_agenda_panel(frame, layout.agenda, app);
+        draw_timers_panel(frame, layout.timers, app);
     }
 
     //help popup
