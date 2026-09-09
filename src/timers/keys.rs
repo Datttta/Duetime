@@ -4,8 +4,8 @@ use crate::{
 };
 
 use super::actions;
-
 use crossterm::event::{KeyCode, KeyEvent};
+use log::info;
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let mut selected = app.timers_list_state.selected();
@@ -28,6 +28,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('a') => {
             actions::add_timer(app);
+            info!("Hit a!!")
         }
 
         //KeyCode::Char('i') => {

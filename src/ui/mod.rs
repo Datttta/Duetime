@@ -3,7 +3,7 @@ pub mod theme;
 pub mod help;
 
 use crate::{
-    app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup},
+    app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup, TimersPopup},
     
     tasks_table::{
         ui::draw_tasks_panel,
@@ -36,6 +36,9 @@ use crate::{
 
     timers::{
         ui::draw_timers_panel,
+        popups::{
+            add_timer,
+        },
     },
 
     ui::widgets::status_message::draw_status_message,
@@ -232,6 +235,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             AgendaPopup::EventInfo => {
                 event_info::draw(frame, app);
+            }
+        }
+    }
+
+    // timers-panel popups
+    if let Popup::Timers(popup) = &app.popup {
+        match popup {
+            TimersPopup::AddTimer => {
+                add_timer::draw(frame, app);
             }
         }
     }

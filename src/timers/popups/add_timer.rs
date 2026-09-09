@@ -90,74 +90,74 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 }
 
-pub fn save_event(app: &mut App) {
-    match app.popup {
-        Popup::Agenda(AgendaPopup::AddEvent) | Popup::Agenda(AgendaPopup::EditEvent) => {
-            // 1. Validate inputs
-            let name = app.event_name.text.trim().to_string();
-            if name.is_empty() {
-                app.set_status_message("Event name cannot be empty.".to_string());
-                return;
-            }
-
-            let date = match NaiveDate::parse_from_str(&app.timer_duration.value, "%d-%m-%y") {
-                Ok(date) => date,
-                Err(_) => {
-                    app.set_status_message("Invalid date.".to_string());
-                    return;
-                }
-            };
-
-            let time = if app.event_time.value == "--:--" {
-                None
-            } else {
-                match NaiveTime::parse_from_str(&app.event_time.value, "%H:%M") {
-                    Ok(time) => Some(time),
-                    Err(_) => {
-                        app.set_status_message("Invalid time.".to_string());
-                        return;
-                    }
-                }
-            };
-
-            let event = AgendaEvent {
-                name: name.clone(),
-                date,
-                time,
-                repeat: app.event_repeat,
-            };
-
-            // 2. Perform Add or Edit action
-            if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
-                app.events.push(event);
-            } else if let Some(index) = app.agenda_table_state.selected() {
-                if let Some(existing_event) = app.events.get_mut(index) {
-                    *existing_event = event;
-                }
-            }
-
-            // 3. Sort events chronologically
-            app.events.sort_by(|a, b| {
-                a.date.cmp(&b.date).then_with(|| match (a.time, b.time) {
-                    (Some(t1), Some(t2)) => t1.cmp(&t2),
-                    (Some(_), None) => std::cmp::Ordering::Less,
-                    (None, Some(_)) => std::cmp::Ordering::Greater,
-                    (None, None) => std::cmp::Ordering::Equal,
-                })
-            });
-
-            // 4. Update table selection to keep track of the modified/added event
-            if let Some(index) = app.events.iter().position(|e| e.name == name && e.date == date) {
-                app.agenda_table_state.select(Some(index));
-            }
-        }
-        _ => {}
-    }
-
-    ui::update_repeating_events(&mut app.events);
-    storage::agenda::save_agenda(&app.events).unwrap();
-    app.popup = Popup::None;
-}
+//pub fn save_event(app: &mut App) {
+//    match app.popup {
+//        Popup::Agenda(AgendaPopup::AddEvent) | Popup::Agenda(AgendaPopup::EditEvent) => {
+//            // 1. Validate inputs
+//            let name = app.event_name.text.trim().to_string();
+//            if name.is_empty() {
+//                app.set_status_message("Event name cannot be empty.".to_string());
+//                return;
+//            }
+//
+//            let date = match NaiveDate::parse_from_str(&app.timer_duration.value, "%d-%m-%y") {
+//                Ok(date) => date,
+//                Err(_) => {
+//                    app.set_status_message("Invalid date.".to_string());
+//                    return;
+//                }
+//            };
+//
+//            let time = if app.event_time.value == "--:--" {
+//                None
+//            } else {
+//                match NaiveTime::parse_from_str(&app.event_time.value, "%H:%M") {
+//                    Ok(time) => Some(time),
+//                    Err(_) => {
+//                        app.set_status_message("Invalid time.".to_string());
+//                        return;
+//                    }
+//                }
+//            };
+//
+//            let event = AgendaEvent {
+//                name: name.clone(),
+//                date,
+//                time,
+//                repeat: app.event_repeat,
+//            };
+//
+//            // 2. Perform Add or Edit action
+//            if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
+//                app.events.push(event);
+//            } else if let Some(index) = app.agenda_table_state.selected() {
+//                if let Some(existing_event) = app.events.get_mut(index) {
+//                    *existing_event = event;
+//                }
+//            }
+//
+//            // 3. Sort events chronologically
+//            app.events.sort_by(|a, b| {
+//                a.date.cmp(&b.date).then_with(|| match (a.time, b.time) {
+//                    (Some(t1), Some(t2)) => t1.cmp(&t2),
+//                    (Some(_), None) => std::cmp::Ordering::Less,
+//                    (None, Some(_)) => std::cmp::Ordering::Greater,
+//                    (None, None) => std::cmp::Ordering::Equal,
+//                })
+//            });
+//
+//            // 4. Update table selection to keep track of the modified/added event
+//            if let Some(index) = app.events.iter().position(|e| e.name == name && e.date == date) {
+//                app.agenda_table_state.select(Some(index));
+//            }
+//        }
+//        _ => {}
+//    }
+//
+//    ui::update_repeating_events(&mut app.events);
+//    storage::agenda::save_agenda(&app.events).unwrap();
+//    app.popup = Popup::None;
+//}
 
 fn close_popup(app: &mut App) {
     if app.timer_selected_input == TimerSelectedInput::Name{
@@ -223,9 +223,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        KeyCode::Enter => {
-            save_event(app);
-        }
+        //KeyCode::Enter => {
+        //    save_event(app);
+        //}
 
         KeyCode::Char('q') | KeyCode::Esc => {
             close_popup(app);

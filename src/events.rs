@@ -6,6 +6,7 @@ use crate::{
     TasksTablePopup, 
     InboxPopup, 
     AgendaPopup,
+    TimersPopup,
     },
 
     tasks_table::popups::{
@@ -34,7 +35,7 @@ use crate::{
 
     storage::current_tasks,
     ui::help,
-    tasks_table, inbox, agenda
+    tasks_table, inbox, agenda, timers
 };
 
 use std::io;
@@ -109,7 +110,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         Panel::TasksTable => tasks_table::keys::handle_keys(app, key),
                         Panel::Inbox => inbox::keys::handle_keys(app, key),
                         Panel::Agenda => agenda::keys::handle_keys(app, key),
-                        Panel::Timers => {},
+                        Panel::Timers => timers::keys::handle_keys(app, key),
                     }
                 }
 

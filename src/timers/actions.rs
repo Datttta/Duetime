@@ -2,7 +2,7 @@ use crate::{
     app::{
     App,
     Popup, 
-    TimerPopup, 
+    TimersPopup, 
     TimerSelectedInput,
     },
 
@@ -14,48 +14,43 @@ use crate::{
 use chrono::Local;
 
 pub fn add_timer(app: &mut App) {
-    app.event_name.clear();
+    app.timer_name.clear();
 
-    app.event_time.cursor = 0;
-    app.event_time.value = "--:--".to_string();
+    app.timer_duration.cursor = 0;
+    app.timer_duration.value = "00:00:00".to_string();
     
-    app.event_date.cursor = 0;
-    app.event_date.value = Local::now().date_naive().format("%d-%m-%y").to_string();
-
-    app.event_repeat = false;
-
-    app.event_name.cursor = app.event_name.text.len();
+    app.timer_name.cursor = app.timer_name.text.len();
 
     app.mode = InputMode::Insert;
-    app.agenda_selected_input = AgendaSelectedInput::Name;
-    app.popup = Popup::Agenda(AgendaPopup::AddEvent);
+    app.timer_selected_input = TimerSelectedInput::Name;
+    app.popup = Popup::Timers(TimersPopup::AddTimer);
 }
 
-pub fn delete_event(app: &mut App) {
-    if let Some(current) = app.agenda_table_state.selected() {
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start {
-                (start.min(current), start.max(current))
-            } else {
-                (current, current)
-            }
-        } else {
-            (current, current)
-        };
-
-        app.events.drain(first..=last);
-
-        if app.events.is_empty() {
-            app.agenda_table_state.select(None);
-        } else {
-            let new_index = first.min(app.events.len() - 1);
-            app.agenda_table_state.select(Some(new_index));
-        }
-
-        app.n_mode = NavigationMode::Normal;
-        app.n_visual_start = None;
-    }
-
-    app.pending_command = None;
-}
+//pub fn delete_event(app: &mut App) {
+//    if let Some(current) = app.timer_list_state.selected() {
+//        let (first, last) = if app.n_mode == NavigationMode::Visual {
+//            if let Some(start) = app.n_visual_start {
+//                (start.min(current), start.max(current))
+//            } else {
+//                (current, current)
+//            }
+//        } else {
+//            (current, current)
+//        };
+//
+//        app.events.drain(first..=last);
+//
+//        if app.events.is_empty() {
+//            app.timer_list_state.select(None);
+//        } else {
+//            let new_index = first.min(app.events.len() - 1);
+//            app.timer_list_state.select(Some(new_index));
+//        }
+//
+//        app.n_mode = NavigationMode::Normal;
+//        app.n_visual_start = None;
+//    }
+//
+//    app.pending_command = None;
+//}
 

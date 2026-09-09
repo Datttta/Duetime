@@ -23,6 +23,7 @@ pub enum Popup {
     TasksTable(TasksTablePopup),
     Inbox(InboxPopup),
     Agenda(AgendaPopup),
+    Timers(TimersPopup)
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -53,7 +54,7 @@ pub enum AgendaPopup {
 }
 
 #[derive(PartialEq, Debug, Clone)]
-pub enum AgendaPopup {
+pub enum TimersPopup {
     AddTimer,
 }
 
