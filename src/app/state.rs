@@ -152,6 +152,12 @@ impl App {
             cursor: 0,
             editable_positions: TIME_EDITABLE_POSITIONS,
         };
+        
+        let timer_duration = DateTimeInput {
+            value: "00:00:00".to_string(),
+            cursor: 0,
+            editable_positions: TIME_EDITABLE_POSITIONS,
+        };
 
         Self {
             // Core

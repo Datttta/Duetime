@@ -7,7 +7,10 @@ use ratatui::{
 };
 
 use crate::{
-    ui::widgets::input,
+    ui::{
+        widgets::input,
+        widgets::date_time_input::draw_date_time_input,
+    },
     vim_text::{InputResult, InputMode},
     app::{App, Popup, AgendaPopup, AgendaSelectedInput},
     agenda::{
@@ -81,7 +84,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     .split(input[1]);
 
     frame.render_widget(Paragraph::new("Date:"), date_row[0]);
-    ui::draw_date_time_input(
+    draw_date_time_input(
         frame,
         date_row[1],
         &app.event_date,
@@ -96,7 +99,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(Paragraph::new("Time:"), time_row[0]);
     
-    ui::draw_date_time_input(
+    draw_date_time_input(
         frame,
         time_row[1],
         &app.event_time,

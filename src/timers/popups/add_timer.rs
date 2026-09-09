@@ -7,9 +7,12 @@ use ratatui::{
 };
 
 use crate::{
-    ui::widgets::input,
+    ui::widgets::{
+        date_time_input::draw_date_time_input,
+        input,
+    },
     vim_text::{InputResult, InputMode},
-    app::{App, Popup, AgendaPopup, AgendaSelectedInput},
+    app::{App, Popup, AgendaPopup, TimerSelectedInput},
     agenda::{
         ui::AgendaEvent,
         ui,
@@ -72,17 +75,17 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         true,
     );
 
-    let date_row = Layout::horizontal([
+    let duration_row = Layout::horizontal([
         Constraint::Length(6), // Width for label text
         Constraint::Min(0),
     ])
     .split(input[1]);
 
-    frame.render_widget(Paragraph::new("Duration:"), time_row[0]);
-    ui::draw_date_time_input(
+    frame.render_widget(Paragraph::new("Duration:"), duration_row[0]);
+    draw_date_time_input(
         frame,
-        time_row[1],
-        &app.event_time,
+        duration_row[1],
+        &app.timer_duration,
         app.timer_selected_input == TimerSelectedInput::Duration,
     );
 }
@@ -157,16 +160,14 @@ pub fn save_event(app: &mut App) {
 }
 
 fn close_popup(app: &mut App) {
-    info!("Selecte input: {:?}", app.agenda_selected_input);
-    info!("app mode: {:?}", app.mode);
-    if app.agenda_selected_input == AgendaSelectedInput::Name{
+    if app.timer_selected_input == TimerSelectedInput::Name{
         if app.mode == InputMode::Normal {
-            app.popup = app.last_popup.clone();
+            app.popup = Popup::None;
         } 
         return
     }
 
-    app.popup = app.last_popup.clone();
+    app.popup = Popup::None;
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
