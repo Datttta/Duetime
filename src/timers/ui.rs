@@ -1,6 +1,9 @@
 use crate::{
     ui::{
-        widgets::input::ellipsize,
+        widgets::{
+            input::ellipsize,
+            duration::format_duration,
+        },
         theme::{task_selection_color, unfocused_panel},
     },
     app::{App, Popup, Panel, Priority},
@@ -22,12 +25,14 @@ use std::time::Duration;
 pub struct TimerInfo {
     pub name: String,
     pub duration: Duration,
+    pub status: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct TimerInfoData {
     pub name: String,
     pub duration: Duration,
+    pub status: String,
 }
 
 impl TimerInfo {
@@ -35,6 +40,7 @@ impl TimerInfo {
         TimerInfoData {
             name: self.name.clone(),
             duration: self.duration,
+            status: self.status.clone(),
         }
     }
 
@@ -42,6 +48,7 @@ impl TimerInfo {
         TimerInfo {
             name: data.name,
             duration: data.duration,
+            status: data.status,
         }
     }
 }
@@ -66,47 +73,88 @@ pub fn draw_timers_panel(
 
     frame.render_widget(border, area);
 
-    draw_timer_placeholder(frame, inner);
+    if app.timers.is_empty() {
+        draw_timer_placeholder(frame, inner);
+    } else {
+        draw_timers(frame, inner, app);
+    }
+
 }
 
-//pub fn draw_timers (
-//    frame: &mut Frame,
-//    area: Rect,
-//    app: &mut App,
-//    ) {
-//
-//    let current = app.timers_list_state.selected();
-//
-//    let popup_open = !matches!(app.popup, Popup::None);
-//
-//    let mut timers = Vec::new();
-//
-//    for (index, timer) in app.inbox_items.iter().enumerate() {
-//        // Draw insertion line before this task.
-//
-//        let mut timer = Row::new(vec![
-//            Cell::from(format!("  {}", ellipsize(&timer.name, 15))),
-//            Cell::from(String::new()),
-//            Cell::from(
-//                Line::from(item.priority.as_str())
-//                    .alignment(Alignment::Center),
-//            ),
-//        ]);
-//
-//        timers.push(timer);
-//    }
-//
-//    let table = Table::new(rows, columns)
-//        //.highlight_symbol("> ");
-//        .row_highlight_style(highlight_style);
-//
-//
-//    frame.render_stateful_widget(
-//        table,
-//        area,
-//        &mut app.inbox_tasks_table_state,
-//    );
-//}
+pub fn draw_timers(
+    frame: &mut Frame,
+    area: Rect,
+    app: &mut App,
+) {
+    let timer_width = 24;
+
+    let constraints = app
+        .timers
+        .iter()
+        .map(|_| Constraint::Length(timer_width))
+        .collect::<Vec<_>>();
+
+    let timer_areas = Layout::horizontal(constraints)
+        .flex(Flex::Start)
+        .split(area);
+
+    for (timer, timer_area) in app.timers.iter().zip(timer_areas.iter()) {
+        draw_timer(frame, *timer_area, timer);
+    }
+}
+
+fn draw_timer(
+    frame: &mut Frame,
+    timer_area: Rect,
+    timer: &TimerInfo,
+) {
+    let timer_block = Block::bordered()
+        .border_style(Style::default().fg(Color::White))
+        .padding(Padding::new(0, 0, 1, 0));
+
+    let inner = timer_block.inner(timer_area);
+
+    frame.render_widget(timer_block, timer_area);
+
+    let time_area = Rect {
+        x: inner.x,
+        y: inner.y,
+        width: inner.width,
+        height: 4,
+    };
+
+    let name_area = Rect {
+        x: inner.x,
+        y: inner.y + 5,
+        width: inner.width,
+        height: 1,
+    };
+
+    let status_area = Rect {
+        x: inner.x,
+        y: inner.y + 6,
+        width: inner.width,
+        height: 1,
+    };
+
+    let time = format_duration(timer.duration);
+
+    let time_widget = Paragraph::new(time)
+        .alignment(Alignment::Center);
+
+    frame.render_widget(time_widget, time_area);
+
+    let name = Paragraph::new(timer.name.as_str())
+        .alignment(Alignment::Center);
+
+    frame.render_widget(name, name_area);
+
+    let status = Paragraph::new(timer.status.as_str())
+        .alignment(Alignment::Center)
+        .style(Style::default().fg(Color::White));
+
+    frame.render_widget(status, status_area);
+}
 
 fn get_big_glyph(c: char) -> (&'static str, &'static str, &'static str) {
     match c {
