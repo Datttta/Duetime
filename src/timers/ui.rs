@@ -17,6 +17,54 @@ use ratatui::{
 
 use serde::{Deserialize, Serialize};
 
+fn get_big_glyph(c: char) -> (&'static str, &'static str, &'static str) {
+    match c {
+        '0' => ("█▀█", "█ █", "▀▀▀"),
+
+        '1' => ("█", "█", "▀"),
+
+        '2' => ("▀▀█", "█▀▀", "▀▀▀"),
+
+        '3' => ("▀▀█", "▀▀█", "▀▀▀"),
+
+        '4' => ("█ █", "▀▀█", "  ▀"),
+
+        '5' => ("█▀▀", "▀▀█", "▀▀▀"),
+
+        '6' => ("█▀▀", "█▀█", "▀▀▀"),
+
+        '7' => ("▀▀█", "  █", "  ▀"),
+
+        '8' => ("█▀█", "█▀█", "▀▀▀"),
+
+        '9' => ("█▀█", "▀▀█", "▀▀▀"),
+
+        ':' => ("▄", "▄", " "),
+
+        _   => ("   ", "   ", "   "),
+    }
+}
+
+fn render_big_time(time_str: &str) -> (String, String, String) {
+    let mut top = String::new();
+    let mut mid = String::new();
+    let mut bot = String::new();
+
+    for (i, c) in time_str.chars().enumerate() {
+        if i > 0 {
+            top.push(' ');
+            mid.push(' ');
+            bot.push(' ');
+        }
+        let (t, m, b) = get_big_glyph(c);
+        top.push_str(t);
+        mid.push_str(m);
+        bot.push_str(b);
+    }
+
+    (top, mid, bot)
+}
+
 pub fn draw_timers_panel(
     frame: &mut Frame,
     area: Rect,
@@ -44,15 +92,14 @@ fn draw_timer_placeholder(
     frame: &mut Frame,
     area: Rect,
 ) {
-    // Create a smaller area for the timer
     let vertical = Layout::vertical([
-        Constraint::Length(7),
+        Constraint::Length(9), // Bumped to 9 to give ample vertical padding for 3 lines
     ])
     .flex(Flex::Center)
     .split(area);
 
     let horizontal = Layout::horizontal([
-        Constraint::Length(24),
+        Constraint::Length(34),
     ])
     .flex(Flex::Center)
     .split(vertical[0]);
@@ -67,24 +114,18 @@ fn draw_timer_placeholder(
 
     frame.render_widget(timer_block, timer_area);
 
+    let time_display = "01:67:89"; 
+    let (top_line, mid_line, bot_line) = render_big_time(time_display);
+
     let text = vec![
-        Line::from(
-            Span::styled(
-                "00:00:00",
-                Style::default().fg(Color::White),
-            )
-        ),
+        Line::from(Span::styled(top_line, Style::default().fg(Color::White))),
+        Line::from(Span::styled(mid_line, Style::default().fg(Color::White))),
+        Line::from(Span::styled(bot_line, Style::default().fg(Color::White))),
         Line::from(""),
-        Line::from(
-            Span::styled(
-                "ADD TIMER",
-                Style::default().fg(Color::Gray),
-            )
-        ),
+        Line::from(Span::styled("Add time", Style::default().fg(Color::Gray))),
     ];
 
-    let paragraph = Paragraph::new(text)
-        .alignment(Alignment::Center);
+    let paragraph = Paragraph::new(text).alignment(Alignment::Center);
 
     frame.render_widget(paragraph, inner);
 }
