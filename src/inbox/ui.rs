@@ -8,7 +8,7 @@ use crate::{
 };
 
 use ratatui::{
-    layout::{Constraint, Rect, Layout, Flex},
+    layout::{Constraint, Rect, Layout, Flex, Alignment},
     widgets::{Row, Table, Cell, Paragraph, Padding, Block},
     style::{Style, Color},
     text::Line,
@@ -90,7 +90,7 @@ pub fn draw_inbox_panel (
     // header
     let columns = Layout::horizontal([
         Constraint::Length(2), // extra
-        Constraint::Length(85), // Item    
+        Constraint::Length(86), // Item    
         Constraint::Length(10), // Priority
     ])
     .flex(Flex::Start)
@@ -144,7 +144,8 @@ pub fn draw_items (
             Cell::from(format!("  {}", ellipsize(&item.input, (ITEM_NAME_LENGHT - 3).into()))),
             Cell::from(String::new()),
             Cell::from(
-                Line::from(item.priority.as_str()),
+                Line::from(item.priority.as_str())
+                    .alignment(Alignment::Center),
             ),
         ]);
 

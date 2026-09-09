@@ -45,7 +45,7 @@ fn get_big_glyph(c: char) -> (&'static str, &'static str, &'static str) {
     }
 }
 
-fn render_big_time(time_str: &str) -> (String, String, String) {
+fn render_time_display(time_str: &str) -> (String, String, String) {
     let mut top = String::new();
     let mut mid = String::new();
     let mut bot = String::new();
@@ -114,15 +114,16 @@ fn draw_timer_placeholder(
 
     frame.render_widget(timer_block, timer_area);
 
-    let time_display = "01:67:89"; 
-    let (top_line, mid_line, bot_line) = render_big_time(time_display);
+    let time_display = "00:00:00"; 
+    let (top_line, mid_line, bot_line) = render_time_display(time_display);
 
     let text = vec![
+        Line::from(Span::styled("Add timer", Style::default().fg(Color::White))),
+        Line::from(""),
         Line::from(Span::styled(top_line, Style::default().fg(Color::White))),
         Line::from(Span::styled(mid_line, Style::default().fg(Color::White))),
         Line::from(Span::styled(bot_line, Style::default().fg(Color::White))),
-        Line::from(""),
-        Line::from(Span::styled("Add time", Style::default().fg(Color::Gray))),
+        Line::from(Span::styled("", Style::default().fg(Color::White))),
     ];
 
     let paragraph = Paragraph::new(text).alignment(Alignment::Center);
