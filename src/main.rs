@@ -1,9 +1,13 @@
 use std::{
     fs::File,
+    time::{Instant, Duration},
     io,
 };
 use simplelog::{LevelFilter, WriteLogger}; 
-use crate::app::App;
+use crate::{
+    app::App,
+    storage::current_tasks,
+};
 use chrono::Local;
 
 mod app;
@@ -26,6 +30,8 @@ fn main() -> io::Result<()> {
 
     let mut app = App::new();
     let mut first_render = true;
+
+    let mut last_save = Instant::now();
 
     let _ = WriteLogger::init(
         LevelFilter::Debug,
@@ -56,6 +62,11 @@ fn main() -> io::Result<()> {
             }
             
             first_render = false;
+        }
+
+        if last_save.elapsed() >= Duration::from_secs(1) {
+            current_tasks::save_current_tasks(&app.tasks).unwrap();
+            last_save = Instant::now();
         }
 
         events::handle_events(&mut app)?;

@@ -1,13 +1,16 @@
 [
   {
     "name": "Read + brush",
-    "status": "PENDING",
+    "status": "STOPPED",
     "planned_start": "",
     "planned_end": "",
-    "actual_start": null,
+    "actual_start": {
+      "secs_since_epoch": 1788974145,
+      "nanos_since_epoch": 593734179
+    },
     "actual_end": null,
     "stopwatch": {
-      "elapsed_secs": 0,
+      "elapsed_secs": 11,
       "running": false
     }
   },
