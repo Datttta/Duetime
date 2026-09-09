@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Read + brush",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Anki",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Workout",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Clean room",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Have lunch + Listening",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Floss + Brush",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Loundry",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  },
+  {
+    "name": "Have dinner + brush",
+    "status": "PENDING",
+    "planned_start": "",
+    "planned_end": "",
+    "actual_start": null,
+    "actual_end": null,
+    "stopwatch": {
+      "elapsed_secs": 0,
+      "running": false
+    }
+  }
+]

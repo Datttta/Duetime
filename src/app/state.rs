@@ -17,6 +17,7 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
+    timers::ui::TimerInfo,
     agenda::ui::{AgendaEvent, DateTimeInput, TIME_EDITABLE_POSITIONS, DATE_EDITABLE_POSITIONS},
     models::{TaskTemplate, Preset, KnownTask},
     navigation::move_items::MoveState,
@@ -61,13 +62,18 @@ pub struct App {
     pub priority: Priority,
 
     // Agenda
-    pub event_name: InputState,
     pub events: Vec<AgendaEvent>,
     pub agenda_table_state: TableState,
+    
+    pub event_name: InputState,
     pub agenda_selected_input: AgendaSelectedInput,
     pub event_date: DateTimeInput,
     pub event_time: DateTimeInput,
     pub event_repeat: bool,
+
+    // Timers
+    //pub timers: Vec<TimerInfo>,
+    //pub timers_list_state: ListState,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -125,6 +131,9 @@ impl App {
 
         let mut agenda_table_state = TableState::default();
         agenda_table_state.select(Some(0));
+        
+        let mut timers_list_state = ListState::default();
+        timers_list_state.select(Some(0));
 
         let today = Local::now().date_naive();
 
@@ -171,6 +180,9 @@ impl App {
             event_date,
             event_time,
             event_repeat: false,
+
+            // Timers
+            // timers: storage::timers::defualt()
             
             // Navigation
             n_mode: NavigationMode::Normal,
