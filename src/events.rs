@@ -28,6 +28,10 @@ use crate::{
         event_info,
     },
 
+    timers::popups::{
+        add_timer,
+    },
+
     storage::current_tasks,
     ui::help,
     tasks_table, inbox, agenda
@@ -177,6 +181,12 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::Agenda(AgendaPopup::EventInfo) => {
                     event_info::handle_keys(app, key);
+                }
+
+                // TIMERS
+ 
+                Popup::Timers(TimersPopup::AddTimer) => {
+                    add_timer::handle_keys(app, key);
                 }
             }
         }

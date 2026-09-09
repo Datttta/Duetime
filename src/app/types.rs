@@ -52,6 +52,11 @@ pub enum AgendaPopup {
     EventInfo,
 }
 
+#[derive(PartialEq, Debug, Clone)]
+pub enum AgendaPopup {
+    AddTimer,
+}
+
 #[derive(PartialEq)]
 pub enum NewPresetFocus {
     Name,
