@@ -223,7 +223,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 }
 
                 KeyCode::Backspace => {
-                    app.event_date.data_backspace(); 
+                    app.event_date.zero_backspace(); 
                 }
 
                 _ => {}

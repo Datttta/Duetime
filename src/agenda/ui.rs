@@ -11,10 +11,7 @@ use crate::{
     
     ui::{
         theme::{unfocused_panel},
-        widgets::{
-            input::ellipsize,
-            date_time_input::DateTimeInput,
-        },
+        widgets::input::ellipsize,
     },
     
     navigation::vim_navigation::NavigationMode,

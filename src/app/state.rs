@@ -19,9 +19,10 @@ use crate::{
     tasks_table::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
     timers::ui::TimerInfo,
-    agenda::ui::{AgendaEvent, DateTimeInput, TIME_EDITABLE_POSITIONS, DATE_EDITABLE_POSITIONS},
+    agenda::ui::{AgendaEvent, TIME_EDITABLE_POSITIONS, DATE_EDITABLE_POSITIONS},
     models::{TaskTemplate, Preset, KnownTask},
     navigation::move_items::MoveState,
+    ui::widgets::date_time_input::DateTimeInput
 };
 
 use std::time::{Duration, Instant};
@@ -194,6 +195,7 @@ impl App {
             // Timers
             timers: current_timers::load_current_timers(),
             timers_list_state,
+            timer_duration,
 
             time_name: InputState::default(),
             timer_selected_input: TimerSelectedInput::Name,

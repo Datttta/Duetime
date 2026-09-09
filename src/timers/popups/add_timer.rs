@@ -100,7 +100,7 @@ pub fn save_event(app: &mut App) {
                 return;
             }
 
-            let date = match NaiveDate::parse_from_str(&app.event_date.value, "%d-%m-%y") {
+            let date = match NaiveDate::parse_from_str(&app.timer_duration.value, "%d-%m-%y") {
                 Ok(date) => date,
                 Err(_) => {
                     app.set_status_message("Invalid date.".to_string());
@@ -171,9 +171,9 @@ fn close_popup(app: &mut App) {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    match app.agenda_selected_input {
-        AgendaSelectedInput::Name => {
-            let result = app.event_name.handle_vim_mode(key, &mut app.mode, usize::MAX);
+    match app.timer_selected_input {
+        TimerSelectedInput::Name => {
+            let result = app.timer_name.handle_vim_mode(key, &mut app.mode, usize::MAX);
 
             match result {
                 InputResult::Consumed => return,
@@ -182,82 +182,44 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        AgendaSelectedInput::Date => {
+        TimerSelectedInput::Duration => {
             match key.code {
                 KeyCode::Char(c) if c.is_ascii_digit() => {
-                    app.event_date.insert_digit(c);
+                    app.timer_duration.insert_digit(c);
                 }
 
                 KeyCode::Char('h') => {
-                    app.event_date.move_left();
+                    app.timer_duration.move_left();
                 }
 
                 KeyCode::Char('l') => {
-                    app.event_date.move_right();
+                    app.timer_duration.move_right();
                 }
 
                 KeyCode::Backspace => {
-                    app.event_date.data_backspace(); 
+                    app.timer_duration.zero_backspace(); 
                 }
 
                 _ => {}
             }
-        }
-
-        AgendaSelectedInput::Time => {
-            match key.code {
-                KeyCode::Char(c) if c.is_ascii_digit() => {
-                    app.event_time.insert_digit(c);
-                }
-
-                KeyCode::Char('h') => {
-                    app.event_time.move_left();
-                }
-
-                KeyCode::Char('l') => {
-                    app.event_time.move_right();
-                }
-                
-                KeyCode::Backspace => {
-                    app.event_time.time_backspace(); 
-                }
-
-                _ => {}
-            }
-        }
-
-        AgendaSelectedInput::Repeat => {
-            match key.code {
-                KeyCode::Char(' ') | KeyCode::Enter => {
-                    app.event_repeat = !app.event_repeat;
-                    return;
-                }
-
-                _ => {}
-            }
-
         }
     }
 
     match key.code {
         KeyCode::Tab | KeyCode::Char('j') => {
-            app.agenda_selected_input = match app.agenda_selected_input {
-                AgendaSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::Tab => AgendaSelectedInput::Date,
-                AgendaSelectedInput::Name => AgendaSelectedInput::Name,
-                AgendaSelectedInput::Date => AgendaSelectedInput::Time,
-                AgendaSelectedInput::Time => AgendaSelectedInput::Repeat,
-                AgendaSelectedInput::Repeat => AgendaSelectedInput::Name
+            app.timer_selected_input = match app.timer_selected_input {
+                TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::Tab => TimerSelectedInput::Duration,
+                TimerSelectedInput::Name => TimerSelectedInput::Name,
+                TimerSelectedInput::Duration => TimerSelectedInput::Time,
             }
         }
 
         KeyCode::BackTab | KeyCode::Char('k') => {
 
-            app.agenda_selected_input = match app.agenda_selected_input {
-                AgendaSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::BackTab => AgendaSelectedInput::Repeat,
-                AgendaSelectedInput::Name => AgendaSelectedInput::Name,
-                AgendaSelectedInput::Repeat => AgendaSelectedInput::Time,
-                AgendaSelectedInput::Time => AgendaSelectedInput::Date,
-                AgendaSelectedInput::Date => AgendaSelectedInput::Name,
+            app.timer_selected_input = match app.timer_selected_input {
+                TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::BackTab => TimerSelectedInput::Repeat,
+                TimerSelectedInput::Name => TimerSelectedInput::Name,
+                TimerSelectedInput::Repeat => TimerSelectedInput::Time,
             }
         }
 
