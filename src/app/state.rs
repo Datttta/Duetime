@@ -9,7 +9,8 @@ use crate::{
         InboxSelectedInput,
         Priority,
         Panel,
-        AgendaSelectedInput
+        AgendaSelectedInput,
+        TimerSelectedInput,
     },
 
     storage::{current_tasks, known_tasks, preset, inbox, agenda, current_timers},
@@ -74,6 +75,9 @@ pub struct App {
     // Timers
     pub timers: Vec<TimerInfo>,
     pub timers_list_state: ListState,
+
+    pub time_name: InputState,
+    pub timer_selected_input: TimerSelectedInput,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -184,6 +188,9 @@ impl App {
             // Timers
             timers: current_timers::load_current_timers(),
             timers_list_state,
+
+            time_name: InputState::default(),
+            timer_selected_input: TimerSelectedInput::Name,
             
             // Navigation
             n_mode: NavigationMode::Normal,

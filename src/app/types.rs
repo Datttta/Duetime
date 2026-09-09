@@ -85,3 +85,9 @@ pub enum AgendaSelectedInput {
     Time,
     Repeat,
 }
+
+#[derive(PartialEq, Debug)]
+pub enum TimerSelectedInput {
+    Name,
+    Duration,
+}
