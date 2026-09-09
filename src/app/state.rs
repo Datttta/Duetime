@@ -77,8 +77,9 @@ pub struct App {
     pub timers: Vec<TimerInfo>,
     pub timers_list_state: ListState,
 
-    pub time_name: InputState,
+    pub timer_name: InputState,
     pub timer_selected_input: TimerSelectedInput,
+    pub timer_duration: DateTimeInput,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -196,8 +197,7 @@ impl App {
             timers: current_timers::load_current_timers(),
             timers_list_state,
             timer_duration,
-
-            time_name: InputState::default(),
+            timer_name: InputState::default(),
             timer_selected_input: TimerSelectedInput::Name,
             
             // Navigation

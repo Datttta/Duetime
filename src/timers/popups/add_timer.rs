@@ -68,7 +68,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     input::draw(
         frame,
         input[0],
-        &app.time_name,
+        &app.timer_name,
         "Time name",
         app.timer_selected_input == TimerSelectedInput::Name,
         app.mode,
@@ -210,16 +210,16 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.timer_selected_input = match app.timer_selected_input {
                 TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::Tab => TimerSelectedInput::Duration,
                 TimerSelectedInput::Name => TimerSelectedInput::Name,
-                TimerSelectedInput::Duration => TimerSelectedInput::Time,
+                TimerSelectedInput::Duration => TimerSelectedInput::Duration,
             }
         }
 
         KeyCode::BackTab | KeyCode::Char('k') => {
 
             app.timer_selected_input = match app.timer_selected_input {
-                TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::BackTab => TimerSelectedInput::Repeat,
+                TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::BackTab => TimerSelectedInput::Duration,
                 TimerSelectedInput::Name => TimerSelectedInput::Name,
-                TimerSelectedInput::Repeat => TimerSelectedInput::Time,
+                TimerSelectedInput::Duration => TimerSelectedInput::Name,
             }
         }
 
