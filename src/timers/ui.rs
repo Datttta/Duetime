@@ -31,7 +31,7 @@ pub struct TimerInfo {
 #[derive(Serialize, Deserialize)]
 pub struct TimerInfoData {
     pub name: String,
-    pub duration: Duration,
+    pub duration: u64,
     pub status: String,
 }
 
@@ -39,7 +39,7 @@ impl TimerInfo {
     pub fn to_data(&self) -> TimerInfoData {
         TimerInfoData {
             name: self.name.clone(),
-            duration: self.duration,
+            duration: self.duration.as_secs(),
             status: self.status.clone(),
         }
     }
@@ -47,7 +47,7 @@ impl TimerInfo {
     pub fn from_data(data: TimerInfoData) -> Self {
         TimerInfo {
             name: data.name,
-            duration: data.duration,
+            duration: Duration::from_secs(data.duration),
             status: data.status,
         }
     }
