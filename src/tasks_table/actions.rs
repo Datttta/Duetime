@@ -8,7 +8,6 @@ use crate::{
     TasksTablePopup, 
     },
 
-    storage::current_tasks,
     vim_text::InputMode,
     models::TaskTemplate,
     navigation::{
@@ -104,8 +103,6 @@ pub fn delete_task(app: &mut App) {
 
         app.n_mode = NavigationMode::Normal;
         app.n_visual_start = None;
-
-        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 
     app.pending_command = None;
@@ -136,8 +133,6 @@ pub fn complete_task(app: &mut App) {
         task.stopwatch.stop();
         task.actual_end = Some(SystemTime::now());
         task.status = "COMPLETED".into();
-
-        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
@@ -149,8 +144,6 @@ pub fn reset_task(app: &mut App) {
         task.actual_start = None;
         task.actual_end = None;
         task.status = "PENDING".into();
-        
-        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
@@ -164,8 +157,6 @@ pub fn hard_reset_task(app: &mut App) {
         task.planned_start = "".to_string();
         task.planned_end = "".to_string();
         task.status = "PENDING".into();
-        
-        current_tasks::save_current_tasks(&app.tasks).unwrap();
     }
 }
 
