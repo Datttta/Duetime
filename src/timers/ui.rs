@@ -8,11 +8,10 @@ use crate::{
 };
 
 use ratatui::{
-    layout::{Constraint, Rect, Layout, Flex, Alignment},
-    widgets::{Paragraph, Padding, Block},
-    style::{Style, Color},
-    text::{Line, Text, Span},
-    widgets::canvas::{Canvas, Circle, Points},
+    layout::{Alignment, Rect, Flex, Constraint, Layout},
+    widgets::{Block, Paragraph, Padding},
+    style::{Color, Style},
+    text::{Line, Span},
     Frame,
 };
 
@@ -45,40 +44,47 @@ fn draw_timer_placeholder(
     frame: &mut Frame,
     area: Rect,
 ) {
-    // 1. Split the area into top (circle canvas) and bottom (text) layout
-    let chunks = Layout::vertical([
-        Constraint::Min(0),      // Canvas area
-        Constraint::Length(1),   // 00:00:00
-        Constraint::Length(1),   // ADD TIMER
+    // Create a smaller area for the timer
+    let vertical = Layout::vertical([
+        Constraint::Length(7),
     ])
     .flex(Flex::Center)
     .split(area);
 
-    // 2. Draw a visually perfect circle using Canvas
-    // Terminal pixels are ~2:1 tall-to-wide. Scaling x_bounds by 2.0 corrects the stretch.
-    let canvas = Canvas::default()
-        .x_bounds([-20.0, 20.0])
-        .y_bounds([-10.0, 10.0])
-        .paint(|ctx| {
-            ctx.draw(&Circle {
-                x: 0.0,
-                y: 0.0,
-                radius: 8.0,
-                color: Color::White,
-            });
-        });
+    let horizontal = Layout::horizontal([
+        Constraint::Length(24),
+    ])
+    .flex(Flex::Center)
+    .split(vertical[0]);
 
-    frame.render_widget(canvas, chunks[0]);
+    let timer_area = horizontal[0];
 
-    // 3. Render "00:00:00"
-    let time_text = Paragraph::new("00:00:00")
-        .alignment(Alignment::Center)
-        .style(Style::default().fg(Color::White));
-    frame.render_widget(time_text, chunks[1]);
+    let timer_block = Block::bordered()
+        .border_style(Style::default().fg(Color::White))
+        .padding(Padding::new(0, 0, 1, 0));
 
-    // 4. Render "ADD TIMER"
-    let add_text = Paragraph::new("ADD TIMER")
-        .alignment(Alignment::Center)
-        .style(Style::default().fg(Color::DarkGray));
-    frame.render_widget(add_text, chunks[2]);
+    let inner = timer_block.inner(timer_area);
+
+    frame.render_widget(timer_block, timer_area);
+
+    let text = vec![
+        Line::from(
+            Span::styled(
+                "00:00:00",
+                Style::default().fg(Color::White),
+            )
+        ),
+        Line::from(""),
+        Line::from(
+            Span::styled(
+                "ADD TIMER",
+                Style::default().fg(Color::Gray),
+            )
+        ),
+    ];
+
+    let paragraph = Paragraph::new(text)
+        .alignment(Alignment::Center);
+
+    frame.render_widget(paragraph, inner);
 }
