@@ -52,8 +52,8 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     KeyCode::Char('L') => {
                         app.focused_panel = match app.focused_panel {
                             Panel::TasksTable => Panel::Inbox,
-                            Panel::Agenda => Panel::Timers,
-                            Panel::Timers => Panel::Timers,
+                            Panel::Timers => Panel::Agenda,
+                            Panel::Agenda => Panel::Agenda,
                             Panel::Inbox => Panel::Inbox,
                         };
                         return Ok(());
@@ -62,17 +62,17 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     KeyCode::Char('H') => {
                         app.focused_panel = match app.focused_panel {
                             Panel::Inbox => Panel::TasksTable,
-                            Panel::Timers => Panel::Agenda,
+                            Panel::Agenda => Panel::Timers,
                             Panel::TasksTable => Panel::TasksTable,
-                            Panel::Agenda => Panel::Agenda,
+                            Panel::Timers => Panel::Timers,
                         };
                         return Ok(());
                     }
                     
                     KeyCode::Char('J') => {
                         app.focused_panel = match app.focused_panel {
-                            Panel::TasksTable => Panel::Agenda,
-                            Panel::Inbox => Panel::Timers,
+                            Panel::TasksTable => Panel::Timers,
+                            Panel::Inbox => Panel::Agenda,
                             Panel::Agenda => Panel::Agenda,
                             Panel::Timers => Panel::Timers,
                         };
@@ -81,8 +81,8 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     
                     KeyCode::Char('K') => {
                         app.focused_panel = match app.focused_panel {
-                            Panel::Agenda => Panel::TasksTable,
-                            Panel::Timers => Panel::Inbox,
+                            Panel::Timers => Panel::TasksTable,
+                            Panel::Agenda => Panel::Inbox,
                             Panel::TasksTable => Panel::TasksTable,
                             Panel::Inbox => Panel::Inbox,
                         };
