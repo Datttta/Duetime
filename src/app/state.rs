@@ -12,7 +12,7 @@ use crate::{
         AgendaSelectedInput
     },
 
-    storage::{current_tasks, known_tasks, preset, inbox, agenda},
+    storage::{current_tasks, known_tasks, preset, inbox, agenda, current_timers},
     vim_text::{InputState, InputMode},
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
@@ -72,8 +72,8 @@ pub struct App {
     pub event_repeat: bool,
 
     // Timers
-    //pub timers: Vec<TimerInfo>,
-    //pub timers_list_state: ListState,
+    pub timers: Vec<TimerInfo>,
+    pub timers_list_state: ListState,
 
     // Presets
     pub presets: Vec<Preset>,
@@ -182,7 +182,8 @@ impl App {
             event_repeat: false,
 
             // Timers
-            // timers: storage::timers::defualt()
+            timers: current_timers::load_current_timers(),
+            timers_list_state,
             
             // Navigation
             n_mode: NavigationMode::Normal,
