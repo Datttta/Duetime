@@ -11,7 +11,10 @@ use crate::{
     
     ui::{
         theme::{unfocused_panel},
-        widgets::input::ellipsize,
+        widgets::{
+            input::ellipsize,
+            data_time_input::DateTimeInput,
+        },
     },
     
     navigation::vim_navigation::NavigationMode,
@@ -104,35 +107,6 @@ pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
     events.retain(|event| {
         event.repeat || event.date >= today
     });
-}
-
-pub fn draw_date_time_input(
-    frame: &mut Frame,
-    area: Rect,
-    input: &DateTimeInput,
-    selected: bool,
-) {
-    let spans = input
-        .value
-        .chars()
-        .enumerate()
-        .map(|(index, character)| {
-            let style = if selected && index == input.cursor {
-                Style::default()
-                    .fg(Color::Black)
-                    .bg(Color::White)
-                    .add_modifier(Modifier::BOLD)
-            } else {
-                Style::default()
-            };
-
-            Span::styled(character.to_string(), style)
-        })
-        .collect::<Vec<_>>();
-
-    let paragraph = Paragraph::new(Line::from(spans));
-
-    frame.render_widget(paragraph, area);
 }
 
 pub fn draw_repeat_input(

@@ -54,3 +54,33 @@ impl DateTimeInput {
         self.move_right();
     }
 }
+
+pub fn draw_date_time_input(
+    frame: &mut Frame,
+    area: Rect,
+    input: &DateTimeInput,
+    selected: bool,
+) {
+    let spans = input
+        .value
+        .chars()
+        .enumerate()
+        .map(|(index, character)| {
+            let style = if selected && index == input.cursor {
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::White)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default()
+            };
+
+            Span::styled(character.to_string(), style)
+        })
+        .collect::<Vec<_>>();
+
+    let paragraph = Paragraph::new(Line::from(spans));
+
+    frame.render_widget(paragraph, area);
+}
+
