@@ -11,17 +11,18 @@ use crate::{
         date_time_input::draw_date_time_input,
         input,
     },
-    vim_text::{InputResult, InputMode},
-    app::{App, Popup, AgendaPopup, TimerSelectedInput},
-    agenda::{
-        ui::AgendaEvent,
+    timers::{
+        ui::TimerInfo,
         ui,
     },
+    app::{App, Popup, TimersPopup, TimerSelectedInput},
+    vim_text::{InputResult, InputMode},
     storage,
     keys_help,
 };
 
 use chrono::{NaiveDate, NaiveTime};
+use std::time::Duration;
 use log::info;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -76,7 +77,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 
     let duration_row = Layout::horizontal([
-        Constraint::Length(6), // Width for label text
+        Constraint::Length(10), // Width for label text
         Constraint::Min(0),
     ])
     .split(input[1]);
@@ -90,74 +91,55 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     );
 }
 
-//pub fn save_event(app: &mut App) {
-//    match app.popup {
-//        Popup::Agenda(AgendaPopup::AddEvent) | Popup::Agenda(AgendaPopup::EditEvent) => {
-//            // 1. Validate inputs
-//            let name = app.event_name.text.trim().to_string();
-//            if name.is_empty() {
-//                app.set_status_message("Event name cannot be empty.".to_string());
-//                return;
-//            }
-//
-//            let date = match NaiveDate::parse_from_str(&app.timer_duration.value, "%d-%m-%y") {
-//                Ok(date) => date,
-//                Err(_) => {
-//                    app.set_status_message("Invalid date.".to_string());
-//                    return;
-//                }
-//            };
-//
-//            let time = if app.event_time.value == "--:--" {
-//                None
-//            } else {
-//                match NaiveTime::parse_from_str(&app.event_time.value, "%H:%M") {
-//                    Ok(time) => Some(time),
-//                    Err(_) => {
-//                        app.set_status_message("Invalid time.".to_string());
-//                        return;
-//                    }
-//                }
-//            };
-//
-//            let event = AgendaEvent {
-//                name: name.clone(),
-//                date,
-//                time,
-//                repeat: app.event_repeat,
-//            };
-//
-//            // 2. Perform Add or Edit action
-//            if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
-//                app.events.push(event);
-//            } else if let Some(index) = app.agenda_table_state.selected() {
-//                if let Some(existing_event) = app.events.get_mut(index) {
-//                    *existing_event = event;
-//                }
-//            }
-//
-//            // 3. Sort events chronologically
-//            app.events.sort_by(|a, b| {
-//                a.date.cmp(&b.date).then_with(|| match (a.time, b.time) {
-//                    (Some(t1), Some(t2)) => t1.cmp(&t2),
-//                    (Some(_), None) => std::cmp::Ordering::Less,
-//                    (None, Some(_)) => std::cmp::Ordering::Greater,
-//                    (None, None) => std::cmp::Ordering::Equal,
-//                })
-//            });
-//
-//            // 4. Update table selection to keep track of the modified/added event
-//            if let Some(index) = app.events.iter().position(|e| e.name == name && e.date == date) {
-//                app.agenda_table_state.select(Some(index));
-//            }
-//        }
-//        _ => {}
-//    }
-//
-//    ui::update_repeating_events(&mut app.events);
-//    storage::agenda::save_agenda(&app.events).unwrap();
-//    app.popup = Popup::None;
-//}
+fn parse_duration(input: &str) -> Option<Duration> {
+    let parts: Vec<&str> = input.split(':').collect();
+
+    if parts.len() != 3 {
+        return None;
+    }
+
+    let hours: u64 = parts[0].parse().ok()?;
+    let minutes: u64 = parts[1].parse().ok()?;
+    let seconds: u64 = parts[2].parse().ok()?;
+
+    if minutes >= 60 || seconds >= 60 {
+        return None;
+    }
+
+    Some(Duration::from_secs(
+        hours * 3600 + minutes * 60 + seconds,
+    ))
+}
+
+pub fn save_timer(app: &mut App) {
+    if !matches!(app.popup, Popup::Timers(TimersPopup::AddTimer)) {
+        return;
+    }
+
+    let name = app.timer_name.text.trim().to_string();
+
+    let duration = match parse_duration(&app.timer_duration.value) {
+        Some(duration) => duration,
+        None => {
+            app.set_status_message("Invalid duration.".to_string());
+            return;
+        }
+    };
+
+    let timer = TimerInfo {
+        name,
+        duration,
+        status: "READY".to_string(),
+    };
+
+    app.timers.push(timer);
+
+    if let Some(index) = app.timers.len().checked_sub(1) {
+        app.timers_list_state.select(Some(index));
+    }
+
+    app.popup = Popup::None;
+}
 
 fn close_popup(app: &mut App) {
     if app.timer_selected_input == TimerSelectedInput::Name{
@@ -210,7 +192,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.timer_selected_input = match app.timer_selected_input {
                 TimerSelectedInput::Name if app.mode != InputMode::Insert || key.code == KeyCode::Tab => TimerSelectedInput::Duration,
                 TimerSelectedInput::Name => TimerSelectedInput::Name,
-                TimerSelectedInput::Duration => TimerSelectedInput::Duration,
+                TimerSelectedInput::Duration => TimerSelectedInput::Name,
             }
         }
 
@@ -223,9 +205,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
 
-        //KeyCode::Enter => {
-        //    save_event(app);
-        //}
+        KeyCode::Enter => {
+            save_timer(app);
+        }
 
         KeyCode::Char('q') | KeyCode::Esc => {
             close_popup(app);

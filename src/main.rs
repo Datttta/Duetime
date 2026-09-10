@@ -6,7 +6,7 @@ use std::{
 use simplelog::{LevelFilter, WriteLogger}; 
 use crate::{
     app::App,
-    storage::current_tasks,
+    storage::{current_tasks, current_timers},
 };
 use chrono::Local;
 
@@ -66,6 +66,7 @@ fn main() -> io::Result<()> {
 
         if last_save.elapsed() >= Duration::from_secs(1) {
             current_tasks::save_current_tasks(&app.tasks).unwrap();
+            current_timers::save_current_timers(&app.timers).unwrap();
             last_save = Instant::now();
         }
 
