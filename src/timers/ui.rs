@@ -91,27 +91,36 @@ pub fn draw_timers(
     area: Rect,
     app: &mut App,
 ) {
-    let timer_width = 34; // Updated from 24 to match timer_placeholder width
+    let timer_width = 34;
+    let card_height = 9;
 
-    // Center the timer card vertically using the exact same constraints as timer_placeholder
-    let vertical = Layout::vertical([
-        Constraint::Length(9),
-    ])
-    .flex(Flex::Center)
-    .split(area);
+    // Split timers into chunks of 3 per row
+    let chunk_size = 3;
+    let timer_chunks: Vec<_> = app.timers.chunks(chunk_size).collect();
+    let num_rows = timer_chunks.len();
 
-    let constraints = app
-        .timers
-        .iter()
-        .map(|_| Constraint::Length(timer_width))
-        .collect::<Vec<_>>();
+    // 1. Create vertical constraints for each row (height 9 each)
+    let vertical_constraints = vec![Constraint::Length(card_height); num_rows];
 
-    let timer_areas = Layout::horizontal(constraints)
+    let row_areas = Layout::vertical(vertical_constraints)
         .flex(Flex::Center)
-        .split(vertical[0]);
+        .split(area);
 
-    for (timer, timer_area) in app.timers.iter().zip(timer_areas.iter()) {
-        draw_timer(frame, *timer_area, timer);
+    // 2. Loop through each row and render its set of timers
+    let mut timer_index = 0;
+    for (row_idx, chunk) in timer_chunks.iter().enumerate() {
+        let constraints = vec![Constraint::Length(timer_width); chunk.len()];
+
+        let col_areas = Layout::horizontal(constraints)
+            .flex(Flex::Center)
+            .split(row_areas[row_idx]);
+
+        for col_area in col_areas.iter() {
+            if let Some(timer) = app.timers.get(timer_index) {
+                draw_timer(frame, *col_area, timer);
+                timer_index += 1;
+            }
+        }
     }
 }
 
@@ -141,7 +150,8 @@ fn draw_timer(
         Line::from(Span::styled(timer.status.as_str(), Style::default().fg(Color::Gray))),
     ];
 
-    let paragraph = Paragraph::new(text).alignment(Alignment::Center);
+    let paragraph = Paragraph::new(text)
+        .alignment(Alignment::Center);
 
     frame.render_widget(paragraph, inner);
 }
