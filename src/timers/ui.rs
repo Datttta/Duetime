@@ -94,19 +94,16 @@ pub fn draw_timers(
     let timer_width = 34;
     let card_height = 9;
 
-    // Split timers into chunks of 3 per row
     let chunk_size = 3;
     let timer_chunks: Vec<_> = app.timers.chunks(chunk_size).collect();
     let num_rows = timer_chunks.len();
 
-    // 1. Create vertical constraints for each row (height 9 each)
     let vertical_constraints = vec![Constraint::Length(card_height); num_rows];
 
     let row_areas = Layout::vertical(vertical_constraints)
         .flex(Flex::Center)
         .split(area);
 
-    // 2. Loop through each row and render its set of timers
     let mut timer_index = 0;
     for (row_idx, chunk) in timer_chunks.iter().enumerate() {
         let constraints = vec![Constraint::Length(timer_width); chunk.len()];
@@ -117,7 +114,10 @@ pub fn draw_timers(
 
         for col_area in col_areas.iter() {
             if let Some(timer) = app.timers.get(timer_index) {
-                draw_timer(frame, *col_area, timer);
+                // Check if the current timer matches the selected index in ListState
+                let is_selected = app.timers_list_state.selected() == Some(timer_index);
+                
+                draw_timer(frame, *col_area, timer, is_selected);
                 timer_index += 1;
             }
         }
@@ -128,9 +128,17 @@ fn draw_timer(
     frame: &mut Frame,
     timer_area: Rect,
     timer: &TimerInfo,
+    is_selected: bool,
 ) {
+    // Set white for selected, gray for unselected
+    let border_color = if is_selected {
+        Color::White
+    } else {
+        Color::DarkGray
+    };
+
     let timer_block = Block::bordered()
-        .border_style(Style::default().fg(Color::White))
+        .border_style(Style::default().fg(border_color))
         .padding(Padding::new(0, 0, 1, 0));
 
     let inner = timer_block.inner(timer_area);
@@ -140,7 +148,6 @@ fn draw_timer(
     let time_str = format_duration(timer.duration);
     let (top_line, mid_line, bot_line) = render_time_display(&time_str);
 
-    // Identical layout structure to draw_timer_placeholder
     let text = vec![
         Line::from(Span::styled(timer.name.as_str(), Style::default().fg(Color::White))),
         Line::from(""),

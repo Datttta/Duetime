@@ -39,6 +39,28 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         //    actions::edit_inbox_item(app);
         //}
 
+        KeyCode::Char('l') => {
+            if let Some(current) = app.timers_list_state.selected() {
+                if !app.timers.is_empty() {
+                    let next = (current + 1).min(app.timers.len() - 1);
+                    app.timers_list_state.select(Some(next));
+                }
+            } else if !app.timers.is_empty() {
+                app.timers_list_state.select(Some(0));
+            }
+        }
+        
+        KeyCode::Char('h') => {
+            if let Some(current) = app.timers_list_state.selected() {
+                if !app.timers.is_empty() {
+                    let previous = current.saturating_sub(1);
+                    app.timers_list_state.select(Some(previous));
+                }
+            } else if !app.timers.is_empty() {
+                app.timers_list_state.select(Some(0));
+            }
+        }
+
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 actions::delete_timer(app);
