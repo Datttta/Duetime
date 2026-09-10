@@ -116,8 +116,15 @@ pub fn draw_timers(
             if let Some(timer) = app.timers.get(timer_index) {
                 // Check if the current timer matches the selected index in ListState
                 let is_selected = app.timers_list_state.selected() == Some(timer_index);
+
+                let timer_area = Rect {
+                    x: col_area.x + 1,
+                    y: col_area.y,
+                    width: col_area.width - 1,
+                    height: col_area.height,
+                };
                 
-                draw_timer(frame, *col_area, timer, is_selected);
+                draw_timer(frame, timer_area, timer, is_selected);
                 timer_index += 1;
             }
         }
