@@ -1,5 +1,6 @@
 *.txt
 *.log
+*.json
 __pycache__/
 
 target/
