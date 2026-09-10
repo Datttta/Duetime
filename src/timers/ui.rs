@@ -91,7 +91,14 @@ pub fn draw_timers(
     area: Rect,
     app: &mut App,
 ) {
-    let timer_width = 24;
+    let timer_width = 34; // Updated from 24 to match timer_placeholder width
+
+    // Center the timer card vertically using the exact same constraints as timer_placeholder
+    let vertical = Layout::vertical([
+        Constraint::Length(9),
+    ])
+    .flex(Flex::Center)
+    .split(area);
 
     let constraints = app
         .timers
@@ -100,8 +107,8 @@ pub fn draw_timers(
         .collect::<Vec<_>>();
 
     let timer_areas = Layout::horizontal(constraints)
-        .flex(Flex::Start)
-        .split(area);
+        .flex(Flex::Center)
+        .split(vertical[0]);
 
     for (timer, timer_area) in app.timers.iter().zip(timer_areas.iter()) {
         draw_timer(frame, *timer_area, timer);
@@ -121,44 +128,22 @@ fn draw_timer(
 
     frame.render_widget(timer_block, timer_area);
 
-    let time_area = Rect {
-        x: inner.x,
-        y: inner.y,
-        width: inner.width,
-        height: 4,
-    };
+    let time_str = format_duration(timer.duration);
+    let (top_line, mid_line, bot_line) = render_time_display(&time_str);
 
-    let name_area = Rect {
-        x: inner.x,
-        y: inner.y + 5,
-        width: inner.width,
-        height: 1,
-    };
+    // Identical layout structure to draw_timer_placeholder
+    let text = vec![
+        Line::from(Span::styled(timer.name.as_str(), Style::default().fg(Color::White))),
+        Line::from(""),
+        Line::from(Span::styled(top_line, Style::default().fg(Color::White))),
+        Line::from(Span::styled(mid_line, Style::default().fg(Color::White))),
+        Line::from(Span::styled(bot_line, Style::default().fg(Color::White))),
+        Line::from(Span::styled(timer.status.as_str(), Style::default().fg(Color::Gray))),
+    ];
 
-    let status_area = Rect {
-        x: inner.x,
-        y: inner.y + 6,
-        width: inner.width,
-        height: 1,
-    };
+    let paragraph = Paragraph::new(text).alignment(Alignment::Center);
 
-    let time = format_duration(timer.duration);
-
-    let time_widget = Paragraph::new(time)
-        .alignment(Alignment::Center);
-
-    frame.render_widget(time_widget, time_area);
-
-    let name = Paragraph::new(timer.name.as_str())
-        .alignment(Alignment::Center);
-
-    frame.render_widget(name, name_area);
-
-    let status = Paragraph::new(timer.status.as_str())
-        .alignment(Alignment::Center)
-        .style(Style::default().fg(Color::White));
-
-    frame.render_widget(status, status_area);
+    frame.render_widget(paragraph, inner);
 }
 
 fn get_big_glyph(c: char) -> (&'static str, &'static str, &'static str) {
