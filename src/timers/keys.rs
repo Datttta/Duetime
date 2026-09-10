@@ -10,20 +10,7 @@ use log::info;
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let mut selected = app.timers_list_state.selected();
 
-    let handled = vim_navigation::handle(
-        key,
-        &mut app.pending_command,
-        &mut selected,
-        app.timers.len(),
-        &mut app.n_mode,
-        &mut app.n_visual_start,
-    );
-
     app.timers_list_state.select(selected);
-
-    if handled {
-        return;
-    }
 
     match key.code {
         KeyCode::Char('a') => {
@@ -40,25 +27,19 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         //}
 
         KeyCode::Char('l') => {
-            if let Some(current) = app.timers_list_state.selected() {
-                if !app.timers.is_empty() {
-                    let next = (current + 1).min(app.timers.len() - 1);
-                    app.timers_list_state.select(Some(next));
-                }
-            } else if !app.timers.is_empty() {
-                app.timers_list_state.select(Some(0));
-            }
+            actions::move_right(app)
         }
         
         KeyCode::Char('h') => {
-            if let Some(current) = app.timers_list_state.selected() {
-                if !app.timers.is_empty() {
-                    let previous = current.saturating_sub(1);
-                    app.timers_list_state.select(Some(previous));
-                }
-            } else if !app.timers.is_empty() {
-                app.timers_list_state.select(Some(0));
-            }
+            actions::move_left(app)
+        }
+
+        KeyCode::Char('k') => {
+            actions::move_up(app)
+        }
+        
+        KeyCode::Char('j') => {
+            actions::move_down(app)
         }
 
         KeyCode::Char('d') => {

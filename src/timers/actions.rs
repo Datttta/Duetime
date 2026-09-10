@@ -12,6 +12,7 @@ use crate::{
 };
 
 use chrono::Local;
+use log::info;
 
 pub fn add_timer(app: &mut App) {
     app.timer_name.clear();
@@ -48,4 +49,76 @@ pub fn delete_timer(app: &mut App) {
     }
 
     app.pending_command = None;
+}
+
+// nagivation
+const COLUMNS: usize = 3;
+
+pub fn move_left(app: &mut App) {
+    if let Some(current) = app.timers_list_state.selected() {
+        let prev = current.saturating_sub(1);
+        app.timers_list_state.select(Some(prev));
+    }
+}
+
+pub fn move_right(app: &mut App) {
+    if let Some(current) = app.timers_list_state.selected() {
+        if !app.timers.is_empty() {
+            let next = (current + 1).min(app.timers.len() - 1);
+            app.timers_list_state.select(Some(next));
+        }
+    }
+}
+
+pub fn move_down(app: &mut App) {
+    if let Some(current) = app.timers_list_state.selected() {
+        if app.timers.len() == 4 && current == 1 {
+            app.timers_list_state.select(Some(3));
+            return
+        }
+        
+        if app.timers.len() == 5 && current == 2 {
+            app.timers_list_state.select(Some(4));
+            return
+        }
+
+        if app.timers.len() == 5 && current == 1 {
+            app.timers_list_state.select(Some(3));
+            return
+        }
+
+        if current > 2 {
+            return
+        }
+
+        if !app.timers.is_empty() {
+            let target = current + COLUMNS;
+            
+            // If moving down stays within valid array bounds, select it
+            if target < app.timers.len() {
+                app.timers_list_state.select(Some(target));
+            } else {
+                // Optional: Clamp to the last item if target exceeds length
+                app.timers_list_state.select(Some(app.timers.len() - 1));
+            }
+        }
+    }
+}
+
+pub fn move_up(app: &mut App) {
+    if let Some(current) = app.timers_list_state.selected() {
+        if app.timers.len() == 4 && current == 3 {
+            app.timers_list_state.select(Some(1));
+            return
+        }
+
+        if app.timers.len() == 5 && current == 4 {
+            app.timers_list_state.select(Some(2));
+            return
+        }
+        // Subtract 3 if possible; otherwise clamp to row 0 column position
+        if current >= COLUMNS {
+            app.timers_list_state.select(Some(current - COLUMNS));
+        }
+    }
 }
