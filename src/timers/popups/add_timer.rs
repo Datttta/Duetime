@@ -113,34 +113,43 @@ fn parse_duration(input: &str) -> Option<Duration> {
 }
 
 pub fn save_timer(app: &mut App) {
-    if !matches!(app.popup, Popup::Timers(TimersPopup::AddTimer)) {
-        return;
-    }
+    match app.popup {
+        Popup::Timers(TimersPopup::AddTimer) | Popup::Timers(TimersPopup::EditTimer) => {
 
-    let name = app.timer_name.text.trim().to_string();
+            let name = app.timer_name.text.trim().to_string();
 
-    let duration = match parse_duration(&app.timer_duration.value) {
-        Some(duration) => duration,
-        None => {
-            app.set_status_message("Invalid duration.".to_string());
-            return;
+            let duration = match parse_duration(&app.timer_duration.value) {
+                Some(duration) => duration,
+                None => {
+                    app.set_status_message("Invalid duration.".to_string());
+                    return;
+                }
+            };
+
+            let timer = TimerInfo {
+                name,
+                duration,
+                status: "READY".to_string(),
+                countdown: Countdown::new(duration),
+            };
+
+            if matches!(app.popup, Popup::Timers(TimersPopup::AddTimer)) {
+                app.timers.push(timer);
+            } else if let Some(index) = app.timers_list_state.selected() {
+                if let Some(existing_timer) = app.timers.get_mut(index) {
+                    *existing_timer = timer;
+                }
+            }
+
+            if let Some(index) = app.timers.len().checked_sub(1) {
+                app.timers_list_state.select(Some(index));
+            }
+
+            app.popup = Popup::None;
         }
-    };
 
-    let timer = TimerInfo {
-        name,
-        duration,
-        status: "READY".to_string(),
-        countdown: Countdown::new(duration),
-    };
-
-    app.timers.push(timer);
-
-    if let Some(index) = app.timers.len().checked_sub(1) {
-        app.timers_list_state.select(Some(index));
+        _ => {}
     }
-
-    app.popup = Popup::None;
 }
 
 fn close_popup(app: &mut App) {
