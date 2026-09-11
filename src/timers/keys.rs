@@ -25,6 +25,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             actions::edit_timer(app);
         }
         
+        KeyCode::Char('r') => {
+            actions::reset_timer(app);
+        }
+        
         // timer
         KeyCode::Char('s') => {
             actions::start_stop(app);

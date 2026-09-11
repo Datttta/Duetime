@@ -47,6 +47,16 @@ pub fn edit_timer(app: &mut App) {
     }
 }
 
+pub fn reset_timer(app: &mut App) {
+    if let Some(index) = app.timers_list_state.selected() {
+        let timer = &mut app.timers[index];
+        
+        // Pass the original duration stored in TimerInfo to reset the countdown
+        timer.countdown.reset(timer.duration);
+        timer.status = "".into();
+    }
+}
+
 pub fn delete_timer(app: &mut App) {
     if let Some(index) = app.timers_list_state.selected() {
         // 1. Check bounds and remove the timer

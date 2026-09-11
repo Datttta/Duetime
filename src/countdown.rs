@@ -80,6 +80,12 @@ impl Countdown {
         }
     }
 
+    pub fn reset(&mut self, original_duration: Duration) {
+        self.ends_at = None;
+        self.ends_at_timestamp = None;
+        self.remaining = original_duration;
+    }
+
     pub fn remaining(&self) -> Duration {
         match self.ends_at {
             Some(ends_at) => {
