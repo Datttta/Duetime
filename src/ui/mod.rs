@@ -245,6 +245,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             TimersPopup::AddTimer => {
                 add_timer::draw(frame, app);
             }
+            
+            TimersPopup::EditTimer => {
+                add_timer::draw(frame, app);
+            }
         }
     }
 

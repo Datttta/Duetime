@@ -189,6 +189,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 Popup::Timers(TimersPopup::AddTimer) => {
                     add_timer::handle_keys(app, key);
                 }
+                
+                Popup::Timers(TimersPopup::EditTimer) => {
+                    add_timer::handle_keys(app, key);
+                }
             }
         }
     }

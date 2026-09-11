@@ -5,6 +5,7 @@ use crate::{
     TimersPopup, 
     TimerSelectedInput,
     },
+    ui::widgets::duration::format_duration,
 
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
@@ -25,6 +26,25 @@ pub fn add_timer(app: &mut App) {
     app.mode = InputMode::Insert;
     app.timer_selected_input = TimerSelectedInput::Name;
     app.popup = Popup::Timers(TimersPopup::AddTimer);
+}
+
+pub fn edit_timer(app: &mut App) {
+    if let Some(index) = app.timers_list_state.selected() {
+        let timer = &app.timers[index];
+
+        // Load timer data into inputs
+        app.timer_name.text = timer.name.clone();
+        app.timer_duration.value = format_duration(timer.duration);
+
+        app.timer_name.cursor = app.timer_name.text.len();
+        app.timer_duration.cursor = app.planned_start.text.len();
+
+        app.mode = InputMode::Normal;
+        app.popup = Popup::Timers(TimersPopup::EditTimer);
+        app.timer_selected_input = TimerSelectedInput::Name;
+
+        app.pending_command = None;
+    }
 }
 
 pub fn delete_timer(app: &mut App) {
@@ -55,14 +75,10 @@ pub fn delete_timer(app: &mut App) {
 pub fn start_stop(app: &mut App) {
     if let Some(index) = app.timers_list_state.selected() {
         let timer = &mut app.timers[index];
-        info!(" is running? {:?}", timer.countdown.running());
-        info!("status: {:?}", timer.status);
 
         if timer.countdown.running() {
             timer.countdown.pause();
-            info!(" is running2? {:?}", timer.countdown.running());
             timer.status = "PAUSED".into();
-            info!("status2: {:?}", timer.status);
         } else {
             timer.countdown.start();
             timer.status = "".into();

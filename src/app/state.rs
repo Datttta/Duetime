@@ -78,8 +78,8 @@ pub struct App {
     pub timers_list_state: ListState,
 
     pub timer_name: InputState,
-    pub timer_selected_input: TimerSelectedInput,
     pub timer_duration: DateTimeInput,
+    pub timer_selected_input: TimerSelectedInput,
 
     // Presets
     pub presets: Vec<Preset>,

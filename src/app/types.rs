@@ -56,6 +56,7 @@ pub enum AgendaPopup {
 #[derive(PartialEq, Debug, Clone)]
 pub enum TimersPopup {
     AddTimer,
+    EditTimer,
 }
 
 #[derive(PartialEq)]
