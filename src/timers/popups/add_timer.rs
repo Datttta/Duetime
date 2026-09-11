@@ -17,6 +17,7 @@ use crate::{
     },
     app::{App, Popup, TimersPopup, TimerSelectedInput},
     vim_text::{InputResult, InputMode},
+    countdown::Countdown,
     storage,
     keys_help,
 };
@@ -130,6 +131,7 @@ pub fn save_timer(app: &mut App) {
         name,
         duration,
         status: "READY".to_string(),
+        countdown: Countdown::new(duration),
     };
 
     app.timers.push(timer);

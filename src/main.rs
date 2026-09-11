@@ -24,6 +24,7 @@ mod suggestions;
 mod inbox;
 mod agenda;
 mod timers;
+mod countdown;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

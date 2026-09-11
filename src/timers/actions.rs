@@ -51,6 +51,25 @@ pub fn delete_timer(app: &mut App) {
     app.pending_command = None;
 }
 
+
+pub fn start_stop(app: &mut App) {
+    if let Some(index) = app.timers_list_state.selected() {
+        let timer = &mut app.timers[index];
+        info!(" is running? {:?}", timer.countdown.running());
+        info!("status: {:?}", timer.status);
+
+        if timer.countdown.running() {
+            timer.countdown.pause();
+            info!(" is running2? {:?}", timer.countdown.running());
+            timer.status = "PAUSED".into();
+            info!("status2: {:?}", timer.status);
+        } else {
+            timer.countdown.start();
+            timer.status = "".into();
+        }
+    }
+}
+
 // nagivation
 const COLUMNS: usize = 3;
 

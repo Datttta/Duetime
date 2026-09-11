@@ -15,7 +15,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('a') => {
             actions::add_timer(app);
-            info!("Hit a!!")
         }
 
         //KeyCode::Char('i') => {
@@ -25,6 +24,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         //KeyCode::Char('e') => {
         //    actions::edit_inbox_item(app);
         //}
+        
+        // timer
+        KeyCode::Char('s') => {
+            actions::start_stop(app);
+        }
 
         KeyCode::Char('l') => {
             actions::move_right(app)

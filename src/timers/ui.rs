@@ -8,6 +8,7 @@ use crate::{
     },
     app::{App, Popup, Panel, Priority},
     navigation::vim_navigation::NavigationMode,
+    countdown::Countdown,
 };
 
 use ratatui::{
@@ -26,6 +27,7 @@ pub struct TimerInfo {
     pub name: String,
     pub duration: Duration,
     pub status: String,
+    pub countdown: Countdown,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -33,6 +35,8 @@ pub struct TimerInfoData {
     pub name: String,
     pub duration: u64,
     pub status: String,
+    pub remaining: u64,
+    pub ends_at: Option<i64>,
 }
 
 pub struct DurationInput {
@@ -46,14 +50,22 @@ impl TimerInfo {
             name: self.name.clone(),
             duration: self.duration.as_secs(),
             status: self.status.clone(),
+            remaining: self.countdown.remaining().as_secs(),
+            ends_at: self.countdown.ends_at_timestamp(),
         }
     }
 
     pub fn from_data(data: TimerInfoData) -> Self {
+        let countdown = Countdown::from_data(
+            Duration::from_secs(data.remaining),
+            data.ends_at,
+        );
+
         TimerInfo {
             name: data.name,
             duration: Duration::from_secs(data.duration),
             status: data.status,
+            countdown,
         }
     }
 }
@@ -152,7 +164,7 @@ fn draw_timer(
 
     frame.render_widget(timer_block, timer_area);
 
-    let time_str = format_duration(timer.duration);
+    let time_str = format_duration(timer.countdown.remaining());
     let (top_line, mid_line, bot_line) = render_time_display(&time_str);
 
     let text = vec![
