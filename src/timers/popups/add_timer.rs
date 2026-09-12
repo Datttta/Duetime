@@ -41,7 +41,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(10),
+            Constraint::Length(8),
             Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
@@ -125,6 +125,13 @@ pub fn save_timer(app: &mut App) {
                     return;
                 }
             };
+
+            info!("duration: {:?}", duration);
+
+            if duration.as_secs() == 0 {
+                app.set_status_message("Invalid duration.".to_string());
+                return;
+            }
 
             let timer = TimerInfo {
                 name,

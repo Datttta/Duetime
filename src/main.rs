@@ -9,6 +9,7 @@ use crate::{
     storage::{current_tasks, current_timers},
 };
 use chrono::Local;
+//use log::info;
 
 mod app;
 mod events;
@@ -68,7 +69,7 @@ fn main() -> io::Result<()> {
         
         // check finished timers
         for (index, timer) in app.timers.iter_mut().enumerate() {
-            if timer.countdown.running() && timer.countdown.remaining() == Duration::ZERO {
+            if timer.countdown.remaining() == Duration::ZERO {
                 app.popup = Popup::Timers(TimersPopup::TimerFinished(index));
             }
         }
