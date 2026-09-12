@@ -1,4 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
+use std::sync::atomic::{AtomicBool, Ordering};
 //use log::info;
 
 use ratatui::{
@@ -12,7 +13,6 @@ use crate::{
     app::{App, Popup, TimersPopup}, 
     keys_help, storage,
 };
-
 pub fn draw(
     frame: &mut Frame,
     app: &mut App,
@@ -68,6 +68,10 @@ pub fn handle_keys (app: &mut App, key: KeyEvent) {
         Popup::Timers(TimersPopup::TimerFinished(index)) => {
             match key.code {
                 KeyCode::Char('q') | KeyCode::Enter => {
+                    if let Some(alarm_flag) = app.active_alarm.take() {
+                        alarm_flag.store(false, Ordering::Relaxed);
+                    }
+
                     app.timers.remove(index);
                     storage::current_timers::save_current_timers(&app.timers).unwrap();
 

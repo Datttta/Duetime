@@ -6,6 +6,8 @@ use ratatui::{
     Frame,
 };
 
+use log::info;
+
 pub struct DateTimeInput {
     pub value: String,
     pub cursor: usize,
@@ -22,6 +24,10 @@ impl DateTimeInput {
             if position > 0 {
                 self.cursor = self.editable_positions[position - 1];
             }
+
+            if position == 0 {
+                self.cursor = self.editable_positions.len() + 1
+            }
         }
     }
 
@@ -33,6 +39,10 @@ impl DateTimeInput {
         {
             if position + 1 < self.editable_positions.len() {
                 self.cursor = self.editable_positions[position + 1];
+            }
+            
+            if position == self.editable_positions.len() - 1 {
+                self.cursor = self.editable_positions[0]
             }
         }
     }

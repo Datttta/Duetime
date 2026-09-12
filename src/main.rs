@@ -3,12 +3,16 @@ use std::{
     time::{Instant, Duration},
     io,
 };
-use simplelog::{LevelFilter, WriteLogger}; 
 use crate::{
     app::{App, Popup, TimersPopup},
     storage::{current_tasks, current_timers},
+    sound::alarm_sound,
 };
+
+use simplelog::{LevelFilter, WriteLogger}; 
 use chrono::Local;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 //use log::info;
 
 mod app;
@@ -26,6 +30,7 @@ mod inbox;
 mod agenda;
 mod timers;
 mod countdown;
+mod sound;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
@@ -71,6 +76,11 @@ fn main() -> io::Result<()> {
         for (index, timer) in app.timers.iter_mut().enumerate() {
             if timer.countdown.remaining() == Duration::ZERO {
                 app.popup = Popup::Timers(TimersPopup::TimerFinished(index));
+                
+                let is_playing = Arc::new(AtomicBool::new(true));
+                alarm_sound(Arc::clone(&is_playing));
+
+                app.active_alarm = Some(is_playing);
             }
         }
 

@@ -25,7 +25,14 @@ use crate::{
     ui::widgets::date_time_input::DateTimeInput
 };
 
-use std::time::{Duration, Instant};
+use std::{
+    sync::atomic::{AtomicBool, Ordering},
+    sync::Arc,
+    time::{Duration, Instant},
+    fs::File,
+    io::BufReader,
+};
+
 use chrono::{NaiveDate, Local};
 
 pub struct App {
@@ -104,6 +111,7 @@ pub struct App {
     pub move_state: MoveState,
     pub help_scroll: u16,
     pub next_id: u64,
+    pub active_alarm: Option<Arc<AtomicBool>>,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,
@@ -233,6 +241,7 @@ impl App {
             move_state: MoveState::default(),
             help_scroll: 0,
             next_id: 1,
+            active_alarm: None,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),

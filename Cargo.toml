@@ -8,8 +8,10 @@ arboard = { version = "3.6", features = ["wayland-data-control"] }
 chrono = { version = "0.4.45", features = ["serde"] }
 crossterm = "0.29.0"
 directories = "6.0.0"
+libc = "0.2.189"
 log = "0.4.33"
 ratatui = "0.30.2"
+rodio = { version = "0.22.2", features = ["minimp3"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 simplelog = "0.12.2"
