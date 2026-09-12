@@ -130,7 +130,7 @@ pub fn draw_timers(
                 let is_selected = app.timers_list_state.selected() == Some(timer_index);
 
                 let timer_area = Rect {
-                    x: col_area.x + 1,
+                    x: col_area.x,
                     y: col_area.y,
                     width: col_area.width - 1,
                     height: col_area.height,
@@ -241,7 +241,7 @@ fn draw_timer_placeholder(
     .split(area);
 
     let horizontal = Layout::horizontal([
-        Constraint::Length(34),
+        Constraint::Length(33),
     ])
     .flex(Flex::Center)
     .split(vertical[0]);
