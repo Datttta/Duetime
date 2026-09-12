@@ -5,12 +5,12 @@ use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Paragraph, Padding, Wrap},
     text::{Line},
-    Frame
+    Frame,
 };
 
 use crate::{
     app::{App, Popup, TimersPopup}, 
-    keys_help,
+    keys_help, storage,
 };
 
 pub fn draw(
@@ -36,7 +36,7 @@ pub fn draw(
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(50),
+            Constraint::Length(51),
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
@@ -69,6 +69,7 @@ pub fn handle_keys (app: &mut App, key: KeyEvent) {
             match key.code {
                 KeyCode::Char('q') | KeyCode::Enter => {
                     app.timers.remove(index);
+                    storage::current_timers::save_current_timers(&app.timers).unwrap();
 
                     if app.timers.is_empty() {
                         app.timers_list_state.select(None);
