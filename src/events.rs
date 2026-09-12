@@ -40,8 +40,12 @@ use crate::{
 };
 
 use std::io;
-
 use crossterm::event::{self, Event, KeyCode};
+
+const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
+const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;
+const BOTTOM_LEFT_PANEL: Panel = Panel::Agenda;
+const BOTTOM_RIGHT_PANEL: Panel = Panel::Timers;
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(100))? {
@@ -56,42 +60,38 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
                 match key.code {
                     KeyCode::Char('L') => {
-                        app.focused_panel = match app.focused_panel {
-                            Panel::TasksTable => Panel::Inbox,
-                            Panel::Timers => Panel::Agenda,
-                            Panel::Agenda => Panel::Agenda,
-                            Panel::Inbox => Panel::Inbox,
-                        };
+                        if app.focused_panel == TOP_LEFT_PANEL {
+                            app.focused_panel = TOP_RIGHT_PANEL;
+                        } else if app.focused_panel == BOTTOM_LEFT_PANEL {
+                            app.focused_panel = BOTTOM_RIGHT_PANEL;
+                        }
                         return Ok(());
                     }
 
                     KeyCode::Char('H') => {
-                        app.focused_panel = match app.focused_panel {
-                            Panel::Inbox => Panel::TasksTable,
-                            Panel::Agenda => Panel::Timers,
-                            Panel::TasksTable => Panel::TasksTable,
-                            Panel::Timers => Panel::Timers,
-                        };
+                        if app.focused_panel == TOP_RIGHT_PANEL {
+                            app.focused_panel = TOP_LEFT_PANEL;
+                        } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
+                            app.focused_panel = BOTTOM_LEFT_PANEL;
+                        }
                         return Ok(());
                     }
                     
                     KeyCode::Char('J') => {
-                        app.focused_panel = match app.focused_panel {
-                            Panel::TasksTable => Panel::Timers,
-                            Panel::Inbox => Panel::Agenda,
-                            Panel::Agenda => Panel::Agenda,
-                            Panel::Timers => Panel::Timers,
-                        };
+                        if app.focused_panel == TOP_LEFT_PANEL {
+                            app.focused_panel = BOTTOM_LEFT_PANEL;
+                        } else if app.focused_panel == TOP_RIGHT_PANEL {
+                            app.focused_panel = BOTTOM_RIGHT_PANEL;
+                        }
                         return Ok(());
                     }
                     
                     KeyCode::Char('K') => {
-                        app.focused_panel = match app.focused_panel {
-                            Panel::Timers => Panel::TasksTable,
-                            Panel::Agenda => Panel::Inbox,
-                            Panel::TasksTable => Panel::TasksTable,
-                            Panel::Inbox => Panel::Inbox,
-                        };
+                        if app.focused_panel == BOTTOM_LEFT_PANEL {
+                            app.focused_panel = TOP_LEFT_PANEL;
+                        } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
+                            app.focused_panel = TOP_RIGHT_PANEL;
+                        }
                         return Ok(());
                     }
                     

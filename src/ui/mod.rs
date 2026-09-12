@@ -86,9 +86,9 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
 
     MainLayout {
         tasks: left[0],
-        timers: left[1],
+        agenda: left[1],
         inbox: right[0],
-        agenda: right[1],
+        timers: right[1],
     }
 }
 
