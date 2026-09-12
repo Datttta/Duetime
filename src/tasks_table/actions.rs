@@ -18,6 +18,7 @@ use crate::{
 };
 
 use std::time::SystemTime;
+//use log::info;
 
 pub fn edit_task(app: &mut App) {
     if let Some(index) = app.tasks_table_state.selected() {

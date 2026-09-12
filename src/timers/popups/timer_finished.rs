@@ -1,5 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use log::info;
+//use log::info;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
@@ -49,6 +49,7 @@ pub fn draw(
     frame.render_widget(block, area);
         
     let paragraph = Paragraph::new(vec![
+        Line::from(" "),
         Line::from("TIME'S UP:").alignment(Alignment::Center),
         Line::from(" "),
         Line::from(timer.name.as_str()).alignment(Alignment::Center), 
@@ -62,7 +63,6 @@ pub fn handle_keys (app: &mut App, key: KeyEvent) {
         Popup::Timers(TimersPopup::TimerFinished(index)) => {
             match key.code {
                 KeyCode::Char('q') | KeyCode::Enter => {
-                    info!("index of itmere: {:?}", index);
                     app.timers.remove(index);
 
                     if app.timers.is_empty() {

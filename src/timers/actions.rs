@@ -53,7 +53,6 @@ pub fn reset_timer(app: &mut App) {
         
         // Pass the original duration stored in TimerInfo to reset the countdown
         timer.countdown.reset(timer.duration);
-        timer.status = "".into();
     }
 }
 
