@@ -24,7 +24,7 @@ use crate::{
 
 use chrono::{NaiveDate, NaiveTime};
 use std::time::Duration;
-use log::info;
+//use log::info;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);
@@ -118,6 +118,11 @@ pub fn save_timer(app: &mut App) {
 
             let name = app.timer_name.text.trim().to_string();
 
+            if name.is_empty() {
+                app.set_status_message("Invalid name.".to_string());
+                return
+            }
+
             let duration = match parse_duration(&app.timer_duration.value) {
                 Some(duration) => duration,
                 None => {
@@ -125,8 +130,6 @@ pub fn save_timer(app: &mut App) {
                     return;
                 }
             };
-
-            info!("duration: {:?}", duration);
 
             if duration.as_secs() == 0 {
                 app.set_status_message("Invalid duration.".to_string());
