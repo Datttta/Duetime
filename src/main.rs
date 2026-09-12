@@ -5,7 +5,7 @@ use std::{
 };
 use simplelog::{LevelFilter, WriteLogger}; 
 use crate::{
-    app::App,
+    app::{App, Popup, TimersPopup},
     storage::{current_tasks, current_timers},
 };
 use chrono::Local;
@@ -53,6 +53,7 @@ fn main() -> io::Result<()> {
 
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
         
+        // set tasks table stopwatch to stopped if the app was closed while IN PROGRESS
         if first_render {
             for i in 0..app.tasks.len() {
                 let task = &mut app.tasks[i];
@@ -63,6 +64,13 @@ fn main() -> io::Result<()> {
             }
             
             first_render = false;
+        }
+        
+        // check finished timers
+        for (index, timer) in app.timers.iter_mut().enumerate() {
+            if timer.countdown.running() && timer.countdown.remaining() == Duration::ZERO {
+                app.popup = Popup::Timers(TimersPopup::TimerFinished(index));
+            }
         }
 
         if last_save.elapsed() >= Duration::from_secs(1) {

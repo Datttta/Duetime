@@ -57,6 +57,7 @@ pub enum AgendaPopup {
 pub enum TimersPopup {
     AddTimer,
     EditTimer,
+    TimerFinished(usize),
 }
 
 #[derive(PartialEq)]

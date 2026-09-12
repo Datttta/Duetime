@@ -31,6 +31,7 @@ use crate::{
 
     timers::popups::{
         add_timer,
+        timer_finished,
     },
 
     storage::current_tasks,
@@ -192,6 +193,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::Timers(TimersPopup::EditTimer) => {
                     add_timer::handle_keys(app, key);
+                }
+                
+                Popup::Timers(TimersPopup::TimerFinished(index)) => {
+                    timer_finished::handle_keys(app, key);
                 }
             }
         }
