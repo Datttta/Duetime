@@ -141,6 +141,27 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete event", Style::default().fg(gray_color())),
         ]),
+        
+        Line::from(""),
+        Line::from("Timers"),
+        Line::from(""),
+
+        Line::from(vec![
+            Span::styled("  a -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Add timer", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  e -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Edit timer", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  i -", Style::default().fg(Color::Yellow)),
+            Span::styled(" timer information", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  dd -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Delete timer", Style::default().fg(gray_color())),
+        ]),
 
         Line::from(""),
         Line::from("Others"),

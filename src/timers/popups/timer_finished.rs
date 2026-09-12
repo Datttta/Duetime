@@ -10,6 +10,7 @@ use ratatui::{
 
 use crate::{
     app::{App, Popup, TimersPopup}, 
+    keys_help,
 };
 
 pub fn draw(
@@ -17,28 +18,32 @@ pub fn draw(
     app: &mut App,
     index: usize
 ) {
-    let area = centered_rect(frame);
+    let area = centered_rect(frame, app);
 
     frame.render_widget(Clear, area);
 
     let block = Block::bordered()
-        .padding(Padding::new(1,1,0,0));
+        .padding(Padding::new(1,1,5,0));
 
     frame.render_widget(&block, area);
 
-    fn centered_rect(frame: &mut Frame) -> Rect {
+    fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(9),
+            Constraint::Length(17),
             Constraint::Length(1), // keys help
         ])
         .flex(Flex::Center)
         .split(frame.area());
 
         let horizontal = Layout::horizontal([
-            Constraint::Length(30),
+            Constraint::Length(50),
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
+        
+        let keys_help = Paragraph::new(keys_help::keys(app))
+                .alignment(Alignment::Center);
+        frame.render_widget(keys_help, vertical[1]);
         
         horizontal[0]
     }

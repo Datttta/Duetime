@@ -39,8 +39,9 @@ use crate::{
     tasks_table, inbox, agenda, timers
 };
 
-use std::io;
 use crossterm::event::{self, Event, KeyCode};
+use std::io;
+use log::info;
 
 const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
 const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;

@@ -1,4 +1,4 @@
-use crate::app::{App, Popup, TasksTablePopup, InboxPopup, AgendaPopup};
+use crate::app::{App, Popup, TasksTablePopup, InboxPopup, AgendaPopup, TimersPopup};
 use ratatui::{
     style::{Modifier, Style},
     text::{Line, Span},
@@ -89,6 +89,14 @@ pub fn keys(app: &App) -> Line<'static> {
                 Span::raw(" Event info  "),
                 Span::styled("q", bold),
                 Span::raw(" Close"),
+            ])
+        }
+
+        // Timers
+        Popup::Timers(TimersPopup::TimerFinished(_)) => {
+            Line::from(vec![
+                Span::styled(" Enter / q ", bold),
+                Span::raw(" OK "),
             ])
         }
 
