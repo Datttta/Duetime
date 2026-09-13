@@ -8,8 +8,9 @@ use ratatui::{
 };
 
 use crate::{
-    app::{App},
+    app::{App, Popup},
     agenda::ui::format_countdown,
+    ui::widgets::duration::format_duration,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -51,8 +52,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Line::from("Timer name:"),
             Line::from(timer.name.as_str()), 
             Line::from(" "),
-            Line::from(format!("Duration: {}", timer.duration)),
-            Line::from(format!("Remaining: {}", timer.remaining)),
+            Line::from(format!("Duration: {}", format_duration(timer.duration))),
         ])
         .wrap(Wrap { trim: false });
     
@@ -63,7 +63,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 pub fn handle_keys (app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('q') => {
-            app.popup = None;
+            app.popup = Popup::None;
         }
 
         _ => {}
