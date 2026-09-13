@@ -24,6 +24,18 @@ impl DateTimeInput {
             if position > 0 {
                 self.cursor = self.editable_positions[position - 1];
             }
+        }
+    }
+    
+    pub fn move_left_nav(&mut self) {
+        if let Some(position) = self
+            .editable_positions
+            .iter()
+            .position(|&pos| pos == self.cursor)
+        {
+            if position > 0 {
+                self.cursor = self.editable_positions[position - 1];
+            }
 
             if position == 0 {
                 self.cursor = self.editable_positions.len() + 1
@@ -32,6 +44,18 @@ impl DateTimeInput {
     }
 
     pub fn move_right(&mut self) {
+        if let Some(position) = self
+            .editable_positions
+            .iter()
+            .position(|&pos| pos == self.cursor)
+        {
+            if position + 1 < self.editable_positions.len() {
+                self.cursor = self.editable_positions[position + 1];
+            }
+        }
+    }
+    
+    pub fn move_right_nav(&mut self) {
         if let Some(position) = self
             .editable_positions
             .iter()

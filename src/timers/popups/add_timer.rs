@@ -192,11 +192,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 }
 
                 KeyCode::Char('h') => {
-                    app.timer_duration.move_left();
+                    app.timer_duration.move_left_nav();
                 }
 
                 KeyCode::Char('l') => {
-                    app.timer_duration.move_right();
+                    app.timer_duration.move_right_nav();
                 }
 
                 KeyCode::Backspace => {

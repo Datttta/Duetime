@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use std::sync::atomic::{AtomicBool, Ordering};
-//use log::info;
+use log::info;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
