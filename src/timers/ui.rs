@@ -12,7 +12,7 @@ use crate::{
 
 use ratatui::{
     layout::{Alignment, Rect, Flex, Constraint, Layout},
-    widgets::{Block, Paragraph, Cell, Padding},
+    widgets::{Block, Paragraph, Padding},
     style::{Color, Style},
     text::{Line, Span},
     Frame,
@@ -36,11 +36,6 @@ pub struct TimerInfoData {
     pub status: String,
     pub remaining: u64,
     pub ends_at: Option<i64>,
-}
-
-pub struct DurationInput {
-    pub value: String,
-    pub cursor: usize,
 }
 
 impl TimerInfo {
