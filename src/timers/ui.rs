@@ -167,7 +167,10 @@ fn draw_timer(
     let (top_line, mid_line, bot_line) = render_time_display(&time_str);
 
     let text = vec![
-        Line::from(Span::styled(timer.name.as_str(), Style::default().fg(Color::White))),
+        Line::from(Span::styled(
+            ellipsize(&timer.name, 20),
+            Style::default().fg(Color::White)
+        )),
         Line::from(""),
         Line::from(Span::styled(top_line, Style::default().fg(Color::White))),
         Line::from(Span::styled(mid_line, Style::default().fg(Color::White))),
