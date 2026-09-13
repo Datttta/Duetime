@@ -51,18 +51,13 @@ use ratatui::{
     Frame,
 };
 
-//use log::info;
+use log::info;
 
 struct MainLayout {
     tasks: Rect,
     inbox: Rect,
     agenda: Rect,
     timers: Rect,
-}
-
-struct HalfHeightLayout {
-    tasks: Rect,
-    agenda: Rect,
 }
 
 fn draw_layout(frame: &mut Frame) -> MainLayout {
@@ -93,7 +88,7 @@ fn draw_layout(frame: &mut Frame) -> MainLayout {
     }
 }
 
-fn draw_half_height_layout(frame: &mut Frame) -> HalfHeightLayout {
+fn draw_half_height_layout(frame: &mut Frame) -> MainLayout {
     let chunks = Layout::horizontal([
         Constraint::Percentage(50),
         Constraint::Length(1),
@@ -101,9 +96,26 @@ fn draw_half_height_layout(frame: &mut Frame) -> HalfHeightLayout {
     ])
     .split(frame.area());
 
-    HalfHeightLayout {
+    MainLayout {
         tasks: chunks[0],
-        agenda: chunks[2],
+        inbox: chunks[2],
+        agenda: Rect::default(),
+        timers: Rect::default(),
+    }
+}
+
+fn draw_half_length_layout(frame: &mut Frame) -> MainLayout {
+    let chunks = Layout::vertical([
+        Constraint::Percentage(50),
+        Constraint::Percentage(50),
+    ])
+    .split(frame.area());
+
+    MainLayout {
+        tasks: chunks[0],
+        agenda: chunks[1],
+        inbox: Rect::default(),
+        timers: Rect::default(),
     }
 }
 
@@ -117,9 +129,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         height: 1,
     };
 
-    //info!("area width: {:?}", area.width);
-    //info!("area height: {:?}", area.height);
-    if area.width < 140 {
+    info!("area width: {:?}", area.width);
+    info!("area height: {:?}", area.height);
+    if area.width < 140 && area.height < 40{
+        // ======== TASKS TABLE PANEL ========
+
         // check the previous focused panel
         if !app.already_set_previous {
             app.previous_panel = app.focused_panel;
@@ -131,19 +145,50 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         app.focused_panel = Panel::TasksTable;
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
+        // ======== HALF HEIGHT PANELS ========
+
         if !app.already_focused_on_previous {
             app.focused_panel = app.previous_panel;
             app.already_focused_on_previous = true;
             app.already_set_previous = false;
         } 
 
+        if app.focused_panel == Panel::Inbox {
+            app.focused_panel = Panel::Inbox;
+        } else {
+            app.focused_panel = Panel::TasksTable;
+        }
+
         let layout = draw_half_height_layout(frame);
+        
+        // draw panels
+        draw_tasks_panel(frame, layout.tasks, app);
+        draw_inbox_panel(frame, layout.inbox, app);
+
+    } else if area.width < 140 && area.height > 40 {
+        // ======== HALF LENGTH PANELS ========
+
+        if !app.already_focused_on_previous {
+            app.focused_panel = app.previous_panel;
+            app.already_focused_on_previous = true;
+            app.already_set_previous = false;
+        } 
+
+        if app.focused_panel == Panel::Agenda {
+            app.focused_panel = Panel::Agenda;
+        } else {
+            app.focused_panel = Panel::TasksTable;
+        }
+
+        let layout = draw_half_length_layout(frame);
         
         // draw panels
         draw_tasks_panel(frame, layout.tasks, app);
         draw_agenda_panel(frame, layout.agenda, app);
 
     } else {
+        // ======== ALL PANELS ========
+
         //focus on previous panel
         if !app.already_focused_on_previous {
             app.focused_panel = app.previous_panel;
