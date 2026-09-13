@@ -58,6 +58,7 @@ pub enum TimersPopup {
     AddTimer,
     EditTimer,
     TimerFinished(usize),
+    TimerInfo,
 }
 
 #[derive(PartialEq)]

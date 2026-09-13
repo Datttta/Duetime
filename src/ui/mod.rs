@@ -39,6 +39,7 @@ use crate::{
         popups::{
             add_timer,
             timer_finished,
+            timer_info
         },
     },
 
@@ -253,6 +254,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             TimersPopup::TimerFinished(index) => {
                 timer_finished::draw(frame, app, *index);
+            }
+
+            TimersPopup::TimerInfo => {
+                timer_info::draw(frame, app);
             }
         }
     }

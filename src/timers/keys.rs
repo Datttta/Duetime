@@ -20,9 +20,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             actions::add_timer(app);
         }
 
-        //KeyCode::Char('i') => {
-        //    actions::inbox_item_info(app);
-        //}
+        KeyCode::Char('i') => {
+            actions::timer_info(app);
+        }
 
         KeyCode::Char('e') => {
             actions::edit_timer(app);

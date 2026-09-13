@@ -93,6 +93,10 @@ pub fn start_stop(app: &mut App) {
     }
 }
 
+pub fn timer_info(app: &mut App) {
+    app.popup = Popup::Timers(TimersPopup::TimerInfo);
+}
+
 // nagivation
 const COLUMNS: usize = 3;
 

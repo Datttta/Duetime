@@ -1,12 +1,12 @@
 use crate::{
     app::{
-    App,
-    Popup, 
-    Panel, 
-    TasksTablePopup, 
-    InboxPopup, 
-    AgendaPopup,
-    TimersPopup,
+        App,
+        Popup, 
+        Panel, 
+        TasksTablePopup, 
+        InboxPopup, 
+        AgendaPopup,
+        TimersPopup,
     },
 
     tasks_table::popups::{
@@ -32,6 +32,7 @@ use crate::{
     timers::popups::{
         add_timer,
         timer_finished,
+        timer_info,
     },
 
     storage::current_tasks,
@@ -197,6 +198,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 
                 Popup::Timers(TimersPopup::TimerFinished(_)) => {
                     timer_finished::handle_keys(app, key);
+                }
+                
+                Popup::Timers(TimersPopup::TimerInfo) => {
+                    timer_info::handle_keys(app, key);
                 }
             }
         }
