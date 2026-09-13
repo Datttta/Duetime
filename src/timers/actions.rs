@@ -9,6 +9,7 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
+    storage,
 };
 
 //use log::info;
@@ -76,6 +77,7 @@ pub fn delete_timer(app: &mut App) {
     }
 
     app.pending_command = None;
+    storage::current_timers::save_current_timers(&app.timers).unwrap();
 }
 
 
