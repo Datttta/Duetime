@@ -2,7 +2,6 @@ use std::fs;
 use std::path::PathBuf;
 
 use crate::{
-    storage::config_location::config_dir,
     tasks_table::ui::{TaskInfo, TaskInfoData},
 };
 

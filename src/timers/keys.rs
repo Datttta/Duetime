@@ -1,14 +1,13 @@
 use crate::{
     app::App,
-    navigation::vim_navigation,
 };
 
 use super::actions;
 use crossterm::event::{KeyCode, KeyEvent};
-use log::info;
+//use log::info;
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
-    let mut selected = if app.timers.is_empty() {
+    let selected = if app.timers.is_empty() {
         None
     } else {
         app.timers_list_state.selected()

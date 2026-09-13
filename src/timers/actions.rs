@@ -9,11 +9,9 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
-    storage,
 };
 
-use chrono::Local;
-use log::info;
+//use log::info;
 
 pub fn add_timer(app: &mut App) {
     app.timer_name.clear();

@@ -6,13 +6,13 @@ use ratatui::{
     Frame,
 };
 
-use log::info;
-
 pub struct DateTimeInput {
     pub value: String,
     pub cursor: usize,
     pub editable_positions: &'static [usize],
 }
+
+//use log::info;
 
 impl DateTimeInput {
     pub fn move_left(&mut self) {

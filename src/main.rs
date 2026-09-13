@@ -13,7 +13,7 @@ use simplelog::{LevelFilter, WriteLogger};
 use chrono::Local;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use log::info;
+//use log::info;
 
 mod app;
 mod events;
@@ -78,7 +78,6 @@ fn main() -> io::Result<()> {
                 app.popup = Popup::Timers(TimersPopup::TimerFinished(index));
                 
                 let is_playing = Arc::new(AtomicBool::new(true));
-                info!("is_playing: {:?}", is_playing);
                 alarm_sound(Arc::clone(&is_playing));
 
                 app.active_alarm = Some(is_playing);

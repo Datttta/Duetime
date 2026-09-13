@@ -26,11 +26,9 @@ use crate::{
 };
 
 use std::{
-    sync::atomic::{AtomicBool, Ordering},
+    sync::atomic::{AtomicBool},
     sync::Arc,
     time::{Duration, Instant},
-    fs::File,
-    io::BufReader,
 };
 
 use chrono::{NaiveDate, Local};

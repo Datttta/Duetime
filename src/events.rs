@@ -41,7 +41,6 @@ use crate::{
 
 use crossterm::event::{self, Event, KeyCode};
 use std::io;
-use log::info;
 
 const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
 const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;
@@ -196,7 +195,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     add_timer::handle_keys(app, key);
                 }
                 
-                Popup::Timers(TimersPopup::TimerFinished(index)) => {
+                Popup::Timers(TimersPopup::TimerFinished(_)) => {
                     timer_finished::handle_keys(app, key);
                 }
             }

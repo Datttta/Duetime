@@ -1,10 +1,10 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use std::sync::atomic::{AtomicBool, Ordering};
-use log::info;
+use std::sync::atomic::{Ordering};
+//use log::info;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
-    widgets::{Clear, Block, Paragraph, Padding, Wrap},
+    widgets::{Clear, Block, Paragraph, Padding},
     text::{Line},
     Frame,
 };

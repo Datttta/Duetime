@@ -18,7 +18,7 @@ pub fn alarm_sound(is_playing: Arc<AtomicBool>) {
 
         // 2. Try to open the default sink after silencing stderr
         let Ok(mut stream_handle) = rodio::DeviceSinkBuilder::open_default_sink() else {
-            //info!("Failed to open default audio sink backend");
+            info!("Failed to open default audio sink backend");
             return;
         };
         stream_handle.log_on_drop(false);
@@ -31,7 +31,7 @@ pub fn alarm_sound(is_playing: Arc<AtomicBool>) {
             let file = match File::open(file_path) {
                 Ok(f) => f,
                 Err(e) => {
-                    //info!("Alarm sound file not found at {}: {}", file_path, e);
+                    info!("Alarm sound file not found at {}: {}", file_path, e);
                     return;
                 }
             };

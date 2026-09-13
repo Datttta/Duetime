@@ -4,10 +4,9 @@ use crate::{
             input::ellipsize,
             duration::format_duration,
         },
-        theme::{task_selection_color, unfocused_panel},
+        theme::{unfocused_panel},
     },
-    app::{App, Popup, Panel, Priority},
-    navigation::vim_navigation::NavigationMode,
+    app::{App, Panel},
     countdown::Countdown,
 };
 
