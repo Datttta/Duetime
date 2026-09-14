@@ -34,12 +34,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     let is_visual = app.n_mode == NavigationMode::Visual;
 
+    let name_length: u16 = 45;
+
     crate::agenda::ui::draw_events(
         frame,
         inner,
         app,
         &event_indices,
         is_visual,
+        name_length,
     );
 
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {

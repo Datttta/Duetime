@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
 
-const EVENT_NAME_LENGHT: u16 = 55;
+const EVENT_NAME_LENGTH: u16 = 55;
 
 #[derive(Default)]
 pub struct AgendaEvent {
@@ -182,10 +182,10 @@ pub fn draw_agenda_panel(
         && app.n_mode == NavigationMode::Visual;
 
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
-    draw_events(frame, chunks[1], app, &today_indices, is_visual);
+    draw_events(frame, chunks[1], app, &today_indices, is_visual, EVENT_NAME_LENGTH);
 
     frame.render_widget(Paragraph::new("Upcoming"), chunks[3]);
-    draw_events(frame, chunks[4], app, &upcoming_indices, is_visual);
+    draw_events(frame, chunks[4], app, &upcoming_indices, is_visual, EVENT_NAME_LENGTH);
 }
 
 pub fn draw_events(
@@ -194,9 +194,10 @@ pub fn draw_events(
     app: &App,
     section_indices: &[usize],
     is_visual: bool,
+    name_length: u16,
 ) {
     let columns = [
-        Constraint::Length(EVENT_NAME_LENGHT), // event name
+        Constraint::Length(name_length), // event name
         Constraint::Length(3),  // sapce
         Constraint::Length(5),  // time of the event
         Constraint::Length(1), // space
@@ -226,7 +227,7 @@ pub fn draw_events(
         let prefix = if is_selected { "> " } else { "  " };
 
         let mut row = Row::new(vec![
-            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGHT - 2).into()))),
+            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGTH - 2).into()))),
             Cell::from(String::new()),
             Cell::from(Line::from(time).alignment(Alignment::Center)),
             Cell::from(String::new()),
