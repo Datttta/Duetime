@@ -10,7 +10,7 @@ use std::{
 };
 
 use crate::{
-    app::{App, Popup, TimersPopup},
+    app::{App, Popup, TimersPopup, Panel},
     storage::{current_tasks, current_timers},
     sound::alarm_sound,
 };
@@ -23,7 +23,7 @@ use crossterm::{
 use simplelog::{LevelFilter, WriteLogger}; 
 use chrono::Local;
 
-//use log::info;
+use log::info;
 
 mod app;
 mod events;
@@ -101,6 +101,10 @@ fn main() -> io::Result<()> {
             current_tasks::save_current_tasks(&app.tasks).unwrap();
             current_timers::save_current_timers(&app.timers).unwrap();
             last_save = Instant::now();
+        }
+
+        if !app.terminal_focus {
+            app.focused_panel = Panel::None;
         }
 
         events::handle_events(&mut app)?;

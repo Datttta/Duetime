@@ -42,6 +42,7 @@ use crate::{
 
 use crossterm::event::{self, Event, KeyCode};
 use std::io;
+use log::info;
 
 const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
 const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;
@@ -50,7 +51,9 @@ const BOTTOM_RIGHT_PANEL: Panel = Panel::Timers;
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(16))? {
-        match event::read()? {
+        let event = event::read()?;
+
+        match event {
             Event::FocusLost => {
                 app.terminal_focus = false;
                 app.previous_panel = app.focused_panel;
