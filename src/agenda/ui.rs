@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub const DATE_EDITABLE_POSITIONS: [usize; 6] = [0, 1, 3, 4, 6, 7];
 pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
 
-const EVENT_NAME_LENGHT: u16 = 45;
+const EVENT_NAME_LENGHT: u16 = 55;
 
 #[derive(Default)]
 pub struct AgendaEvent {
