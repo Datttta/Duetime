@@ -110,6 +110,7 @@ pub struct App {
     pub help_scroll: u16,
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
+    pub terminal_focus: bool,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,
@@ -240,6 +241,7 @@ impl App {
             help_scroll: 0,
             next_id: 1,
             active_alarm: None,
+            terminal_focus: true,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),

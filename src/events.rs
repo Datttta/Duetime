@@ -52,11 +52,13 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
     if event::poll(std::time::Duration::from_millis(16))? {
         match event::read()? {
             Event::FocusLost => {
+                app.terminal_focus = false;
                 app.previous_panel = app.focused_panel;
                 app.focused_panel = Panel::None;
             }
 
             Event::FocusGained => {
+                app.terminal_focus = true;
                 app.focused_panel = app.previous_panel;
             }
 

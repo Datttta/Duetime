@@ -140,7 +140,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.already_set_previous = true;
         }
         
-        if app.focused_panel != Panel::None {
+        if app.terminal_focus == true {
             app.focused_panel = Panel::TasksTable;
         }
 
@@ -154,9 +154,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.already_set_previous = false;
         } 
 
-        if app.focused_panel == Panel::Inbox {
+        if app.focused_panel == Panel::Inbox && app.terminal_focus == true {
             app.focused_panel = Panel::Inbox;
-        } else if app.focused_panel == Panel::TasksTable {
+        } else if app.terminal_focus == true {
             app.focused_panel = Panel::TasksTable;
         }
 
@@ -175,9 +175,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.already_set_previous = false;
         } 
 
-        if app.focused_panel == Panel::Agenda {
+        if app.focused_panel == Panel::Agenda && app.terminal_focus == true {
             app.focused_panel = Panel::Agenda;
-        } else if app.focused_panel == Panel::TasksTable {
+        } else if app.terminal_focus == true {
             app.focused_panel = Panel::TasksTable;
         }
 
