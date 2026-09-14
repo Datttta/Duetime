@@ -49,161 +49,175 @@ const BOTTOM_LEFT_PANEL: Panel = Panel::Agenda;
 const BOTTOM_RIGHT_PANEL: Panel = Panel::Timers;
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
-    if event::poll(std::time::Duration::from_millis(100))? {
-        if let Event::Key(key) = event::read()? {
-
-            // Panel switching only when no popup is open
-            if matches!(app.popup, Popup::None) {
-                if key.code == KeyCode::Char('?') {
-                    app.popup = Popup::Help;
-                    return Ok(());
-                }
-
-                match key.code {
-                    KeyCode::Char('L') => {
-                        if app.focused_panel == TOP_LEFT_PANEL {
-                            app.focused_panel = TOP_RIGHT_PANEL;
-                        } else if app.focused_panel == BOTTOM_LEFT_PANEL {
-                            app.focused_panel = BOTTOM_RIGHT_PANEL;
-                        }
-                        return Ok(());
-                    }
-
-                    KeyCode::Char('H') => {
-                        if app.focused_panel == TOP_RIGHT_PANEL {
-                            app.focused_panel = TOP_LEFT_PANEL;
-                        } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
-                            app.focused_panel = BOTTOM_LEFT_PANEL;
-                        }
-                        return Ok(());
-                    }
-                    
-                    KeyCode::Char('J') => {
-                        if app.focused_panel == TOP_LEFT_PANEL {
-                            app.focused_panel = BOTTOM_LEFT_PANEL;
-                        } else if app.focused_panel == TOP_RIGHT_PANEL {
-                            app.focused_panel = BOTTOM_RIGHT_PANEL;
-                        }
-                        return Ok(());
-                    }
-                    
-                    KeyCode::Char('K') => {
-                        if app.focused_panel == BOTTOM_LEFT_PANEL {
-                            app.focused_panel = TOP_LEFT_PANEL;
-                        } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
-                            app.focused_panel = TOP_RIGHT_PANEL;
-                        }
-                        return Ok(());
-                    }
-                    
-                    KeyCode::Char('q') => {
-                        current_tasks::save_current_tasks(&app.tasks).unwrap();
-                        app.running = false;
-                    }
-
-                    _ => {}
-                }
+    if event::poll(std::time::Duration::from_millis(16))? {
+        match event::read()? {
+            Event::FocusLost => {
+                app.previous_panel = app.focused_panel;
+                app.focused_panel = Panel::None;
             }
 
-            // Popup gets priority over focused panel
-            match &app.popup {
-                Popup::None => {
-                    match app.focused_panel {
-                        Panel::TasksTable => tasks_table::keys::handle_keys(app, key),
-                        Panel::Inbox => inbox::keys::handle_keys(app, key),
-                        Panel::Agenda => agenda::keys::handle_keys(app, key),
-                        Panel::Timers => timers::keys::handle_keys(app, key),
+            Event::FocusGained => {
+                app.focused_panel = app.previous_panel;
+            }
+
+            Event::Key(key) => {
+                // Panel switching only when no popup is open
+                if matches!(app.popup, Popup::None) {
+                    if key.code == KeyCode::Char('?') {
+                        app.popup = Popup::Help;
+                        return Ok(());
+                    }
+
+                    match key.code {
+                        KeyCode::Char('L') => {
+                            if app.focused_panel == TOP_LEFT_PANEL {
+                                app.focused_panel = TOP_RIGHT_PANEL;
+                            } else if app.focused_panel == BOTTOM_LEFT_PANEL {
+                                app.focused_panel = BOTTOM_RIGHT_PANEL;
+                            }
+                            return Ok(());
+                        }
+
+                        KeyCode::Char('H') => {
+                            if app.focused_panel == TOP_RIGHT_PANEL {
+                                app.focused_panel = TOP_LEFT_PANEL;
+                            } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
+                                app.focused_panel = BOTTOM_LEFT_PANEL;
+                            }
+                            return Ok(());
+                        }
+                        
+                        KeyCode::Char('J') => {
+                            if app.focused_panel == TOP_LEFT_PANEL {
+                                app.focused_panel = BOTTOM_LEFT_PANEL;
+                            } else if app.focused_panel == TOP_RIGHT_PANEL {
+                                app.focused_panel = BOTTOM_RIGHT_PANEL;
+                            }
+                            return Ok(());
+                        }
+                        
+                        KeyCode::Char('K') => {
+                            if app.focused_panel == BOTTOM_LEFT_PANEL {
+                                app.focused_panel = TOP_LEFT_PANEL;
+                            } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
+                                app.focused_panel = TOP_RIGHT_PANEL;
+                            }
+                            return Ok(());
+                        }
+                        
+                        KeyCode::Char('q') => {
+                            current_tasks::save_current_tasks(&app.tasks).unwrap();
+                            app.running = false;
+                        }
+
+                        _ => {}
                     }
                 }
 
-                // TASKS POPUPS
+                // Popup gets priority over focused panel
+                match &app.popup {
+                    Popup::None => {
+                        match app.focused_panel {
+                            Panel::TasksTable => tasks_table::keys::handle_keys(app, key),
+                            Panel::Inbox => inbox::keys::handle_keys(app, key),
+                            Panel::Agenda => agenda::keys::handle_keys(app, key),
+                            Panel::Timers => timers::keys::handle_keys(app, key),
+                            _ => {}
+                        }
+                    }
 
-                Popup::TasksTable(TasksTablePopup::AddTask) => {
-                    task_add::handle_keys(app, key);
+                    // TASKS POPUPS
+
+                    Popup::TasksTable(TasksTablePopup::AddTask) => {
+                        task_add::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::EditTask) => {
+                        task_add::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::Presets) => {
+                        presets::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::NewPreset) => {
+                        new_preset::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::KnownTasks) => {
+                        known_tasks::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::AddKnownTask) => {
+                        known_tasks_add::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::EditKnownTask(_)) => {
+                        known_tasks_add::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::TaskInfo) => {
+                        task_info::handle_keys(app, key);
+                    }
+
+                    Popup::Help => {
+                        help::handle_keys(app, key);
+                    }
+
+                    // INBOX POPUPS
+
+                    Popup::Inbox(InboxPopup::AddInboxItem) => {
+                        inbox_item_add::handle_keys(app, key);
+                    }
+
+                    Popup::Inbox(InboxPopup::EditInboxItem) => {
+                        inbox_item_add::handle_keys(app, key);
+                    }
+                    
+                    Popup::Inbox(InboxPopup::InfoInboxItem) => {
+                        inbox_item_info::handle_keys(app, key);
+                    }
+
+                    // AGENDA POPUPS
+
+                    Popup::Agenda(AgendaPopup::AddEvent) => {
+                        add_event::handle_keys(app, key);
+                    }
+                    
+                    Popup::Agenda(AgendaPopup::EditEvent) => {
+                        add_event::handle_keys(app, key);
+                    }
+                    
+                    Popup::Agenda(AgendaPopup::AllEvents) => {
+                        all_events::handle_keys(app, key);
+                    }
+                    
+                    Popup::Agenda(AgendaPopup::EventInfo) => {
+                        event_info::handle_keys(app, key);
+                    }
+
+                    // TIMERS
+     
+                    Popup::Timers(TimersPopup::AddTimer) => {
+                        add_timer::handle_keys(app, key);
+                    }
+                    
+                    Popup::Timers(TimersPopup::EditTimer) => {
+                        add_timer::handle_keys(app, key);
+                    }
+                    
+                    Popup::Timers(TimersPopup::TimerFinished(_)) => {
+                        timer_finished::handle_keys(app, key);
+                    }
+                    
+                    Popup::Timers(TimersPopup::TimerInfo) => {
+                        timer_info::handle_keys(app, key);
+                    }
                 }
 
-                Popup::TasksTable(TasksTablePopup::EditTask) => {
-                    task_add::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::Presets) => {
-                    presets::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::NewPreset) => {
-                    new_preset::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::KnownTasks) => {
-                    known_tasks::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::AddKnownTask) => {
-                    known_tasks_add::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::EditKnownTask(_)) => {
-                    known_tasks_add::handle_keys(app, key);
-                }
-
-                Popup::TasksTable(TasksTablePopup::TaskInfo) => {
-                    task_info::handle_keys(app, key);
-                }
-
-                Popup::Help => {
-                    help::handle_keys(app, key);
-                }
-
-                // INBOX POPUPS
-
-                Popup::Inbox(InboxPopup::AddInboxItem) => {
-                    inbox_item_add::handle_keys(app, key);
-                }
-
-                Popup::Inbox(InboxPopup::EditInboxItem) => {
-                    inbox_item_add::handle_keys(app, key);
-                }
-                
-                Popup::Inbox(InboxPopup::InfoInboxItem) => {
-                    inbox_item_info::handle_keys(app, key);
-                }
-
-                // AGENDA POPUPS
-
-                Popup::Agenda(AgendaPopup::AddEvent) => {
-                    add_event::handle_keys(app, key);
-                }
-                
-                Popup::Agenda(AgendaPopup::EditEvent) => {
-                    add_event::handle_keys(app, key);
-                }
-                
-                Popup::Agenda(AgendaPopup::AllEvents) => {
-                    all_events::handle_keys(app, key);
-                }
-                
-                Popup::Agenda(AgendaPopup::EventInfo) => {
-                    event_info::handle_keys(app, key);
-                }
-
-                // TIMERS
- 
-                Popup::Timers(TimersPopup::AddTimer) => {
-                    add_timer::handle_keys(app, key);
-                }
-                
-                Popup::Timers(TimersPopup::EditTimer) => {
-                    add_timer::handle_keys(app, key);
-                }
-                
-                Popup::Timers(TimersPopup::TimerFinished(_)) => {
-                    timer_finished::handle_keys(app, key);
-                }
-                
-                Popup::Timers(TimersPopup::TimerInfo) => {
-                    timer_info::handle_keys(app, key);
-                }
             }
+
+            _ => {}
         }
     }
 

@@ -10,6 +10,7 @@ pub enum Priority {
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Panel {
+    None,
     TasksTable,
     Inbox,
     Agenda,

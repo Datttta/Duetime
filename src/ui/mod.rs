@@ -129,8 +129,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         height: 1,
     };
 
-    info!("area width: {:?}", area.width);
-    info!("area height: {:?}", area.height);
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
@@ -141,8 +139,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.already_focused_on_previous = false;
             app.already_set_previous = true;
         }
+        
+        if app.focused_panel != Panel::None {
+            app.focused_panel = Panel::TasksTable;
+        }
 
-        app.focused_panel = Panel::TasksTable;
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
@@ -155,7 +156,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         if app.focused_panel == Panel::Inbox {
             app.focused_panel = Panel::Inbox;
-        } else {
+        } else if app.focused_panel == Panel::TasksTable {
             app.focused_panel = Panel::TasksTable;
         }
 
@@ -176,7 +177,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         if app.focused_panel == Panel::Agenda {
             app.focused_panel = Panel::Agenda;
-        } else {
+        } else if app.focused_panel == Panel::TasksTable {
             app.focused_panel = Panel::TasksTable;
         }
 

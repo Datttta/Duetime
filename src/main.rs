@@ -1,18 +1,28 @@
 use std::{
+    sync::{
+        atomic::AtomicBool,
+        Arc,
+    },
+
     fs::File,
     time::{Instant, Duration},
     io,
 };
+
 use crate::{
     app::{App, Popup, TimersPopup},
     storage::{current_tasks, current_timers},
     sound::alarm_sound,
 };
 
+use crossterm::{
+    event::EnableFocusChange,
+    execute,
+};
+
 use simplelog::{LevelFilter, WriteLogger}; 
 use chrono::Local;
-use std::sync::Arc;
-use std::sync::atomic::AtomicBool;
+
 //use log::info;
 
 mod app;
@@ -45,6 +55,8 @@ fn main() -> io::Result<()> {
         simplelog::Config::default(),
         File::create("debug.log").unwrap(),
     );
+
+    execute!(io::stdout(), EnableFocusChange)?;
 
     while app.running {
         let today = Local::now().date_naive();

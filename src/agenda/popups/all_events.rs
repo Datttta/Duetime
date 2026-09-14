@@ -26,14 +26,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .title("All Events")
         .padding(Padding::new(1,1,1,0));
 
-    let inner = block.inner(area);
-
     frame.render_widget(&block, area);
 
+    let inner = block.inner(area);
     let event_indices: Vec<usize> = (0..app.events.len()).collect();
-
     let is_visual = app.n_mode == NavigationMode::Visual;
-
     let name_length: u16 = 45;
 
     crate::agenda::ui::draw_events(
