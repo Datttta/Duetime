@@ -218,7 +218,7 @@ where
             true
         }
 
-        KeyCode::Char('q') => {
+        KeyCode::Esc => {
             *state = MoveState::default();
             true
         }

@@ -23,7 +23,7 @@ use crossterm::{
 use simplelog::{LevelFilter, WriteLogger}; 
 use chrono::Local;
 
-use log::info;
+//use log::info;
 
 mod app;
 mod events;

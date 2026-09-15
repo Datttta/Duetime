@@ -51,7 +51,7 @@ use ratatui::{
     Frame,
 };
 
-use log::info;
+//use log::info;
 
 struct MainLayout {
     tasks: Rect,
@@ -141,14 +141,12 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
         
         if app.terminal_focus == true {
-            info!("terminal_focus small window: {:?}", app.terminal_focus);
             app.focused_panel = Panel::TasksTable;
         }
 
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
-        info!("terminal_focus tall window: {:?}", app.terminal_focus);
 
         if !app.already_focused_on_previous {
             app.focused_panel = app.previous_panel;
