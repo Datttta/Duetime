@@ -55,13 +55,22 @@ pub fn delete_inbox_item(app: &mut App) {
             (current, current)
         };
 
+        let deleted_count = last - first + 1;
         app.inbox_items.drain(first..=last);
 
         if app.inbox_items.is_empty() {
             app.inbox_tasks_table_state.select(None);
+            *app.inbox_tasks_table_state.offset_mut() = 0;
         } else {
             let new_index = first.min(app.inbox_items.len() - 1);
             app.inbox_tasks_table_state.select(Some(new_index));
+
+            // Only pull the panel up if we aren't already at the default position (offset 0)
+            let current_offset = app.inbox_tasks_table_state.offset();
+            if current_offset > 0 {
+                let new_offset = current_offset.saturating_sub(deleted_count);
+                *app.inbox_tasks_table_state.offset_mut() = new_offset;
+            }
         }
 
         app.n_mode = NavigationMode::Normal;
