@@ -9,7 +9,10 @@ use crate::{
 
 use ratatui::{
     layout::{Constraint, Rect, Layout, Flex, Alignment},
-    widgets::{Row, Table, Cell, Paragraph, Padding, Block},
+    widgets::{
+        Row, Table, Cell, Paragraph, Padding, Block,
+        Scrollbar, ScrollbarOrientation, ScrollbarState,
+    },
     style::{Style, Color},
     text::Line,
     Frame,
@@ -80,7 +83,7 @@ pub fn draw_inbox_panel (
     let chunks = Layout::vertical ([
         Constraint::Length(1), // header
         Constraint::Length(1), // spacing
-        Constraint::Min(0),    // tasks
+        Constraint::Min(0),    // plans
     ])
     .split(inner);
 
@@ -99,8 +102,42 @@ pub fn draw_inbox_panel (
     frame.render_widget(Paragraph::new("Item"), columns[1]);
     frame.render_widget(Paragraph::new("Priority"), columns[2]);
     
+    
     // draw
     draw_items(frame, chunks[2], app, is_visual);
+
+    let visible_height = chunks[2].height as usize;
+    let item_count = app.inbox_items.len();
+
+    // Define scroll_offset here before the scrollbar block
+    let scroll_offset = app.inbox_tasks_table_state.offset();
+
+    // Scrollbar
+    if item_count > visible_height {
+        let max_scroll = item_count.saturating_sub(visible_height);
+        
+        let mut scrollbar_state = ScrollbarState::new(max_scroll + 1)
+            .position(scroll_offset);
+
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .thumb_symbol("▊")
+            .track_symbol(Some(""))
+            .begin_symbol(Some(""))
+            .end_symbol(Some(""));
+
+        let scrollbar_area = Rect {
+            x: area.x + area.width - 2,
+            y: chunks[1].y,          // Align strictly with the items chunk start
+            width: 1,
+            height: chunks[2].height + 1, // Match the items chunk height exactly
+        };
+
+        frame.render_stateful_widget(
+            scrollbar,
+            scrollbar_area,
+            &mut scrollbar_state,
+        );
+    }
 }
 
 pub fn draw_items (
