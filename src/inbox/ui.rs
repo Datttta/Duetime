@@ -102,21 +102,22 @@ pub fn draw_inbox_panel (
     frame.render_widget(Paragraph::new("Item"), columns[1]);
     frame.render_widget(Paragraph::new("Priority"), columns[2]);
     
-    
-    // draw
-    draw_items(frame, chunks[2], app, is_visual);
-
     let visible_height = chunks[2].height as usize;
     let item_count = app.inbox_items.len();
-
-    // Define scroll_offset here before the scrollbar block
     let scroll_offset = app.inbox_tasks_table_state.offset();
 
     // Scrollbar
+    let mut table_area = chunks[2];
+    if item_count > visible_height {
+        // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
+        table_area.width = table_area.width.saturating_sub(2);
+    }
+    draw_items(frame, table_area, app, is_visual);
+
     if item_count > visible_height {
         let max_scroll = item_count.saturating_sub(visible_height);
         
-        let mut scrollbar_state = ScrollbarState::new(max_scroll + 1)
+        let mut scrollbar_state = ScrollbarState::new(max_scroll + 2)
             .position(scroll_offset);
 
         let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
@@ -127,9 +128,9 @@ pub fn draw_inbox_panel (
 
         let scrollbar_area = Rect {
             x: area.x + area.width - 2,
-            y: chunks[1].y,          // Align strictly with the items chunk start
+            y: chunks[1].y,
             width: 1,
-            height: chunks[2].height + 1, // Match the items chunk height exactly
+            height: chunks[2].height + 1,
         };
 
         frame.render_stateful_widget(
@@ -138,6 +139,7 @@ pub fn draw_inbox_panel (
             &mut scrollbar_state,
         );
     }
+
 }
 
 pub fn draw_items (
