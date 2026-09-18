@@ -1,6 +1,10 @@
 use ratatui::{
     layout::{Alignment, Constraint, Layout, Rect},
-    widgets::{Block, Cell, Padding, Paragraph, Row, Table},
+    widgets::{
+        Block, Cell, Padding, Paragraph, Row, Table,
+        Scrollbar, ScrollbarOrientation, ScrollbarState,
+    },
+
     style::{Color, Style, Modifier},
     text::{Line, Span},
     Frame,
@@ -174,18 +178,55 @@ pub fn draw_agenda_panel(
         Constraint::Length(today_height),   // Today events list
         Constraint::Length(1),              // "space
         Constraint::Length(1),              // "Upcoming" Header
-        Constraint::Length(upcoming_height),// Upcoming events list
+        Constraint::Min(upcoming_height),// Upcoming events list
     ])
     .split(inner);
 
     let is_visual = app.focused_panel == Panel::Agenda
         && app.n_mode == NavigationMode::Visual;
 
+    // Scrollbar
+    let total_content_height = today_height + 1 + 1 + upcoming_height; // headers + spacing + lists
+    let inner_height = inner.height;
+    let scroll_offset = app.agenda_table_state.offset();
+
+    let mut table_area = chunks[4];
+    if total_content_height > inner_height {
+        table_area.width = table_area.width.saturating_sub(2);
+    }
+
+    if total_content_height > inner_height {
+        let max_scroll = total_content_height.saturating_sub(inner_height);
+        
+        let mut scrollbar_state = ScrollbarState::new((max_scroll + 1).into())
+            .position(scroll_offset)
+            .viewport_content_length(inner_height as usize);
+
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .thumb_symbol("▊")
+            .track_symbol(Some(""))
+            .begin_symbol(Some(""))
+            .end_symbol(Some(""));
+
+        let scrollbar_area = Rect {
+            x: area.x + area.width - 2,
+            y: chunks[0].y,                 // Start from the "Today" header
+            width: 1,
+            height: inner.height,           // Span the entire inner panel height
+        };
+
+        frame.render_stateful_widget(
+            scrollbar,
+            scrollbar_area,
+            &mut scrollbar_state,
+        );
+    }
+
     frame.render_widget(Paragraph::new("Today"), chunks[0]);
     draw_events(frame, chunks[1], app, &today_indices, is_visual, EVENT_NAME_LENGTH);
 
     frame.render_widget(Paragraph::new("Upcoming"), chunks[3]);
-    draw_events(frame, chunks[4], app, &upcoming_indices, is_visual, EVENT_NAME_LENGTH);
+    draw_events(frame, table_area, app, &upcoming_indices, is_visual, EVENT_NAME_LENGTH);
 }
 
 pub fn draw_events(

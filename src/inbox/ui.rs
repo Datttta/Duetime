@@ -102,17 +102,16 @@ pub fn draw_inbox_panel (
     frame.render_widget(Paragraph::new("Item"), columns[1]);
     frame.render_widget(Paragraph::new("Priority"), columns[2]);
     
+    // Scrollbar
     let visible_height = chunks[2].height as usize;
     let item_count = app.inbox_items.len();
     let scroll_offset = app.inbox_tasks_table_state.offset();
 
-    // Scrollbar
     let mut table_area = chunks[2];
     if item_count > visible_height {
         // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
         table_area.width = table_area.width.saturating_sub(2);
     }
-    draw_items(frame, table_area, app, is_visual);
 
     if item_count > visible_height {
         let max_scroll = item_count.saturating_sub(visible_height);
@@ -139,7 +138,8 @@ pub fn draw_inbox_panel (
             &mut scrollbar_state,
         );
     }
-
+    
+    draw_items(frame, table_area, app, is_visual);
 }
 
 pub fn draw_items (
