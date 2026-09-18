@@ -144,7 +144,7 @@ impl App {
         inbox_tasks_table_state.select(Some(0));
 
         let mut agenda_table_state = TableState::default();
-        agenda_table_state.select(Some(0));
+        agenda_table_state.select(Some(1));
         
         let mut all_events_table_state = TableState::default();
         all_events_table_state.select(Some(0));
@@ -203,6 +203,7 @@ impl App {
             event_date,
             event_time,
             event_repeat: false,
+            all_events_table_state,
 
             // Timers
             timers: current_timers::load_current_timers(),
@@ -246,7 +247,6 @@ impl App {
             next_id: 1,
             active_alarm: None,
             terminal_focus: false,
-            all_events_table_state,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),

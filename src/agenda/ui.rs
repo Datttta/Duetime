@@ -97,6 +97,54 @@ pub fn update_repeating_events(events: &mut Vec<AgendaEvent>) {
     }
 }
 
+// Returns true if the table row index is a header or spacer
+pub fn is_header_or_spacer(row_idx: usize, today_count: usize) -> bool {
+    if row_idx == 0 {
+        return true; // "Today" header
+    }
+    if row_idx == today_count + 1 {
+        return true; // Spacing row
+    }
+    if row_idx == today_count + 2 {
+        return true; // "Upcoming" header
+    }
+    false
+}
+
+// Snaps the selection to the closest valid event row if it lands on a header/spacer
+pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usize) {
+    if let Some(mut current) = app.agenda_table_state.selected() {
+        if !is_header_or_spacer(current, today_count) {
+            return; // Already on a valid row
+        }
+
+        // Search downwards first for a valid event
+        let mut found = None;
+        let mut test_idx = current;
+        while test_idx < total_rows {
+            if !is_header_or_spacer(test_idx, today_count) {
+                found = Some(test_idx);
+                break;
+            }
+            test_idx += 1;
+        }
+
+        // If nothing found below, search upwards
+        if found.is_none() {
+            test_idx = current;
+            while test_idx > 0 {
+                test_idx -= 1;
+                if !is_header_or_spacer(test_idx, today_count) {
+                    found = Some(test_idx);
+                    break;
+                }
+            }
+        }
+
+        app.agenda_table_state.select(found);
+    }
+}
+
 pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
     let today = Local::now().date_naive();
     events.retain(|event| event.repeat || event.date >= today);

@@ -3,34 +3,42 @@ use crate::{
     navigation::vim_navigation,
 };
 
-use log::info;
 use super::actions;
+use super::ui::snap_agenda_selection; // Import your snapper helper from ui.rs
 
 use crossterm::event::{KeyCode, KeyEvent};
+use chrono::Duration;
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let mut selected = app.agenda_table_state.selected();
 
-    // Build the same list of events that are displayed in the agenda.
     let today = chrono::Local::now().date_naive();
+    let max_date = today + Duration::days(30);
 
-    let table_events: Vec<usize> = app
-        .events
-        .iter()
-        .enumerate()
-        .filter(|(_, event)| {
-            let days = (event.date - today).num_days();
-
-            days <= 30
+    // Filter visible events just like ui.rs does
+    let visible_indices: Vec<usize> = (0..app.events.len())
+        .filter(|&i| {
+            let date = app.events[i].date;
+            date >= today && date <= max_date
         })
-        .map(|(index, _)| index)
         .collect();
+
+    let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+        visible_indices
+            .into_iter()
+            .partition(|&i| app.events[i].date == today);
+
+    let today_count = today_indices.len();
+    let upcoming_count = upcoming_indices.len();
+
+    // Total table rows = Today header (1) + today events + spacer (1) + Upcoming header (1) + upcoming events
+    let total_rows = today_count + upcoming_count + 3;
 
     let handled = vim_navigation::handle(
         key,
         &mut app.pending_command,
         &mut selected,
-        table_events.len(),
+        total_rows, // Pass total table rows, not just event count!
         &mut app.n_mode,
         &mut app.n_visual_start,
     );
@@ -38,7 +46,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.agenda_table_state.select(selected);
 
     if handled {
-        return;
+        snap_agenda_selection(app, total_rows, today_count);
     }
 
     match key.code {
