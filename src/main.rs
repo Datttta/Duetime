@@ -1,3 +1,7 @@
+use log::info;
+use simplelog::{LevelFilter, WriteLogger}; 
+use chrono::Local;
+
 use std::{
     sync::{
         atomic::AtomicBool,
@@ -19,11 +23,6 @@ use crossterm::{
     event::EnableFocusChange,
     execute,
 };
-
-use simplelog::{LevelFilter, WriteLogger}; 
-use chrono::Local;
-
-//use log::info;
 
 mod app;
 mod events;
@@ -59,15 +58,8 @@ fn main() -> io::Result<()> {
     execute!(io::stdout(), EnableFocusChange)?;
 
     while app.running {
-        let today = Local::now().date_naive();
-
-        if today != app.last_agenda_update {
-            agenda::ui::remove_expired_events(&mut app.events);
-            agenda::ui::update_repeating_events(&mut app.events);
-            app.last_agenda_update = today;
-
-            crate::storage::agenda::save_agenda(&app.events).unwrap();
-        }
+        agenda::ui::remove_expired_events(&mut app.events);
+        agenda::ui::update_repeating_events(&mut app.events);
 
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
         
@@ -100,6 +92,7 @@ fn main() -> io::Result<()> {
         if last_save.elapsed() >= Duration::from_secs(1) {
             current_tasks::save_current_tasks(&app.tasks).unwrap();
             current_timers::save_current_timers(&app.timers).unwrap();
+            crate::storage::agenda::save_agenda(&app.events).unwrap();
             last_save = Instant::now();
         }
 

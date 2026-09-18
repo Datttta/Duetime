@@ -1,3 +1,6 @@
+use log::info;
+use chrono::{Local, Duration};
+
 use crate::{
     app::{
     App,
@@ -7,11 +10,10 @@ use crate::{
     },
 
     navigation::vim_navigation::NavigationMode,
+    agenda::ui::get_selected_global_index,
     vim_text::InputMode,
     storage,
 };
-
-use chrono::Local;
 
 pub fn add_event(app: &mut App) {
     app.event_name.clear();
@@ -32,7 +34,7 @@ pub fn add_event(app: &mut App) {
 }
 
 pub fn edit_event(app: &mut App) {
-    if let Some(index) = app.agenda_table_state.selected() {
+    if let Some(index) = get_selected_global_index(app) {
         let event = &app.events[index];
 
         // Load event data into inputs
@@ -70,7 +72,7 @@ pub fn event_info(app: &mut App) {
 }
 
 pub fn delete_event(app: &mut App) {
-    if let Some(current) = app.agenda_table_state.selected() {
+    if let Some(current) = get_selected_global_index(app) {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
             if let Some(start) = app.n_visual_start {
                 (start.min(current), start.max(current))
@@ -83,11 +85,40 @@ pub fn delete_event(app: &mut App) {
 
         app.events.drain(first..=last);
 
-        if app.events.is_empty() {
+        let today = Local::now().date_naive();
+        let max_date = today + Duration::days(30);
+
+        let visible_indices: Vec<usize> = (0..app.events.len())
+            .filter(|&i| {
+                let date = app.events[i].date;
+                date >= today && date <= max_date
+            })
+            .collect();
+
+        if visible_indices.is_empty() {
             app.agenda_table_state.select(None);
         } else {
-            let new_index = first.min(app.events.len() - 1);
-            app.agenda_table_state.select(Some(new_index));
+            // Target the global event index that took the place of the deleted block, clamped to the new bounds
+            let target_global = first.min(app.events.len().saturating_sub(1));
+
+            let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+                visible_indices
+                    .into_iter()
+                    .partition(|&i| app.events[i].date == today);
+
+            let today_count = today_indices.len();
+
+            // Map target global index back to its proper table row index
+            if let Some(pos) = today_indices.iter().position(|&g| g == target_global) {
+                // Today event row (Header is row 0, so event is pos + 1)
+                app.agenda_table_state.select(Some(pos + 1));
+            } else if let Some(pos) = upcoming_indices.iter().position(|&g| g == target_global) {
+                // Upcoming event row (Account for Today header [1] + today events + spacer [1] + Upcoming header [1])
+                app.agenda_table_state.select(Some(today_count + 3 + pos));
+            } else {
+                // Fallback to the first available selectable row
+                app.agenda_table_state.select(Some(1));
+            }
         }
 
         app.n_mode = NavigationMode::Normal;

@@ -111,6 +111,11 @@ pub fn is_header_or_spacer(row_idx: usize, today_count: usize, app: &mut App) ->
         return true; // Spacing row
     }
     if row_idx == today_count + 2 {
+        if let Some(current) = app.agenda_table_state.selected() {
+            if current == today_count + 2{
+                app.agenda_table_state.select(Some(current +1))
+            }
+        }
         return true; // "Upcoming" header
     }
     false
@@ -130,7 +135,7 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
             KeyCode::Char('k') | KeyCode::Up => false, // Pressed up -> search upwards first
             KeyCode::Char('j') | KeyCode::Down => true,  // Pressed down -> search downwards first
             KeyCode::Char('G') => false,                 // Jumped to bottom -> search upwards
-            _ => false,                                   // Default fallback (e.g., 'gg' or jumps)
+            _ => true,                                   // Default fallback (e.g., 'gg' or jumps)
         };
 
         if search_down_first {
@@ -155,8 +160,6 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
                 }
             }
         } else {
-            let offset = app.agenda_table_state.offset_mut();
-            *offset = offset.saturating_sub(1);
             // 1. Search upwards first
             let mut test_idx = current;
             while test_idx > 0 {
@@ -180,6 +183,40 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
         }
 
         app.agenda_table_state.select(found);
+    }
+}
+
+// Helper to map the currently selected table row back to the actual event index in app.events
+pub fn get_selected_global_index(app: &App) -> Option<usize> {
+    let selected_row = app.agenda_table_state.selected()?;
+    
+    let today = Local::now().date_naive();
+    let max_date = today + Duration::days(30);
+
+    let visible_indices: Vec<usize> = (0..app.events.len())
+        .filter(|&i| {
+            let date = app.events[i].date;
+            date >= today && date <= max_date
+        })
+        .collect();
+
+    let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+        visible_indices
+            .into_iter()
+            .partition(|&i| app.events[i].date == today);
+
+    let today_count = today_indices.len();
+
+    // Map table row index back to the correct slice
+    if selected_row >= 1 && selected_row <= today_count {
+        // Today event slice (Row 1 is the first event, since Row 0 is the "Today" header)
+        Some(today_indices[selected_row - 1])
+    } else if selected_row > today_count + 2 {
+        // Upcoming event slice (Account for Today header [0], today events, spacer, and Upcoming header)
+        let upcoming_idx = selected_row - (today_count + 3);
+        Some(upcoming_indices.get(upcoming_idx).copied()?)
+    } else {
+        None // Safely ignored if it somehow lands on a header or spacer row
     }
 }
 

@@ -1,3 +1,5 @@
+use log::info;
+
 use crate::{
     app::App,
     navigation::vim_navigation,

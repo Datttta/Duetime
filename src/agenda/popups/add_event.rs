@@ -21,7 +21,7 @@ use crate::{
     keys_help,
 };
 
-use chrono::{NaiveDate, NaiveTime};
+use chrono::{NaiveDate, NaiveTime, Duration, Local};
 use log::info;
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -151,11 +151,11 @@ pub fn save_event(app: &mut App) {
                 repeat: app.event_repeat,
             };
 
-            // 2. Perform Add or Edit action
+            // 2. Perform Add or Edit action using global indices correctly
             if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
                 app.events.push(event);
-            } else if let Some(index) = app.agenda_table_state.selected() {
-                if let Some(existing_event) = app.events.get_mut(index) {
+            } else if let Some(global_index) = ui::get_selected_global_index(app) {
+                if let Some(existing_event) = app.events.get_mut(global_index) {
                     *existing_event = event;
                 }
             }
@@ -170,9 +170,35 @@ pub fn save_event(app: &mut App) {
                 })
             });
 
-            // 4. Update table selection to keep track of the modified/added event
-            if let Some(index) = app.events.iter().position(|e| e.name == name && e.date == date) {
-                app.agenda_table_state.select(Some(index));
+            // 4. Update table selection to highlight the newly added/edited event properly
+            if let Some(target_global) = app.events.iter().position(|e| e.name == name && e.date == date) {
+                let today = Local::now().date_naive();
+                let max_date = today + Duration::days(30);
+
+                let visible_indices: Vec<usize> = (0..app.events.len())
+                    .filter(|&i| {
+                        let date = app.events[i].date;
+                        date >= today && date <= max_date
+                    })
+                    .collect();
+
+                let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+                    visible_indices
+                        .into_iter()
+                        .partition(|&i| app.events[i].date == today);
+
+                let today_count = today_indices.len();
+
+                if let Some(pos) = today_indices.iter().position(|&g| g == target_global) {
+                    // Today event row (Header is row 0, so event is pos + 1)
+                    app.agenda_table_state.select(Some(pos + 1));
+                } else if let Some(pos) = upcoming_indices.iter().position(|&g| g == target_global) {
+                    // Upcoming event row (Account for Today header [1] + today events + spacer [1] + Upcoming header [1])
+                    app.agenda_table_state.select(Some(today_count + 3 + pos));
+                } else {
+                    // Fallback if the event falls outside the 30-day window
+                    app.agenda_table_state.select(None);
+                }
             }
         }
         _ => {}
