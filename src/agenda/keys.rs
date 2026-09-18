@@ -3,6 +3,7 @@ use crate::{
     navigation::vim_navigation,
 };
 
+use log::info;
 use super::actions;
 
 use crossterm::event::{KeyCode, KeyEvent};
@@ -25,13 +26,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         .map(|(index, _)| index)
         .collect();
 
-    let len = table_events.len();
-
     let handled = vim_navigation::handle(
         key,
         &mut app.pending_command,
         &mut selected,
-        len,
+        table_events.len(),
         &mut app.n_mode,
         &mut app.n_visual_start,
     );

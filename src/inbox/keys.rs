@@ -3,6 +3,7 @@ use crate::{
     navigation::vim_navigation,
 };
 
+//use log::info;
 use super::actions;
 
 use crossterm::event::{KeyCode, KeyEvent};

@@ -1,10 +1,9 @@
 use ratatui::{
-    layout::{Alignment, Constraint, Layout, Rect},
+    layout::{Alignment, Constraint, Rect},
     widgets::{
         Block, Cell, Padding, Paragraph, Row, Table,
         Scrollbar, ScrollbarOrientation, ScrollbarState,
     },
-
     style::{Color, Style, Modifier},
     text::{Line, Span},
     Frame,
@@ -12,12 +11,10 @@ use ratatui::{
 
 use crate::{
     app::{App, Panel, Popup},
-    
     ui::{
-        theme::{unfocused_panel},
+        theme::unfocused_panel,
         widgets::input::ellipsize,
     },
-    
     navigation::vim_navigation::NavigationMode,
 };
 
@@ -67,12 +64,11 @@ impl AgendaEvent {
 
 pub fn format_countdown(date: NaiveDate) -> String {
     let today = Local::now().date_naive();
-
     let days = (date - today).num_days();
 
     match days {
         1 => "1 day".to_string(),
-        days  => format!("{} days", days),
+        days => format!("{} days", days),
     }
 }
 
@@ -90,7 +86,6 @@ pub fn update_repeating_events(events: &mut Vec<AgendaEvent>) {
             event.date = match event.date.with_year(next_year) {
                 Some(date) => date,
                 None => {
-                    // February 29 → February 28 in non-leap years
                     event.date
                         .with_day(28)
                         .unwrap()
@@ -104,10 +99,7 @@ pub fn update_repeating_events(events: &mut Vec<AgendaEvent>) {
 
 pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
     let today = Local::now().date_naive();
-
-    events.retain(|event| {
-        event.repeat || event.date >= today
-    });
+    events.retain(|event| event.repeat || event.date >= today);
 }
 
 pub fn draw_repeat_input(
@@ -169,38 +161,65 @@ pub fn draw_agenda_panel(
             .into_iter()
             .partition(|&i| app.events[i].date == today);
 
-    // Dynamic height constraints based on section item counts
-    let today_height = (today_indices.len() as u16).max(1);
-    let upcoming_height = (upcoming_indices.len() as u16).max(1);
-
-    let chunks = Layout::vertical([
-        Constraint::Length(1),              // "Today" Header
-        Constraint::Length(today_height),   // Today events list
-        Constraint::Length(1),              // "space
-        Constraint::Length(1),              // "Upcoming" Header
-        Constraint::Min(0),// Upcoming events list
-    ])
-    .split(inner);
-
     let is_visual = app.focused_panel == Panel::Agenda
         && app.n_mode == NavigationMode::Visual;
+    let popup_open = !matches!(app.popup, Popup::None);
+    let current_row = app.agenda_table_state.selected();
 
-    // Scrollbar
-    let total_content_height = today_height + 1 + 1 + upcoming_height; // headers + spacing + lists
-    let inner_height = inner.height;
+    let columns = [
+        Constraint::Length(EVENT_NAME_LENGTH),
+        Constraint::Length(3),
+        Constraint::Length(5),
+        Constraint::Length(1),
+        Constraint::Length(11),
+        Constraint::Length(1),
+        Constraint::Length(8),
+    ];
+
+    let mut rows = Vec::new();
+
+    // 1. Today Header (Row index 0)
+    rows.push(Row::new(vec![Cell::from("Today")]).style(Style::default()));
+
+    // 2. Today Events
+    for &global_index in &today_indices {
+        let event = &app.events[global_index];
+        let row_idx = rows.len();
+        rows.push(build_agenda_row(event, row_idx, current_row, is_visual, popup_open, app));
+    }
+
+    // 3. Spacing Row
+    rows.push(Row::new(vec![Cell::from("")]));
+
+    // 4. Upcoming Header
+    rows.push(Row::new(vec![Cell::from("Upcoming")]).style(Style::default()));
+
+    // 5. Upcoming Events
+    for &global_index in &upcoming_indices {
+        let event = &app.events[global_index];
+        let row_idx = rows.len();
+        rows.push(build_agenda_row(event, row_idx, current_row, is_visual, popup_open, app));
+    }
+
+    let total_rows = rows.len();
+    let visible_height = inner.height as usize;
     let scroll_offset = app.agenda_table_state.offset();
 
-    let mut table_area = chunks[4];
-    if total_content_height > inner_height {
+    let mut table_area = inner;
+    if total_rows > visible_height {
         table_area.width = table_area.width.saturating_sub(2);
     }
 
-    if total_content_height > inner_height {
-        let max_scroll = total_content_height.saturating_sub(inner_height);
+    let table = Table::new(rows, columns);
+    frame.render_stateful_widget(table, table_area, &mut app.agenda_table_state);
+
+    // Scrollbar rendering
+    if total_rows > visible_height {
+        let max_scroll = total_rows.saturating_sub(visible_height);
         
-        let mut scrollbar_state = ScrollbarState::new((max_scroll + 1).into())
+        let mut scrollbar_state = ScrollbarState::new(max_scroll + 1)
             .position(scroll_offset)
-            .viewport_content_length(inner_height as usize);
+            .viewport_content_length(visible_height);
 
         let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
             .thumb_symbol("▊")
@@ -210,89 +229,104 @@ pub fn draw_agenda_panel(
 
         let scrollbar_area = Rect {
             x: area.x + area.width - 2,
-            y: chunks[0].y,                 // Start from the "Today" header
+            y: inner.y,
             width: 1,
-            height: inner.height,           // Span the entire inner panel height
+            height: inner.height,
         };
 
-        frame.render_stateful_widget(
-            scrollbar,
-            scrollbar_area,
-            &mut scrollbar_state,
-        );
+        frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
-
-    frame.render_widget(Paragraph::new("Today"), chunks[0]);
-    draw_events(frame, chunks[1], app, &today_indices, is_visual, EVENT_NAME_LENGTH);
-
-    frame.render_widget(Paragraph::new("Upcoming"), chunks[3]);
-    draw_events(frame, table_area, app, &upcoming_indices, is_visual, EVENT_NAME_LENGTH);
 }
 
+// Row builder for the main agenda panel (accounts for headers and spacing rows via row_idx)
+fn build_agenda_row(
+    event: &AgendaEvent,
+    row_idx: usize,
+    current_row: Option<usize>,
+    is_visual: bool,
+    popup_open: bool,
+    app: &App,
+) -> Row<'static> {
+    let time = event
+        .time
+        .map(|t| t.format("%H:%M").to_string())
+        .unwrap_or_default();
+    let countdown = format_countdown(event.date);
+
+    let is_selected = current_row == Some(row_idx);
+    let prefix = if is_selected { "> " } else { "  " };
+
+    let mut row = Row::new(vec![
+        Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGTH - 2).into()))),
+        Cell::from(String::new()),
+        Cell::from(Line::from(time).alignment(Alignment::Center)),
+        Cell::from(String::new()),
+        Cell::from(Line::from(event.date.format("%a, %b %-d").to_string()).alignment(Alignment::Center)),
+        Cell::from(Cell::from(String::new())),
+        Cell::from(Line::from(countdown)),
+    ]);
+
+    if !popup_open && is_visual {
+        if let (Some(start), Some(end)) = (app.n_visual_start, current_row) {
+            let first = start.min(end);
+            let last = start.max(end);
+            if row_idx >= first && row_idx <= last {
+                row = row.style(Style::default().fg(Color::Black).bg(Color::White));
+            }
+        }
+    }
+
+    row
+}
+
+// Used exclusively by the All Events popup (flat list, no headers)
 pub fn draw_events(
     frame: &mut Frame,
     area: Rect,
-    app: &App,
+    app: &mut App,
     section_indices: &[usize],
     is_visual: bool,
     name_length: u16,
 ) {
     let columns = [
-        Constraint::Length(name_length), // event name
-        Constraint::Length(3),  // sapce
-        Constraint::Length(5),  // time of the event
-        Constraint::Length(1), // space
-        Constraint::Length(11), // event date
-        Constraint::Length(1), // space
-        Constraint::Length(8),  // countdown
+        Constraint::Length(name_length),
+        Constraint::Length(3),
+        Constraint::Length(5),
+        Constraint::Length(1),
+        Constraint::Length(11),
+        Constraint::Length(1),
+        Constraint::Length(8),
     ];
 
-    let visual_start = app.n_visual_start;
-    let visual_mode = is_visual;
-    let current = app.agenda_table_state.selected();
+    let current = app.all_events_table_state.selected();
     let popup_open = !matches!(app.popup, Popup::None);
 
     let mut rows = Vec::new();
 
-    for &global_index in section_indices {
+    for (popup_row_idx, &global_index) in section_indices.iter().enumerate() {
         let event = &app.events[global_index];
-
-        let time = event
-            .time
-            .map(|time| time.format("%H:%M").to_string())
-            .unwrap_or_default();
-
-        let countdown = format_countdown(event.date);
-
-        let is_selected = current == Some(global_index);
+        let is_selected = current == Some(popup_row_idx);
         let prefix = if is_selected { "> " } else { "  " };
 
+        let time = event.time.map(|t| t.format("%H:%M").to_string()).unwrap_or_default();
+        let countdown = format_countdown(event.date);
+
         let mut row = Row::new(vec![
-            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGTH - 2).into()))),
+            Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (name_length - 2).into()))),
             Cell::from(String::new()),
             Cell::from(Line::from(time).alignment(Alignment::Center)),
             Cell::from(String::new()),
-            Cell::from(
-                Line::from(event.date.format("%a, %b %-d").to_string())
-                    .alignment(Alignment::Center),
-            ),
+            Cell::from(Line::from(event.date.format("%a, %b %-d").to_string()).alignment(Alignment::Center)),
             Cell::from(String::new()),
             Cell::from(Line::from(countdown)),
         ]);
 
-
-        // Apply visual selection range highlighting across global indices
-        if !popup_open && visual_mode {
-            if let (Some(start), Some(end)) = (visual_start, current) {
+        if is_visual {
+            if let (Some(start), Some(end)) = (app.n_visual_start, current) {
                 let first = start.min(end);
                 let last = start.max(end);
-
-                if global_index >= first && global_index <= last {
-                    row = row.style(
-                        Style::default()
-                            .fg(Color::Black)
-                            .bg(Color::White),
-                    );
+                if popup_row_idx >= first && popup_row_idx <= last {
+                    row = row.style(Style::default().fg(Color::Black).bg(Color::White));
                 }
             }
         }
@@ -301,6 +335,5 @@ pub fn draw_events(
     }
 
     let table = Table::new(rows, columns);
-
-    frame.render_widget(table, area);
+    frame.render_stateful_widget(table, area, &mut app.all_events_table_state);
 }

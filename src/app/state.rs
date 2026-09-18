@@ -111,6 +111,7 @@ pub struct App {
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
+    pub all_events_table_state: TableState,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,
@@ -144,6 +145,9 @@ impl App {
 
         let mut agenda_table_state = TableState::default();
         agenda_table_state.select(Some(0));
+        
+        let mut all_events_table_state = TableState::default();
+        all_events_table_state.select(Some(0));
         
         let mut timers_list_state = ListState::default();
         timers_list_state.select(Some(0));
@@ -242,6 +246,7 @@ impl App {
             next_id: 1,
             active_alarm: None,
             terminal_focus: false,
+            all_events_table_state,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),
