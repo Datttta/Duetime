@@ -178,7 +178,7 @@ pub fn draw_agenda_panel(
         Constraint::Length(today_height),   // Today events list
         Constraint::Length(1),              // "space
         Constraint::Length(1),              // "Upcoming" Header
-        Constraint::Min(upcoming_height),// Upcoming events list
+        Constraint::Min(0),// Upcoming events list
     ])
     .split(inner);
 
