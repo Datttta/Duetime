@@ -46,7 +46,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.agenda_table_state.select(selected);
 
     if handled {
-        snap_agenda_selection(app, total_rows, today_count);
+        snap_agenda_selection(app, total_rows, today_count, key);
     }
 
     match key.code {
