@@ -36,6 +36,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
                 app.n_mode = NavigationMode::Normal;
                 app.pending_command = None;
+                app.search_panel = None;
             }
         }
 
@@ -64,6 +65,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             search::SearchNavigationResult::Cancel => {
                 app.n_mode = NavigationMode::Normal;
                 app.pending_command = None;
+                app.search_panel = None;
             }
         }
 
@@ -81,6 +83,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         search::clear(&mut app.agenda_search);
 
         app.n_mode = NavigationMode::Search;
+        app.search_panel = Some(Panel::Agenda);
         app.pending_command = None;
 
         return;

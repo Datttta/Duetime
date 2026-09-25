@@ -36,9 +36,10 @@ use chrono::Local;
 
 pub struct App {
     // Core
-    pub running: bool,
     pub popup: Popup,
+    pub running: bool,
     pub last_popup: Popup,
+    pub search_panel: Option<Panel>,
     pub pending_command: Option<char>,
 
     // Vim modes
@@ -178,10 +179,11 @@ impl App {
 
         Self {
             // Core
-            pending_command: None,
-            popup: Popup::None,
-            last_popup: Popup::None,
             running: true,
+            search_panel: None,
+            popup: Popup::None,
+            pending_command: None,
+            last_popup: Popup::None,
 
             // TasksTable
             task_name: InputState::default(),

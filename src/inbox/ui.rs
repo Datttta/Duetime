@@ -1,3 +1,6 @@
+use serde::{Deserialize, Serialize};
+use log::info;
+
 use crate::{
     ui::{
         widgets::input::ellipsize,
@@ -17,8 +20,6 @@ use ratatui::{
     text::{Line, Span},
     Frame,
 };
-
-use serde::{Deserialize, Serialize};
 
 const ITEM_NAME_LENGHT: u16 = 84;
 
@@ -148,8 +149,8 @@ pub fn draw_inbox_panel (
                 app.inbox_search.matches.len()
             )
         };
-        
-        if app.n_mode == NavigationMode::Search 
+
+        if app.search_panel == Some(Panel::Inbox) 
            || app.n_mode == NavigationMode::SearchNavigation 
         {
             let search_line = Line::from(vec![

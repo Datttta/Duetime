@@ -376,11 +376,11 @@ pub fn draw_agenda_panel(
         frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
     
-    if app.n_mode == NavigationMode::Search 
+    if app.search_panel == Some(Panel::Agenda) 
        || app.n_mode == NavigationMode::SearchNavigation 
     {
         let search_line = Line::from(vec![
-            Span::raw(" /"),
+            Span::raw("/"),
             Span::raw(&app.agenda_search.query),
         ]);
 

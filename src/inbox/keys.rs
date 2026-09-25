@@ -1,13 +1,13 @@
+use super::actions;
+use crossterm::event::{KeyCode, KeyEvent};
+use log::info;
+
 use crate::{
     app::App,
     navigation::vim_navigation,
     inbox::keys::vim_navigation::NavigationMode,
     Panel, search,
 };
-
-use super::actions;
-
-use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     // --------------------------------------------------
@@ -29,9 +29,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
             search::SearchInputResult::Cancel => {
                 search::clear(&mut app.inbox_search);
-
-                app.n_mode = NavigationMode::Normal;
+                
+                app.search_panel = None;
                 app.pending_command = None;
+                app.n_mode = NavigationMode::Normal;
             }
         }
 
@@ -58,8 +59,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
 
             search::SearchNavigationResult::Cancel => {
-                app.n_mode = NavigationMode::Normal;
                 app.pending_command = None;
+                app.n_mode = NavigationMode::Normal;
             }
         }
 
@@ -77,6 +78,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         search::clear(&mut app.inbox_search);
 
         app.n_mode = NavigationMode::Search;
+        app.search_panel = Some(Panel::Inbox);
         app.pending_command = None;
 
         return;
