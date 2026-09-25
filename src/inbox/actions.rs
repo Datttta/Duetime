@@ -1,16 +1,17 @@
 use crate::{
     app::{
-    App,
-    Popup, 
-    InboxPopup, 
-    InboxSelectedInput,
-    Priority
+        App,
+        Popup,
+        InboxPopup,
+        InboxSelectedInput,
+        Priority,
     },
-
-    storage::inbox,
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
+    storage::inbox,
 };
+
+use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn edit_inbox_item(app: &mut App) {
     if let Some(index) = app.inbox_tasks_table_state.selected() {
@@ -41,6 +42,46 @@ pub fn inbox_item_add_popup(app: &mut App) {
     app.mode = InputMode::Insert;
     app.inbox_selected_input = InboxSelectedInput::InboxItemInput;
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
+}
+
+pub fn handle_search_input(app: &mut App, key: KeyEvent) {
+    match key.code {
+        KeyCode::Char(c) => {
+            app.inbox_search.push(c);
+            search_inbox(app);
+        }
+
+        KeyCode::Backspace => {
+            app.inbox_search.pop();
+            search_inbox(app);
+        }
+
+        KeyCode::Esc => {
+            app.inbox_search.clear();
+            app.n_mode = NavigationMode::Normal;
+            app.pending_command = None;
+        }
+
+        _ => {}
+    }
+}
+
+pub fn search_inbox(app: &mut App) {
+    let query = app.inbox_search.trim();
+
+    if query.is_empty() {
+        return;
+    }
+
+    let query = query.to_lowercase();
+
+    if let Some(index) = app
+        .inbox_items
+        .iter()
+        .position(|item| item.input.to_lowercase().contains(&query))
+    {
+        app.inbox_tasks_table_state.select(Some(index));
+    }
 }
 
 pub fn delete_inbox_item(app: &mut App) {

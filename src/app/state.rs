@@ -31,7 +31,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use chrono::{NaiveDate, Local};
+use chrono::Local;
 
 pub struct App {
     // Core
@@ -67,6 +67,7 @@ pub struct App {
     pub inbox_item: InputState,
     pub inbox_selected_input: InboxSelectedInput,
     pub priority: Priority,
+    pub inbox_search: String,
 
     // Agenda
     pub events: Vec<AgendaEvent>,
@@ -105,7 +106,6 @@ pub struct App {
     pub selected_suggestion: usize,
 
     // Misc
-    pub last_agenda_update: NaiveDate,
     pub move_state: MoveState,
     pub help_scroll: u16,
     pub next_id: u64,
@@ -191,9 +191,12 @@ impl App {
             // Inbox
             inbox_item: InputState::default(),
             inbox_items: inbox::load_inbox(),
+            
             inbox_tasks_table_state,
             inbox_selected_input: InboxSelectedInput::InboxItemInput,
+            
             priority: Priority::Low,
+            inbox_search: String::new(),
 
             // Agenda
             event_name: InputState::default(),
@@ -241,7 +244,6 @@ impl App {
             already_focused_on_previous: false,
 
             // Misc
-            last_agenda_update: Local::now().date_naive(),
             move_state: MoveState::default(),
             help_scroll: 0,
             next_id: 1,

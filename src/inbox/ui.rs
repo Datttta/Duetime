@@ -84,6 +84,7 @@ pub fn draw_inbox_panel (
         Constraint::Length(1), // header
         Constraint::Length(1), // spacing
         Constraint::Min(0),    // plans
+        Constraint::Length(1), // search 
     ])
     .split(inner);
 
@@ -137,6 +138,13 @@ pub fn draw_inbox_panel (
             scrollbar_area,
             &mut scrollbar_state,
         );
+
+        if app.n_mode == NavigationMode::SearchInbox {
+            let search = Paragraph::new(format!(" /{}_", app.inbox_search))
+                .style(Style::default().fg(Color::White));
+
+            frame.render_widget(search, chunks[3]);
+        }
     }
     
     draw_items(frame, table_area, app, is_visual);

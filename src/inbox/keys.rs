@@ -1,6 +1,8 @@
 use crate::{
     app::App,
     navigation::vim_navigation,
+    inbox::keys::vim_navigation::NavigationMode,
+    Panel,
 };
 
 //use log::info;
@@ -9,6 +11,21 @@ use super::actions;
 use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    if app.n_mode == NavigationMode::SearchInbox {
+        actions::handle_search_input(app, key);
+        return;
+    }
+
+    if app.n_mode == NavigationMode::Normal
+        && app.focused_panel == Panel::Inbox
+        && key.code == KeyCode::Char('/')
+    {
+        app.inbox_search.clear();
+        app.n_mode = NavigationMode::SearchInbox;
+        app.pending_command = None;
+        return;
+    }
+
     let mut selected = app.inbox_tasks_table_state.selected();
 
     let handled = vim_navigation::handle(
@@ -38,7 +55,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             actions::edit_inbox_item(app);
         }
-        
+
         KeyCode::Char('y') => {
             app.copy_inbox_input();
         }

@@ -4,6 +4,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 pub enum NavigationMode {
     Normal,
     Visual,
+    SearchInbox,
 }
 
 pub fn handle (
@@ -42,6 +43,8 @@ pub fn handle (
                     *mode = NavigationMode::Normal;
                     *n_visual_start = None;
                 }
+
+                NavigationMode::SearchInbox => {}
             }
 
             true

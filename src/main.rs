@@ -1,6 +1,5 @@
-use log::info;
+//use log::info;
 use simplelog::{LevelFilter, WriteLogger}; 
-use chrono::Local;
 
 use std::{
     sync::{
