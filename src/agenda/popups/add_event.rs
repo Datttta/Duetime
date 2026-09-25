@@ -212,7 +212,7 @@ pub fn save_event(app: &mut App) {
 fn close_popup(app: &mut App) {
     info!("Selecte input: {:?}", app.agenda_selected_input);
     info!("app mode: {:?}", app.mode);
-    if app.agenda_selected_input == AgendaSelectedInput::Name{
+    if app.agenda_selected_input == AgendaSelectedInput::Name {
         if app.mode == InputMode::Normal {
             app.popup = app.last_popup.clone();
         } 

@@ -34,6 +34,8 @@ pub fn add_event(app: &mut App) {
 }
 
 pub fn edit_event(app: &mut App) {
+    app.last_popup = app.popup.clone();
+
     let selected = if app.popup == Popup::None {
         get_selected_global_index(app)
     } else {
@@ -41,36 +43,6 @@ pub fn edit_event(app: &mut App) {
     };
 
     if let Some(index) = selected {
-        let event = &app.events[index];
-
-        // Load event data into inputs
-        app.event_name.text = event.name.clone();
-
-        app.event_date.value =
-            event.date.format("%d-%m-%y").to_string();
-
-        app.event_time.value = event
-            .time
-            .map(|time| time.format("%H:%M").to_string())
-            .unwrap_or_else(|| "--:--".to_string());
-
-        app.event_repeat = event.repeat;
-
-        // Reset cursors
-        app.event_name.cursor = 0;
-        app.event_date.cursor = 0;
-        app.event_time.cursor = 0;
-
-        app.mode = InputMode::Normal;
-        app.popup = Popup::Agenda(AgendaPopup::EditEvent);
-        app.agenda_selected_input = AgendaSelectedInput::Name;
-
-        app.pending_command = None;
-    }
-}
-
-pub fn edit_event_catalog(app: &mut App) {
-    if let Some(index) = app.all_events_table_state.selected() {
         let event = &app.events[index];
 
         // Load event data into inputs
