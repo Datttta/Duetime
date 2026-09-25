@@ -72,51 +72,79 @@ pub fn event_info(app: &mut App) {
 }
 
 pub fn search_agenda(app: &mut App) {
-    search::search_items(
-        &mut app.agenda_search,
-        &app.events,
-        |event, query| {
-            event.name.to_lowercase().contains(query)
-        },
-    );
+    let today = chrono::Local::now().date_naive();
+    let max_date = today + chrono::Duration::days(30);
+
+    let visible_indices: Vec<usize> = app
+        .events
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| {
+            event.date >= today && event.date <= max_date
+        })
+        .map(|(index, _)| index)
+        .collect();
+
+    let query = app.agenda_search.query.trim().to_lowercase();
+
+    app.agenda_search.matches.clear();
+    app.agenda_search.current_match = 0;
+
+    if query.is_empty() {
+        return;
+    }
+
+    app.agenda_search.matches = visible_indices
+        .into_iter()
+        .filter(|&event_index| {
+            app.events[event_index]
+                .name
+                .to_lowercase()
+                .contains(&query)
+        })
+        .collect();
 
     if let Some(&event_index) = app.agenda_search.matches.first() {
-        let today = chrono::Local::now().date_naive();
+        select_agenda_event(app, event_index);
+    }
+}
 
-        let today_indices: Vec<usize> = app
-            .events
-            .iter()
-            .enumerate()
-            .filter(|(_, event)| event.date == today)
-            .map(|(index, _)| index)
-            .collect();
+pub fn select_agenda_event(app: &mut App, event_index: usize) {
+    let today = chrono::Local::now().date_naive();
 
-        let upcoming_indices: Vec<usize> = app
-            .events
-            .iter()
-            .enumerate()
-            .filter(|(_, event)| {
-                event.date > today
-                    && event.date <= today + chrono::Duration::days(30)
-            })
-            .map(|(index, _)| index)
-            .collect();
+    let today_indices: Vec<usize> = app
+        .events
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| event.date == today)
+        .map(|(index, _)| index)
+        .collect();
 
-        if let Some(position) = today_indices
-            .iter()
-            .position(|&index| index == event_index)
-        {
-            // Row 0 = Today header
-            app.agenda_table_state.select(Some(position + 1));
-        } else if let Some(position) = upcoming_indices
-            .iter()
-            .position(|&index| index == event_index)
-        {
-            // Today header + today events + spacer + Upcoming header
-            let row = today_indices.len() + 3 + position;
+    let upcoming_indices: Vec<usize> = app
+        .events
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| {
+            event.date > today
+                && event.date <= today + chrono::Duration::days(30)
+        })
+        .map(|(index, _)| index)
+        .collect();
 
-            app.agenda_table_state.select(Some(row));
-        }
+    if let Some(position) = today_indices
+        .iter()
+        .position(|&index| index == event_index)
+    {
+        // Row 0 is "Today"
+        app.agenda_table_state.select(Some(position + 1));
+    } else if let Some(position) = upcoming_indices
+        .iter()
+        .position(|&index| index == event_index)
+    {
+        // Today events + Today header + spacer + Upcoming header
+        let row = today_indices.len() + 3 + position;
+
+        app.agenda_table_state.select(Some(row));
     }
 }
 

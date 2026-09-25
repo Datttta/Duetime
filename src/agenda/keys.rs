@@ -33,10 +33,9 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
             search::SearchInputResult::Cancel => {
                 search::clear(&mut app.agenda_search);
-
-                app.n_mode = NavigationMode::Normal;
-                app.pending_command = None;
                 app.search_panel = None;
+                app.pending_command = None;
+                app.n_mode = NavigationMode::Normal;
             }
         }
 
@@ -53,19 +52,20 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             key,
         ) {
             search::SearchNavigationResult::Continue => {
-                if let Some(&index) = app
+                if let Some(&event_index) = app
                     .agenda_search
                     .matches
                     .get(app.agenda_search.current_match)
                 {
-                    app.agenda_table_state.select(Some(index));
+                    actions::select_agenda_event(app, event_index);
                 }
             }
 
             search::SearchNavigationResult::Cancel => {
-                app.n_mode = NavigationMode::Normal;
-                app.pending_command = None;
+                search::clear(&mut app.agenda_search);
                 app.search_panel = None;
+                app.pending_command = None;
+                app.n_mode = NavigationMode::Normal;
             }
         }
 

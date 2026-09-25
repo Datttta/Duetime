@@ -1,6 +1,5 @@
 use super::actions;
 use crossterm::event::{KeyCode, KeyEvent};
-use log::info;
 
 use crate::{
     app::App,
