@@ -150,8 +150,9 @@ pub fn draw_inbox_panel (
             )
         };
 
-        if (app.search_panel == Some(Panel::Inbox) 
-           || app.n_mode == NavigationMode::SearchNavigation)
+        if app.search_panel == Some(Panel::Inbox) 
+           && (app.n_mode == NavigationMode::SearchNavigation
+               || app.n_mode == NavigationMode::Search)
            && app.popup == Popup::None 
         {
             let search_line = Line::from(vec![

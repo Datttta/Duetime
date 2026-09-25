@@ -377,8 +377,9 @@ pub fn draw_agenda_panel(
         )
     };
 
-    if (app.search_panel == Some(Panel::Agenda) 
-       || app.n_mode == NavigationMode::SearchNavigation)
+    if app.search_panel == Some(Panel::Agenda) 
+       && (app.n_mode == NavigationMode::SearchNavigation
+           || app.n_mode == NavigationMode::Search)
        && app.popup == Popup::None 
     {
         let search_line = Line::from(vec![

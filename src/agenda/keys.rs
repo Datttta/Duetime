@@ -33,6 +33,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
             search::SearchInputResult::Cancel => {
                 search::clear(&mut app.agenda_search);
+                
                 app.search_panel = None;
                 app.pending_command = None;
                 app.n_mode = NavigationMode::Normal;

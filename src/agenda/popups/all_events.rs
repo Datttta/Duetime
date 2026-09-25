@@ -1,5 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use log::info;
+//use log::info;
 
 use ratatui::{
     widgets::{Clear, Block, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState},
@@ -14,7 +14,6 @@ use crate::{
         vim_navigation::NavigationMode,
         vim_navigation,
     },
-    vim_text::InputResult,
     app::{App, Popup},
     agenda::actions,
     keys_help, Panel, search,
