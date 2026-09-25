@@ -9,9 +9,11 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
     storage::inbox,
+    search::SearchNavigationResult,
+    search,
 };
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyEvent};
 
 pub fn edit_inbox_item(app: &mut App) {
     if let Some(index) = app.inbox_tasks_table_state.selected() {
@@ -44,55 +46,42 @@ pub fn inbox_item_add_popup(app: &mut App) {
     app.popup = Popup::Inbox(InboxPopup::AddInboxItem);
 }
 
-pub fn handle_search_input(app: &mut App, key: KeyEvent) {
-    match key.code {
-        KeyCode::Char(c) => {
-            app.inbox_search.push(c);
-            search_inbox(app);
-        }
+pub fn search_inbox(app: &mut App) {
+    search::search_items(
+        &mut app.inbox_search,
+        &app.inbox_items,
+        |item, query| {
+            item.input.to_lowercase().contains(query)
+        },
+    );
 
-        KeyCode::Backspace => {
-            app.inbox_search.pop();
-            search_inbox(app);
-        }
-
-        KeyCode::Enter => {
-            if !app.inbox_search_matches.is_empty() {
-                app.n_mode = NavigationMode::SearchInboxNavigation;
-            }
-        }
-
-        KeyCode::Esc => {
-            clear_inbox_search(app);
-        }
-
-        _ => {}
+    if let Some(&index) = app.inbox_search.matches.first() {
+        app.inbox_tasks_table_state.select(Some(index));
     }
 }
 
-pub fn clear_inbox_search(app: &mut App) {
-    app.inbox_search.clear();
-    app.inbox_search_matches.clear();
-    app.inbox_search_match = 0;
-    app.n_mode = NavigationMode::Normal;
-    app.pending_command = None;
-}
-
-pub fn handle_search_navigation(app: &mut App, key: KeyEvent) {
-    match key.code {
-        KeyCode::Char('n') => {
-            next_search_match(app);
+pub fn handle_inbox_search_navigation(
+    app: &mut App,
+    key: KeyEvent,
+) {
+    match search::handle_search_navigation(
+        &mut app.inbox_search,
+        key,
+    ) {
+        SearchNavigationResult::Continue => {
+            if let Some(&index) = app
+                .inbox_search
+                .matches
+                .get(app.inbox_search.current_match)
+            {
+                app.inbox_tasks_table_state.select(Some(index));
+            }
         }
 
-        KeyCode::Char('N') => {
-            previous_search_match(app);
+        SearchNavigationResult::Cancel => {
+            app.n_mode = NavigationMode::Normal;
+            app.pending_command = None;
         }
-
-        KeyCode::Esc => {
-            clear_inbox_search(app);
-        }
-
-        _ => {}
     }
 }
 

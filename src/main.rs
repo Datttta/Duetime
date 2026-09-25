@@ -39,6 +39,7 @@ mod agenda;
 mod timers;
 mod countdown;
 mod sound;
+mod search;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();

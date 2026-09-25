@@ -3,38 +3,89 @@ use crate::{
     navigation::vim_navigation,
     inbox::keys::vim_navigation::NavigationMode,
     Panel,
+    search,
 };
 
-//use log::info;
 use super::actions;
 
 use crossterm::event::{KeyCode, KeyEvent};
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    // --------------------------------------------------
     // Search typing mode
+    // --------------------------------------------------
+
     if app.n_mode == NavigationMode::SearchInbox {
-        actions::handle_search_input(app, key);
+        match search::handle_search_input(
+            &mut app.inbox_search,
+            key,
+        ) {
+            search::SearchInputResult::Continue => {
+                actions::search_inbox(app);
+            }
+
+            search::SearchInputResult::Navigate => {
+                app.n_mode = NavigationMode::SearchInboxNavigation;
+            }
+
+            search::SearchInputResult::Cancel => {
+                search::clear(&mut app.inbox_search);
+
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+            }
+        }
+
         return;
     }
 
+    // --------------------------------------------------
     // Search navigation mode
+    // --------------------------------------------------
+
     if app.n_mode == NavigationMode::SearchInboxNavigation {
-        actions::handle_search_navigation(app, key);
+        match search::handle_search_navigation(
+            &mut app.inbox_search,
+            key,
+        ) {
+            search::SearchNavigationResult::Continue => {
+                if let Some(&index) = app
+                    .inbox_search
+                    .matches
+                    .get(app.inbox_search.current_match)
+                {
+                    app.inbox_tasks_table_state.select(Some(index));
+                }
+            }
+
+            search::SearchNavigationResult::Cancel => {
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+            }
+        }
+
         return;
     }
 
+    // --------------------------------------------------
     // Start search
+    // --------------------------------------------------
+
     if app.n_mode == NavigationMode::Normal
         && app.focused_panel == Panel::Inbox
         && key.code == KeyCode::Char('/')
     {
-        app.inbox_search.clear();
-        app.inbox_search_matches.clear();
-        app.inbox_search_match = 0;
+        search::clear(&mut app.inbox_search);
+
         app.n_mode = NavigationMode::SearchInbox;
         app.pending_command = None;
+
         return;
     }
+
+    // --------------------------------------------------
+    // Normal Vim navigation
+    // --------------------------------------------------
 
     let mut selected = app.inbox_tasks_table_state.selected();
 
@@ -52,6 +103,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     if handled {
         return;
     }
+
+    // --------------------------------------------------
+    // Inbox actions
+    // --------------------------------------------------
 
     match key.code {
         KeyCode::Char('a') => {

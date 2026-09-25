@@ -13,7 +13,7 @@ use ratatui::{
         Row, Table, Cell, Paragraph, Padding, Block,
         Scrollbar, ScrollbarOrientation, ScrollbarState,
     },
-    style::{Style, Color, Modifier},
+    style::{Style, Color},
     text::{Line, Span},
     Frame,
 };
@@ -139,13 +139,13 @@ pub fn draw_inbox_panel (
             &mut scrollbar_state,
         );
 
-        let match_info = if app.inbox_search_matches.is_empty() {
+        let match_info = if app.inbox_search.matches.is_empty() {
             "0/0".to_string()
         } else {
             format!(
                 "{}/{}",
-                app.inbox_search_match + 1,
-                app.inbox_search_matches.len()
+                app.inbox_search.current_match + 1,
+                app.inbox_search.matches.len()
             )
         };
         
@@ -154,7 +154,7 @@ pub fn draw_inbox_panel (
         {
             let search_line = Line::from(vec![
                 Span::raw(" /"),
-                Span::raw(&app.inbox_search),
+                Span::raw(&app.inbox_search.query),
             ]);
 
             frame.render_widget(search_line, chunks[3]);
