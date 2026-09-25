@@ -35,6 +35,7 @@ use crate::{
         timer_info,
     },
 
+    navigation::vim_navigation::NavigationMode,
     storage::current_tasks,
     ui::help,
     tasks_table, inbox, agenda, timers
@@ -111,8 +112,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         }
                         
                         KeyCode::Char('q') => {
-                            current_tasks::save_current_tasks(&app.tasks).unwrap();
-                            app.running = false;
+                            if app.n_mode != NavigationMode::Search && app.n_mode != NavigationMode::SearchNavigation {
+                                current_tasks::save_current_tasks(&app.tasks).unwrap();
+                                app.running = false;
+                            }
                         }
 
                         _ => {}

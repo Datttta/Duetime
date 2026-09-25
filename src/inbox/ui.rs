@@ -153,7 +153,10 @@ pub fn draw_inbox_panel (
 
     info!("search_panel: {:?}", app.search_panel);
 
-    if app.search_panel == Some(Panel::Inbox) && app.popup == Popup::None 
+    if app.search_panel == Some(Panel::Inbox) 
+       && (app.n_mode == NavigationMode::SearchNavigation
+           || app.n_mode == NavigationMode::Search)
+       && app.popup == Popup::None 
     {
         let search_line = Line::from(vec![
             Span::raw(" /"),

@@ -35,7 +35,7 @@ pub fn handle_search_navigation(
             SearchNavigationResult::Continue
         }
 
-        KeyCode::Esc => {
+        KeyCode::Esc | KeyCode::Char('q') => {
             clear(search);
             SearchNavigationResult::Cancel
         }

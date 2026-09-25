@@ -43,6 +43,7 @@ use crate::{
         },
     },
 
+    navigation::vim_navigation::NavigationMode,
     ui::widgets::status_message::draw_status_message,
 };
 
@@ -144,6 +145,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.focused_panel = Panel::TasksTable;
         }
 
+        app.n_mode = NavigationMode::Normal;
+
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
@@ -182,7 +185,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
 
         let layout = draw_half_length_layout(frame);
-        
+       
+        app.n_mode = NavigationMode::Normal;
+
         // draw panels
         draw_tasks_panel(frame, layout.tasks, app);
         draw_agenda_panel(frame, layout.agenda, app);
