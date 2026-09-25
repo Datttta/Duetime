@@ -96,61 +96,6 @@ pub fn handle_search_navigation(app: &mut App, key: KeyEvent) {
     }
 }
 
-pub fn search_inbox(app: &mut App) {
-    let query = app.inbox_search.trim().to_lowercase();
-
-    app.inbox_search_matches.clear();
-    app.inbox_search_match = 0;
-
-    if query.is_empty() {
-        return;
-    }
-
-    app.inbox_search_matches = app
-        .inbox_items
-        .iter()
-        .enumerate()
-        .filter(|(_, item)| {
-            item.input.to_lowercase().contains(&query)
-        })
-        .map(|(index, _)| index)
-        .collect();
-
-    if let Some(&index) = app.inbox_search_matches.first() {
-        app.inbox_tasks_table_state.select(Some(index));
-    }
-}
-
-pub fn next_search_match(app: &mut App) {
-    if app.inbox_search_matches.is_empty() {
-        return;
-    }
-
-    app.inbox_search_match =
-        (app.inbox_search_match + 1) % app.inbox_search_matches.len();
-
-    let index = app.inbox_search_matches[app.inbox_search_match];
-
-    app.inbox_tasks_table_state.select(Some(index));
-}
-
-pub fn previous_search_match(app: &mut App) {
-    if app.inbox_search_matches.is_empty() {
-        return;
-    }
-
-    if app.inbox_search_match == 0 {
-        app.inbox_search_match =
-            app.inbox_search_matches.len() - 1;
-    } else {
-        app.inbox_search_match -= 1;
-    }
-
-    let index = app.inbox_search_matches[app.inbox_search_match];
-
-    app.inbox_tasks_table_state.select(Some(index));
-}
-
 pub fn delete_inbox_item(app: &mut App) {
     if let Some(current) = app.inbox_tasks_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
