@@ -81,6 +81,8 @@ pub struct App {
     pub event_date: DateTimeInput,
     pub event_time: DateTimeInput,
     pub event_repeat: bool,
+
+    pub all_events_table_state: TableState,
     
     pub agenda_search: SearchState,
 
@@ -116,7 +118,6 @@ pub struct App {
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
-    pub all_events_table_state: TableState,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,

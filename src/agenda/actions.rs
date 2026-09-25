@@ -148,6 +148,20 @@ pub fn select_agenda_event(app: &mut App, event_index: usize) {
     }
 }
 
+pub fn search_all_events(app: &mut App) {
+    search::search_items(
+        &mut app.agenda_search,
+        &app.events,
+        |event, query| {
+            event.name.to_lowercase().contains(query)
+        },
+    );
+
+    if let Some(&index) = app.agenda_search.matches.first() {
+        app.all_events_table_state.select(Some(index));
+    }
+}
+
 pub fn delete_event(app: &mut App) {
     if let Some(current) = get_selected_global_index(app) {
         let (first, last) = if app.n_mode == NavigationMode::Visual {

@@ -1,3 +1,6 @@
+use crossterm::event::{KeyCode, KeyEvent};
+use log::info;
+
 use ratatui::{
     widgets::{Clear, Block, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState},
     layout::{Rect, Constraint, Layout, Flex, Alignment},
@@ -6,14 +9,12 @@ use ratatui::{
     Frame,
 };
 
-use crossterm::event::{KeyCode, KeyEvent};
-
 use crate::{
     navigation::{
         vim_navigation::NavigationMode,
         vim_navigation,
     },
-    search::{SearchInputResult, SearchNavigationResult},
+    vim_text::InputResult,
     app::{App, Popup},
     agenda::actions,
     keys_help, Panel, search,
@@ -156,7 +157,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     if app.n_mode == NavigationMode::Search {
         match search::handle_search_input(&mut app.agenda_search, key) {
             search::SearchInputResult::Continue => {
-                actions::search_agenda(app);
+                actions::search_all_events(app);
             }
             search::SearchInputResult::Navigate => {
                 app.n_mode = NavigationMode::SearchNavigation;
@@ -182,7 +183,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     .matches
                     .get(app.agenda_search.current_match)
                 {
-                    app.agenda_table_state.select(Some(index));
+                    app.all_events_table_state.select(Some(index));
                 }
             }
             search::SearchNavigationResult::Cancel => {
@@ -208,6 +209,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         return;
     }
 
+    // normal navigation
     let mut selected = app.all_events_table_state.selected();
 
     let handled = vim_navigation::handle(
@@ -254,7 +256,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
         }
         
-        KeyCode::Char('q') => {
+        KeyCode::Char('q') | KeyCode::Esc => {
             app.popup = Popup::None
         }
 

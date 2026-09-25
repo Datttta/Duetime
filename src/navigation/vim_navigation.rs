@@ -73,9 +73,13 @@ pub fn handle (
         }
 
         KeyCode::Esc => {
-            *mode = NavigationMode::Normal;
-            *n_visual_start = None;
-            true
+            if *mode != NavigationMode::Normal {
+                *mode = NavigationMode::Normal;
+                *n_visual_start = None;
+                true
+            } else {
+                false
+            }
         }
 
         _ => false,

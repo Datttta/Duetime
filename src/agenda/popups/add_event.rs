@@ -318,6 +318,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('q') | KeyCode::Esc => {
+            info!("selected_input: {:?}", app.agenda_selected_input);
             close_popup(app);
         }
 

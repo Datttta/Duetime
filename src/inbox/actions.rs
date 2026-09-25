@@ -57,7 +57,6 @@ pub fn search_inbox(app: &mut App) {
     }
 }
 
-
 pub fn delete_inbox_item(app: &mut App) {
     if let Some(current) = app.inbox_tasks_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
