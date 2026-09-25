@@ -2,8 +2,7 @@ use crate::{
     app::App,
     navigation::vim_navigation,
     inbox::keys::vim_navigation::NavigationMode,
-    Panel,
-    search,
+    Panel, search,
 };
 
 use super::actions;
@@ -15,7 +14,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     // Search typing mode
     // --------------------------------------------------
 
-    if app.n_mode == NavigationMode::SearchInbox {
+    if app.n_mode == NavigationMode::Search {
         match search::handle_search_input(
             &mut app.inbox_search,
             key,
@@ -25,7 +24,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             }
 
             search::SearchInputResult::Navigate => {
-                app.n_mode = NavigationMode::SearchInboxNavigation;
+                app.n_mode = NavigationMode::SearchNavigation;
             }
 
             search::SearchInputResult::Cancel => {
@@ -43,7 +42,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     // Search navigation mode
     // --------------------------------------------------
 
-    if app.n_mode == NavigationMode::SearchInboxNavigation {
+    if app.n_mode == NavigationMode::SearchNavigation {
         match search::handle_search_navigation(
             &mut app.inbox_search,
             key,
@@ -77,7 +76,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     {
         search::clear(&mut app.inbox_search);
 
-        app.n_mode = NavigationMode::SearchInbox;
+        app.n_mode = NavigationMode::Search;
         app.pending_command = None;
 
         return;

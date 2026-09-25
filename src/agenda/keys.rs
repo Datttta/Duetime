@@ -3,6 +3,8 @@
 use crate::{
     app::App,
     navigation::vim_navigation,
+    agenda::keys::vim_navigation::NavigationMode,
+    search, Panel
 };
 
 use super::actions;
@@ -12,6 +14,78 @@ use crossterm::event::{KeyCode, KeyEvent};
 use chrono::Duration;
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    // --------------------------------------------------
+    // Search typing mode
+    // --------------------------------------------------
+
+    if app.n_mode == NavigationMode::Search {
+        match search::handle_search_input(
+            &mut app.agenda_search,
+            key,
+        ) {
+            search::SearchInputResult::Continue => {
+                actions::search_inbox(app);
+            }
+
+            search::SearchInputResult::Navigate => {
+                app.n_mode = NavigationMode::SearchNavigation;
+            }
+
+            search::SearchInputResult::Cancel => {
+                search::clear(&mut app.agenda_search);
+
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+            }
+        }
+
+        return;
+    }
+
+    // --------------------------------------------------
+    // Search navigation mode
+    // --------------------------------------------------
+
+    if app.n_mode == NavigationMode::SearchNavigation {
+        match search::handle_search_navigation(
+            &mut app.agenda_search,
+            key,
+        ) {
+            search::SearchNavigationResult::Continue => {
+                if let Some(&index) = app
+                    .agenda_search
+                    .matches
+                    .get(app.agenda_search.current_match)
+                {
+                    app.inbox_tasks_table_state.select(Some(index));
+                }
+            }
+
+            search::SearchNavigationResult::Cancel => {
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+            }
+        }
+
+        return;
+    }
+
+    // --------------------------------------------------
+    // Start search
+    // --------------------------------------------------
+
+    if app.n_mode == NavigationMode::Normal
+        && app.focused_panel == Panel::Inbox
+        && key.code == KeyCode::Char('/')
+    {
+        search::clear(&mut app.agenda_search);
+
+        app.n_mode = NavigationMode::Search;
+        app.pending_command = None;
+
+        return;
+    }
+
     let mut selected = app.agenda_table_state.selected();
 
     let today = chrono::Local::now().date_naive();

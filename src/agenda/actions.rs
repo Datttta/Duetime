@@ -11,9 +11,12 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     agenda::ui::get_selected_global_index,
+    search::SearchNavigationResult,
     vim_text::InputMode,
-    storage,
+    storage, search,
 };
+
+use crossterm::event::{KeyEvent};
 
 pub fn add_event(app: &mut App) {
     app.event_name.clear();
@@ -69,6 +72,45 @@ pub fn all_events(app: &mut App) {
 
 pub fn event_info(app: &mut App) {
     app.popup = Popup::Agenda(AgendaPopup::EventInfo);
+}
+
+pub fn search_inbox(app: &mut App) {
+    search::search_items(
+        &mut app.agenda_search,
+        &app.inbox_items,
+        |item, query| {
+            item.input.to_lowercase().contains(query)
+        },
+    );
+
+    if let Some(&index) = app.agenda_search.matches.first() {
+        app.agenda_table_state.select(Some(index));
+    }
+}
+
+pub fn handle_agenda_search_navigation(
+    app: &mut App,
+    key: KeyEvent,
+) {
+    match search::handle_search_navigation(
+        &mut app.agenda_search,
+        key,
+    ) {
+        SearchNavigationResult::Continue => {
+            if let Some(&index) = app
+                .agenda_search
+                .matches
+                .get(app.agenda_search.current_match)
+            {
+                app.agenda_table_state.select(Some(index));
+            }
+        }
+
+        SearchNavigationResult::Cancel => {
+            app.n_mode = NavigationMode::Normal;
+            app.pending_command = None;
+        }
+    }
 }
 
 pub fn delete_event(app: &mut App) {

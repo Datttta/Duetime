@@ -212,6 +212,8 @@ impl App {
             event_repeat: false,
             all_events_table_state,
 
+            agenda_search: SearchState::default(),
+
             // Timers
             timers: current_timers::load_current_timers(),
             timers_list_state,

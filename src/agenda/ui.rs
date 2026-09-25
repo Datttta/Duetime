@@ -299,7 +299,7 @@ pub fn draw_agenda_panel(
     let current_row = app.agenda_table_state.selected();
 
     let columns = [
-        Constraint::Length(name_length), // event name
+        Constraint::Length(EVENT_NAME_LENGTH), // event name
         Constraint::Length(3),  // sapce
         Constraint::Length(5),  // time of the event
         Constraint::Length(1), // space
@@ -377,8 +377,8 @@ pub fn draw_agenda_panel(
             )
         };
         
-        if app.n_mode == NavigationMode::SearchInbox 
-           || app.n_mode == NavigationMode::SearchInboxNavigation 
+        if app.n_mode == NavigationMode::Search 
+           || app.n_mode == NavigationMode::SearchNavigation 
         {
             let search_line = Line::from(vec![
                 Span::raw(" /"),
