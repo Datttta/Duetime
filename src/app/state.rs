@@ -80,6 +80,8 @@ pub struct App {
     pub event_date: DateTimeInput,
     pub event_time: DateTimeInput,
     pub event_repeat: bool,
+    
+    pub agenda_search: SearchState,
 
     // Timers
     pub timers: Vec<TimerInfo>,

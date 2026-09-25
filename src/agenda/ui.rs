@@ -269,6 +269,15 @@ pub fn draw_agenda_panel(
     let inner = border.inner(area);
     frame.render_widget(border, area);
 
+    let chunks = ratatui::layout::Layout::vertical([
+        Constraint::Min(1),
+        Constraint::Length(1),
+    ])
+    .split(inner);
+
+    let table_area = chunks[0];
+    let search_area = chunks[1];
+
     let today = Local::now().date_naive();
     let max_date = today + Duration::days(30);
 
@@ -290,13 +299,13 @@ pub fn draw_agenda_panel(
     let current_row = app.agenda_table_state.selected();
 
     let columns = [
-        Constraint::Length(EVENT_NAME_LENGTH),
-        Constraint::Length(3),
-        Constraint::Length(5),
-        Constraint::Length(1),
-        Constraint::Length(11),
-        Constraint::Length(1),
-        Constraint::Length(8),
+        Constraint::Length(name_length), // event name
+        Constraint::Length(3),  // sapce
+        Constraint::Length(5),  // time of the event
+        Constraint::Length(1), // space
+        Constraint::Length(11), // event date
+        Constraint::Length(1), // space
+        Constraint::Length(8),  // countdown
     ];
 
     let mut rows = Vec::new();
@@ -325,10 +334,11 @@ pub fn draw_agenda_panel(
     }
 
     let total_rows = rows.len();
-    let visible_height = inner.height as usize;
     let scroll_offset = app.agenda_table_state.offset();
+    
+    let visible_height = table_area.height as usize;
 
-    let mut table_area = inner;
+    let mut table_area = table_area;
     if total_rows > visible_height {
         table_area.width = table_area.width.saturating_sub(2);
     }
@@ -352,10 +362,48 @@ pub fn draw_agenda_panel(
 
         let scrollbar_area = Rect {
             x: area.x + area.width - 2,
-            y: inner.y,
+            y: table_area.y,
             width: 1,
-            height: inner.height,
+            height: table_area.height,
         };
+
+        let match_info = if app.agenda_search.matches.is_empty() {
+            "0/0".to_string()
+        } else {
+            format!(
+                "{}/{}",
+                app.agenda_search.current_match + 1,
+                app.agenda_search.matches.len()
+            )
+        };
+        
+        if app.n_mode == NavigationMode::SearchInbox 
+           || app.n_mode == NavigationMode::SearchInboxNavigation 
+        {
+            let search_line = Line::from(vec![
+                Span::raw(" /"),
+                Span::raw(&app.agenda_search.query),
+            ]);
+
+            frame.render_widget(search_line, chunks[3]);
+            
+            frame.render_widget(
+                Paragraph::new(match_info)
+                    .alignment(Alignment::Right)
+                    .block(
+                        Block::default()
+                            .padding(Padding::right(2))
+                    ),
+                chunks[3],
+            );
+
+        } else {
+            let search_line = Paragraph::new(format!(""))
+                .style(Style::default().fg(Color::White));
+
+            frame.render_widget(search_line, chunks[3]);
+        }
+
 
         frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
@@ -412,13 +460,14 @@ pub fn draw_events(
     name_length: u16,
 ) {
     let columns = [
-        Constraint::Length(name_length),
-        Constraint::Length(3),
-        Constraint::Length(5),
-        Constraint::Length(1),
-        Constraint::Length(11),
-        Constraint::Length(1),
-        Constraint::Length(8),
+        Constraint::Length(name_length), // event name
+        Constraint::Length(3),  // sapce
+        Constraint::Length(5),  // time of the event
+        Constraint::Length(1), // space
+        Constraint::Length(11), // event date
+        Constraint::Length(1), // space
+        Constraint::Length(8),  // countdown
+
     ];
 
     let current = app.all_events_table_state.selected();
