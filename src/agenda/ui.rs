@@ -276,7 +276,6 @@ pub fn draw_agenda_panel(
     .split(inner);
 
     let table_area = chunks[0];
-    let search_area = chunks[1];
 
     let today = Local::now().date_naive();
     let max_date = today + Duration::days(30);
@@ -343,8 +342,15 @@ pub fn draw_agenda_panel(
         table_area.width = table_area.width.saturating_sub(2);
     }
 
-    let table = Table::new(rows, columns);
-    frame.render_stateful_widget(table, table_area, &mut app.agenda_table_state);
+    let match_info = if app.agenda_search.matches.is_empty() {
+        "0/0".to_string()
+    } else {
+        format!(
+            "{}/{}",
+            app.agenda_search.current_match + 1,
+            app.agenda_search.matches.len()
+        )
+    };
 
     // Scrollbar rendering
     if total_rows > visible_height {
@@ -367,46 +373,38 @@ pub fn draw_agenda_panel(
             height: table_area.height,
         };
 
-        let match_info = if app.agenda_search.matches.is_empty() {
-            "0/0".to_string()
-        } else {
-            format!(
-                "{}/{}",
-                app.agenda_search.current_match + 1,
-                app.agenda_search.matches.len()
-            )
-        };
-        
-        if app.n_mode == NavigationMode::Search 
-           || app.n_mode == NavigationMode::SearchNavigation 
-        {
-            let search_line = Line::from(vec![
-                Span::raw(" /"),
-                Span::raw(&app.agenda_search.query),
-            ]);
-
-            frame.render_widget(search_line, chunks[3]);
-            
-            frame.render_widget(
-                Paragraph::new(match_info)
-                    .alignment(Alignment::Right)
-                    .block(
-                        Block::default()
-                            .padding(Padding::right(2))
-                    ),
-                chunks[3],
-            );
-
-        } else {
-            let search_line = Paragraph::new(format!(""))
-                .style(Style::default().fg(Color::White));
-
-            frame.render_widget(search_line, chunks[3]);
-        }
-
-
         frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
+    
+    if app.n_mode == NavigationMode::Search 
+       || app.n_mode == NavigationMode::SearchNavigation 
+    {
+        let search_line = Line::from(vec![
+            Span::raw(" /"),
+            Span::raw(&app.agenda_search.query),
+        ]);
+
+        frame.render_widget(search_line, chunks[1]);
+        
+        frame.render_widget(
+            Paragraph::new(match_info)
+                .alignment(Alignment::Right)
+                .block(
+                    Block::default()
+                        .padding(Padding::right(2))
+                ),
+            chunks[1],
+        );
+
+    } else {
+        let search_line = Paragraph::new(format!(""))
+            .style(Style::default().fg(Color::White));
+
+        frame.render_widget(search_line, chunks[1]);
+    }
+
+    let table = Table::new(rows, columns);
+    frame.render_stateful_widget(table, table_area, &mut app.agenda_table_state);
 }
 
 // Row builder for the main agenda panel (accounts for headers and spacing rows via row_idx)

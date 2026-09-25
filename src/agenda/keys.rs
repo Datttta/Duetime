@@ -1,17 +1,17 @@
-//use log::info;
-
 use crate::{
+    agenda::keys::vim_navigation::NavigationMode,
     app::App,
     navigation::vim_navigation,
-    agenda::keys::vim_navigation::NavigationMode,
-    search, Panel
+    search,
+    Panel,
 };
 
 use super::actions;
-use super::ui::snap_agenda_selection; // Import your snapper helper from ui.rs
+use super::ui::snap_agenda_selection;
 
-use crossterm::event::{KeyCode, KeyEvent};
 use chrono::Duration;
+use crossterm::event::{KeyCode, KeyEvent};
+//use log::info;
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     // --------------------------------------------------
@@ -24,7 +24,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             key,
         ) {
             search::SearchInputResult::Continue => {
-                actions::search_inbox(app);
+                actions::search_agenda(app);
             }
 
             search::SearchInputResult::Navigate => {
@@ -57,7 +57,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     .matches
                     .get(app.agenda_search.current_match)
                 {
-                    app.inbox_tasks_table_state.select(Some(index));
+                    app.agenda_table_state.select(Some(index));
                 }
             }
 
@@ -75,7 +75,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     // --------------------------------------------------
 
     if app.n_mode == NavigationMode::Normal
-        && app.focused_panel == Panel::Inbox
+        && app.focused_panel == Panel::Agenda
         && key.code == KeyCode::Char('/')
     {
         search::clear(&mut app.agenda_search);
@@ -86,12 +86,15 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         return;
     }
 
+    // --------------------------------------------------
+    // Normal Agenda navigation
+    // --------------------------------------------------
+
     let mut selected = app.agenda_table_state.selected();
 
     let today = chrono::Local::now().date_naive();
     let max_date = today + Duration::days(30);
 
-    // Filter visible events just like ui.rs does
     let visible_indices: Vec<usize> = (0..app.events.len())
         .filter(|&i| {
             let date = app.events[i].date;
@@ -107,14 +110,14 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let today_count = today_indices.len();
     let upcoming_count = upcoming_indices.len();
 
-    // Total table rows = Today header (1) + today events + spacer (1) + Upcoming header (1) + upcoming events
+    // Today header + today events + spacer + upcoming header + upcoming events
     let total_rows = today_count + upcoming_count + 3;
 
     let handled = vim_navigation::handle(
         key,
         &mut app.pending_command,
         &mut selected,
-        total_rows, // Pass total table rows, not just event count!
+        total_rows,
         &mut app.n_mode,
         &mut app.n_visual_start,
     );
@@ -122,7 +125,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.agenda_table_state.select(selected);
 
     if handled {
-        snap_agenda_selection(app, total_rows, today_count, key);
+        snap_agenda_selection(
+            app,
+            total_rows,
+            today_count,
+            key,
+        );
     }
 
     match key.code {
@@ -133,12 +141,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             actions::edit_event(app);
         }
-        
+
         KeyCode::Char('i') => {
             app.last_popup = app.popup.clone();
             actions::event_info(app);
         }
-        
+
         KeyCode::Char('l') => {
             actions::all_events(app);
         }
@@ -148,7 +156,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 actions::delete_event(app);
                 app.pending_command = None;
             } else {
-                app.pending_command = Some('d')
+                app.pending_command = Some('d');
             }
         }
 

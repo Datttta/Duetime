@@ -11,12 +11,9 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     agenda::ui::get_selected_global_index,
-    search::SearchNavigationResult,
     vim_text::InputMode,
     storage, search,
 };
-
-use crossterm::event::{KeyEvent};
 
 pub fn add_event(app: &mut App) {
     app.event_name.clear();
@@ -74,41 +71,51 @@ pub fn event_info(app: &mut App) {
     app.popup = Popup::Agenda(AgendaPopup::EventInfo);
 }
 
-pub fn search_inbox(app: &mut App) {
+pub fn search_agenda(app: &mut App) {
     search::search_items(
         &mut app.agenda_search,
-        &app.inbox_items,
-        |item, query| {
-            item.input.to_lowercase().contains(query)
+        &app.events,
+        |event, query| {
+            event.name.to_lowercase().contains(query)
         },
     );
 
-    if let Some(&index) = app.agenda_search.matches.first() {
-        app.agenda_table_state.select(Some(index));
-    }
-}
+    if let Some(&event_index) = app.agenda_search.matches.first() {
+        let today = chrono::Local::now().date_naive();
 
-pub fn handle_agenda_search_navigation(
-    app: &mut App,
-    key: KeyEvent,
-) {
-    match search::handle_search_navigation(
-        &mut app.agenda_search,
-        key,
-    ) {
-        SearchNavigationResult::Continue => {
-            if let Some(&index) = app
-                .agenda_search
-                .matches
-                .get(app.agenda_search.current_match)
-            {
-                app.agenda_table_state.select(Some(index));
-            }
-        }
+        let today_indices: Vec<usize> = app
+            .events
+            .iter()
+            .enumerate()
+            .filter(|(_, event)| event.date == today)
+            .map(|(index, _)| index)
+            .collect();
 
-        SearchNavigationResult::Cancel => {
-            app.n_mode = NavigationMode::Normal;
-            app.pending_command = None;
+        let upcoming_indices: Vec<usize> = app
+            .events
+            .iter()
+            .enumerate()
+            .filter(|(_, event)| {
+                event.date > today
+                    && event.date <= today + chrono::Duration::days(30)
+            })
+            .map(|(index, _)| index)
+            .collect();
+
+        if let Some(position) = today_indices
+            .iter()
+            .position(|&index| index == event_index)
+        {
+            // Row 0 = Today header
+            app.agenda_table_state.select(Some(position + 1));
+        } else if let Some(position) = upcoming_indices
+            .iter()
+            .position(|&index| index == event_index)
+        {
+            // Today header + today events + spacer + Upcoming header
+            let row = today_indices.len() + 3 + position;
+
+            app.agenda_table_state.select(Some(row));
         }
     }
 }

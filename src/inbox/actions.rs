@@ -9,11 +9,8 @@ use crate::{
     navigation::vim_navigation::NavigationMode,
     vim_text::InputMode,
     storage::inbox,
-    search::SearchNavigationResult,
     search,
 };
-
-use crossterm::event::{KeyEvent};
 
 pub fn edit_inbox_item(app: &mut App) {
     if let Some(index) = app.inbox_tasks_table_state.selected() {
@@ -60,30 +57,6 @@ pub fn search_inbox(app: &mut App) {
     }
 }
 
-pub fn handle_inbox_search_navigation(
-    app: &mut App,
-    key: KeyEvent,
-) {
-    match search::handle_search_navigation(
-        &mut app.inbox_search,
-        key,
-    ) {
-        SearchNavigationResult::Continue => {
-            if let Some(&index) = app
-                .inbox_search
-                .matches
-                .get(app.inbox_search.current_match)
-            {
-                app.inbox_tasks_table_state.select(Some(index));
-            }
-        }
-
-        SearchNavigationResult::Cancel => {
-            app.n_mode = NavigationMode::Normal;
-            app.pending_command = None;
-        }
-    }
-}
 
 pub fn delete_inbox_item(app: &mut App) {
     if let Some(current) = app.inbox_tasks_table_state.selected() {
