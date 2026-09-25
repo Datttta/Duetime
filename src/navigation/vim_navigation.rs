@@ -5,6 +5,7 @@ pub enum NavigationMode {
     Normal,
     Visual,
     SearchInbox,
+    SearchInboxNavigation,
 }
 
 pub fn handle (
@@ -45,6 +46,7 @@ pub fn handle (
                 }
 
                 NavigationMode::SearchInbox => {}
+                NavigationMode::SearchInboxNavigation => {}
             }
 
             true

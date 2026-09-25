@@ -67,7 +67,10 @@ pub struct App {
     pub inbox_item: InputState,
     pub inbox_selected_input: InboxSelectedInput,
     pub priority: Priority,
+
     pub inbox_search: String,
+    pub inbox_search_matches: Vec<usize>,
+    pub inbox_search_match: usize,
 
     // Agenda
     pub events: Vec<AgendaEvent>,
@@ -194,9 +197,11 @@ impl App {
             
             inbox_tasks_table_state,
             inbox_selected_input: InboxSelectedInput::InboxItemInput,
-            
             priority: Priority::Low,
+
             inbox_search: String::new(),
+            inbox_search_matches: Vec::new(),
+            inbox_search_match: 0,
 
             // Agenda
             event_name: InputState::default(),
