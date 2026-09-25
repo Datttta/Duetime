@@ -1,4 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
+//use log::info;
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex},
@@ -8,8 +9,9 @@ use ratatui::{
 };
 
 use crate::{
-    app::{App},
-    agenda::ui::format_countdown,
+    app::{App, AgendaPopup},
+    agenda::ui::{format_countdown, get_selected_global_index},
+    Popup,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -44,7 +46,13 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     frame.render_widget(block, area);
     
-    if let Some(index) = app.agenda_table_state.selected() {
+    let selected = if app.popup == Popup::None {
+        get_selected_global_index(app)
+    } else {
+        app.all_events_table_state.selected()
+    };
+
+    if let Some(index) = selected {
         let event = &app.events[index];
 
         let time = event
