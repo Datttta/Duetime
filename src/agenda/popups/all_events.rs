@@ -234,7 +234,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('e') => {
             app.last_popup = app.popup.clone();
-            actions::edit_event(app);
+            actions::edit_event_catalog(app);
         }
         
         KeyCode::Char('i') => {
