@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-//use log::info;
+use log::info;
 
 use crate::{
     ui::{
@@ -139,45 +139,44 @@ pub fn draw_inbox_panel (
             scrollbar_area,
             &mut scrollbar_state,
         );
+    }
 
-        let match_info = if app.inbox_search.matches.is_empty() {
-            "0/0".to_string()
-        } else {
-            format!(
-                "{}/{}",
-                app.inbox_search.current_match + 1,
-                app.inbox_search.matches.len()
-            )
-        };
+    let match_info = if app.inbox_search.matches.is_empty() {
+        "0/0".to_string()
+    } else {
+        format!(
+            "{}/{}",
+            app.inbox_search.current_match + 1,
+            app.inbox_search.matches.len()
+        )
+    };
 
-        if app.search_panel == Some(Panel::Inbox) 
-           && (app.n_mode == NavigationMode::SearchNavigation
-               || app.n_mode == NavigationMode::Search)
-           && app.popup == Popup::None 
-        {
-            let search_line = Line::from(vec![
-                Span::raw(" /"),
-                Span::raw(&app.inbox_search.query),
-            ]);
+    info!("search_panel: {:?}", app.search_panel);
 
-            frame.render_widget(search_line, chunks[3]);
-            
-            frame.render_widget(
-                Paragraph::new(match_info)
-                    .alignment(Alignment::Right)
-                    .block(
-                        Block::default()
-                            .padding(Padding::right(2))
-                    ),
-                chunks[3],
-            );
+    if app.search_panel == Some(Panel::Inbox) && app.popup == Popup::None 
+    {
+        let search_line = Line::from(vec![
+            Span::raw(" /"),
+            Span::raw(&app.inbox_search.query),
+        ]);
 
-        } else {
-            let search_line = Paragraph::new(format!(""))
-                .style(Style::default().fg(Color::White));
+        frame.render_widget(search_line, chunks[3]);
+        
+        frame.render_widget(
+            Paragraph::new(match_info)
+                .alignment(Alignment::Right)
+                .block(
+                    Block::default()
+                        .padding(Padding::right(2))
+                ),
+            chunks[3],
+        );
 
-            frame.render_widget(search_line, chunks[3]);
-        }
+    } else {
+        let search_line = Paragraph::new(format!(""))
+            .style(Style::default().fg(Color::White));
+
+        frame.render_widget(search_line, chunks[3]);
     }
     
     draw_items(frame, table_area, app, is_visual);
