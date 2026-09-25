@@ -294,6 +294,7 @@ pub fn draw_agenda_panel(
 
     let is_visual = app.focused_panel == Panel::Agenda
         && app.n_mode == NavigationMode::Visual;
+
     let popup_open = !matches!(app.popup, Popup::None);
     let current_row = app.agenda_table_state.selected();
 
@@ -342,16 +343,6 @@ pub fn draw_agenda_panel(
         table_area.width = table_area.width.saturating_sub(2);
     }
 
-    let match_info = if app.agenda_search.matches.is_empty() {
-        "0/0".to_string()
-    } else {
-        format!(
-            "{}/{}",
-            app.agenda_search.current_match + 1,
-            app.agenda_search.matches.len()
-        )
-    };
-
     // Scrollbar rendering
     if total_rows > visible_height {
         let max_scroll = total_rows.saturating_sub(visible_height);
@@ -375,7 +366,17 @@ pub fn draw_agenda_panel(
 
         frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
-    
+
+    let match_info = if app.agenda_search.matches.is_empty() {
+        "0/0".to_string()
+    } else {
+        format!(
+            "{}/{}",
+            app.agenda_search.current_match + 1,
+            app.agenda_search.matches.len()
+        )
+    };
+
     if app.search_panel == Some(Panel::Agenda) 
        || app.n_mode == NavigationMode::SearchNavigation 
     {

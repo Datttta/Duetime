@@ -1,6 +1,8 @@
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex, Alignment},
     widgets::{Clear, Block, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState},
+    layout::{Rect, Constraint, Layout, Flex, Alignment},
+    style::{Color, Style},
+    text::{Line, Span},
     Frame,
 };
 
@@ -11,9 +13,10 @@ use crate::{
         vim_navigation::NavigationMode,
         vim_navigation,
     },
+    search::{SearchInputResult, SearchNavigationResult},
     app::{App, Popup},
     agenda::actions,
-    keys_help,
+    keys_help, Panel, search,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -24,6 +27,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let block = Block::bordered()
         .title("All Events")
         .padding(Padding::new(1, 1, 1, 0));
+
+    let inner = block.inner(area);
+    
+    let chunks = ratatui::layout::Layout::vertical([
+        Constraint::Min(1),
+        Constraint::Length(1),
+    ])
+    .split(inner);
 
     let inner = block.inner(area);
     frame.render_widget(&block, area);
@@ -42,14 +53,42 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         table_area.width = table_area.width.saturating_sub(2);
     }
 
-    crate::agenda::ui::draw_events(
-        frame,
-        table_area,
-        app,
-        &event_indices,
-        is_visual,
-        name_length,
-    );
+    let match_info = if app.agenda_search.matches.is_empty() {
+        "0/0".to_string()
+    } else {
+        format!(
+            "{}/{}",
+            app.agenda_search.current_match + 1,
+            app.agenda_search.matches.len()
+        )
+    };
+
+    if app.search_panel == Some(Panel::Agenda) 
+       || app.n_mode == NavigationMode::SearchNavigation 
+    {
+        let search_line = Line::from(vec![
+            Span::raw("/"),
+            Span::raw(&app.agenda_search.query),
+        ]);
+
+        frame.render_widget(search_line, chunks[1]);
+        
+        frame.render_widget(
+            Paragraph::new(match_info)
+                .alignment(Alignment::Right)
+                .block(
+                    Block::default()
+                        .padding(Padding::right(2))
+                ),
+            chunks[1],
+        );
+
+    } else {
+        let search_line = Paragraph::new(format!(""))
+            .style(Style::default().fg(Color::White));
+
+        frame.render_widget(search_line, chunks[1]);
+    }
 
     // Scrollbar rendering for the popup
     if item_count > visible_height {
@@ -78,6 +117,15 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             &mut scrollbar_state,
         );
     }
+
+    crate::agenda::ui::draw_events(
+        frame,
+        table_area,
+        app,
+        &event_indices,
+        is_visual,
+        name_length,
+    );
 }
 
 fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
@@ -102,6 +150,64 @@ fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
 }
 
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
+    // --------------------------------------------------
+    // Search typing mode
+    // --------------------------------------------------
+    if app.n_mode == NavigationMode::Search {
+        match search::handle_search_input(&mut app.agenda_search, key) {
+            search::SearchInputResult::Continue => {
+                actions::search_agenda(app);
+            }
+            search::SearchInputResult::Navigate => {
+                app.n_mode = NavigationMode::SearchNavigation;
+            }
+            search::SearchInputResult::Cancel => {
+                search::clear(&mut app.agenda_search);
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+                app.search_panel = None;
+            }
+        }
+        return;
+    }
+
+    // --------------------------------------------------
+    // Search navigation mode
+    // --------------------------------------------------
+    if app.n_mode == NavigationMode::SearchNavigation {
+        match search::handle_search_navigation(&mut app.agenda_search, key) {
+            search::SearchNavigationResult::Continue => {
+                if let Some(&index) = app
+                    .agenda_search
+                    .matches
+                    .get(app.agenda_search.current_match)
+                {
+                    app.agenda_table_state.select(Some(index));
+                }
+            }
+            search::SearchNavigationResult::Cancel => {
+                app.n_mode = NavigationMode::Normal;
+                app.pending_command = None;
+                app.search_panel = None;
+            }
+        }
+        return;
+    }
+
+    // --------------------------------------------------
+    // Start search
+    // --------------------------------------------------
+    if app.n_mode == NavigationMode::Normal
+        && app.focused_panel == Panel::Agenda
+        && key.code == KeyCode::Char('/')
+    {
+        search::clear(&mut app.agenda_search);
+        app.n_mode = NavigationMode::Search;
+        app.search_panel = Some(Panel::Agenda);
+        app.pending_command = None;
+        return;
+    }
+
     let mut selected = app.all_events_table_state.selected();
 
     let handled = vim_navigation::handle(
