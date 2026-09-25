@@ -257,7 +257,7 @@ impl App {
             help_scroll: 0,
             next_id: 1,
             active_alarm: None,
-            terminal_focus: false,
+            terminal_focus: true,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),

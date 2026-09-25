@@ -9,7 +9,7 @@ use ratatui::{
 };
 
 use crate::{
-    app::{App, AgendaPopup},
+    app::App,
     agenda::ui::{format_countdown, get_selected_global_index},
     Popup,
 };
