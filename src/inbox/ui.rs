@@ -149,18 +149,26 @@ pub fn draw_inbox_panel (
             )
         };
         
-        if app.n_mode == NavigationMode::SearchInbox || app.n_mode == NavigationMode::SearchInboxNavigation {
+        if app.n_mode == NavigationMode::SearchInbox 
+           || app.n_mode == NavigationMode::SearchInboxNavigation 
+        {
             let search_line = Line::from(vec![
                 Span::raw(" /"),
                 Span::raw(&app.inbox_search),
-                Span::raw("  "),
-                Span::styled(
-                    match_info,
-                    Style::default().add_modifier(Modifier::BOLD),
-                ),
             ]);
 
             frame.render_widget(search_line, chunks[3]);
+            
+            frame.render_widget(
+                Paragraph::new(match_info)
+                    .alignment(Alignment::Right)
+                    .block(
+                        Block::default()
+                            .padding(Padding::right(2))
+                    ),
+                chunks[3],
+            );
+
         } else {
             let search_line = Paragraph::new(format!(""))
                 .style(Style::default().fg(Color::White));
