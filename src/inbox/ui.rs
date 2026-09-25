@@ -149,7 +149,7 @@ pub fn draw_inbox_panel (
             )
         };
         
-        if app.n_mode == NavigationMode::SearchInbox {
+        if app.n_mode == NavigationMode::SearchInbox || app.n_mode == NavigationMode::SearchInboxNavigation {
             let search_line = Line::from(vec![
                 Span::raw(" /"),
                 Span::raw(&app.inbox_search),
