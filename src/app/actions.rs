@@ -144,7 +144,6 @@ impl App {
                     task.planned_end = self.planned_end.text.clone();
                     self.popup = Popup::None;
                 }
-                
             }
 
             TaskDestination::EditPresetTask(index) => {
@@ -155,7 +154,6 @@ impl App {
                     self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
                 }
             }
-
         }
 
         self.task_name.clear();

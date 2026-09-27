@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use log::info;
+//use log::info;
 
 use crate::{
     ui::{
@@ -150,8 +150,6 @@ pub fn draw_inbox_panel (
             app.inbox_search.matches.len()
         )
     };
-
-    info!("search_panel: {:?}", app.search_panel);
 
     if app.search_panel == Some(Panel::Inbox) 
        && (app.n_mode == NavigationMode::SearchNavigation

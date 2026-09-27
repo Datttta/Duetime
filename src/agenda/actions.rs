@@ -1,4 +1,4 @@
-//use log::info;
+use log::info;
 use chrono::{Local, Duration};
 
 use crate::{
@@ -41,6 +41,8 @@ pub fn edit_event(app: &mut App) {
     } else {
         app.all_events_table_state.selected()
     };
+
+    info!("Selected: {:?}", selected);
 
     if let Some(index) = selected {
         let event = &app.events[index];

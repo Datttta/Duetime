@@ -154,7 +154,7 @@ pub fn save_event(app: &mut App) {
             // 2. Perform Add or Edit action using global indices correctly
             if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
                 app.events.push(event);
-            } else if let Some(global_index) = ui::get_selected_global_index(app) {
+            } else if let Some(global_index) = app.all_events_table_state.selected() {
                 if let Some(existing_event) = app.events.get_mut(global_index) {
                     *existing_event = event;
                 }
@@ -206,12 +206,10 @@ pub fn save_event(app: &mut App) {
 
     ui::update_repeating_events(&mut app.events);
     storage::agenda::save_agenda(&app.events).unwrap();
-    app.popup = Popup::None;
+    app.popup = Popup::Agenda(AgendaPopup::AllEvents);
 }
 
 fn close_popup(app: &mut App) {
-    info!("Selecte input: {:?}", app.agenda_selected_input);
-    info!("app mode: {:?}", app.mode);
     if app.agenda_selected_input == AgendaSelectedInput::Name {
         if app.mode == InputMode::Normal {
             app.popup = app.last_popup.clone();
