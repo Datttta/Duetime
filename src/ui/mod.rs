@@ -139,13 +139,13 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             
             app.already_focused_on_previous = false;
             app.already_set_previous = true;
+
+            app.n_mode = NavigationMode::Normal;
         }
         
         if app.terminal_focus == true {
             app.focused_panel = Panel::TasksTable;
         }
-
-        app.n_mode = NavigationMode::Normal;
 
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
@@ -155,6 +155,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.focused_panel = app.previous_panel;
             app.already_focused_on_previous = true;
             app.already_set_previous = false;
+            app.n_mode = NavigationMode::Normal;
         } 
 
         if app.focused_panel == Panel::Inbox && app.terminal_focus == true {
@@ -176,6 +177,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.focused_panel = app.previous_panel;
             app.already_focused_on_previous = true;
             app.already_set_previous = false;
+            app.n_mode = NavigationMode::Normal;
         } 
 
         if app.focused_panel == Panel::Agenda && app.terminal_focus == true {
@@ -186,8 +188,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         let layout = draw_half_length_layout(frame);
        
-        app.n_mode = NavigationMode::Normal;
-
         // draw panels
         draw_tasks_panel(frame, layout.tasks, app);
         draw_agenda_panel(frame, layout.agenda, app);
