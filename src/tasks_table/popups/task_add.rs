@@ -3,7 +3,7 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use crate::{
     app::{App, TaskSelectedInput},
     ui::widgets::input,
-    vim_text::{InputResult},
+    vim_text::{InputResult, InputMode},
     keys_help,
     suggestions,
 };
@@ -71,21 +71,23 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .alignment(Alignment::Center)
         .block(Block::default().padding(Padding::top(1)));
 
-    let suggestions_area = Rect {
-        x: tasks_colums[0].x,
-        y: tasks_colums[0].bottom(),
-        width: TASK_NAME_WIDTH,
-        height: app.suggestions.len().min(5) as u16,
-    };
+    if app.mode == InputMode::Insert {
+        let suggestions_area = Rect {
+            x: tasks_colums[0].x,
+            y: tasks_colums[0].bottom(),
+            width: TASK_NAME_WIDTH,
+            height: app.suggestions.len().min(5) as u16,
+        };
 
-    let task_name_suggestions = suggestions::task_name_list(
-        &app.known_tasks,
-        &app.presets,
-        &app.task_name.text,
-        app.selected_suggestion,
-    );
+        let task_name_suggestions = suggestions::task_name_list(
+            &app.known_tasks,
+            &app.presets,
+            &app.task_name.text,
+            app.selected_suggestion,
+        );
 
-    frame.render_widget(task_name_suggestions, suggestions_area);
+        frame.render_widget(task_name_suggestions, suggestions_area);
+    }
 
     input::draw(
         frame,
@@ -136,6 +138,10 @@ fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
     }
 
     if app.suggestions.is_empty() {
+        return false;
+    }
+
+    if app.mode != InputMode::Insert {
         return false;
     }
 
