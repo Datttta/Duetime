@@ -22,6 +22,7 @@ pub enum Popup {
     None,
     Help,
     Updated,
+    Info,
     TasksTable(TasksTablePopup),
     Inbox(InboxPopup),
     Agenda(AgendaPopup),

@@ -3,7 +3,7 @@ pub mod theme;
 
 use crate::{
     app::{
-        popups::{help, updated},
+        popups::{help, updated, info},
         App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup, TimersPopup,
     },
     
@@ -225,6 +225,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     
     if let Popup::Updated = app.popup {
         updated::draw(frame, app);
+    }
+    
+    if let Popup::Info = app.popup {
+        info::draw(frame, app);
     }
 
     // TasksTable-panel popups
