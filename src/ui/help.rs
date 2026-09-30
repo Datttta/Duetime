@@ -39,6 +39,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Move up", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
+            Span::styled("  l -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Move left", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  h -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Move right", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
             Span::styled("  gg -", Style::default().fg(Color::Yellow)),
             Span::styled(" Go to first item", Style::default().fg(gray_color())),
         ]),
