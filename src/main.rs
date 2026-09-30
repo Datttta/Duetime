@@ -40,6 +40,7 @@ mod timers;
 mod countdown;
 mod sound;
 mod search;
+mod update;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
@@ -65,6 +66,8 @@ fn main() -> io::Result<()> {
         
         // set tasks table stopwatch to stopped if the app was closed while IN PROGRESS
         if first_render {
+            update::check_for_updates();
+
             for i in 0..app.tasks.len() {
                 let task = &mut app.tasks[i];
                 
