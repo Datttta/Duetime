@@ -43,18 +43,21 @@ mod search;
 mod update;
 
 fn main() -> io::Result<()> {
-    let mut terminal = ratatui::init();
-
-    let mut app = App::new();
-    let mut first_render = true;
-
-    let mut last_save = Instant::now();
-
     let _ = WriteLogger::init(
         LevelFilter::Debug,
         simplelog::Config::default(),
         File::create("debug.log").unwrap(),
     );
+
+    if update::check_for_updates() {
+        return Ok(());
+    }
+
+    let mut terminal = ratatui::init();
+
+    let mut app = App::new();
+    let mut first_render = true;
+    let mut last_save = Instant::now();
 
     execute!(io::stdout(), EnableFocusChange)?;
 
