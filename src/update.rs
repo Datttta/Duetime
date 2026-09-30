@@ -15,14 +15,16 @@ pub fn check_for_updates() {
     match result {
         Ok(status) => {
             if status.is_updated() {
-                info!("Duetime was updated to version {}", status.version());
-
+                info!("Duetime was updated to {}", status.version());
                 let _ = restart::restart();
+            } else {
+                info!("Duetime is already up to date");
+                info!("Current Duetime version: {}", cargo_crate_version!());
             }
         }
 
         Err(error) => {
-            log::error!("Update failed: {}", error);
+            log::error!("Update failed: {:?}", error);
         }
     }
 }
