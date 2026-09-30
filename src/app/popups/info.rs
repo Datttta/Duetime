@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex, Alignment},
+    layout::{Rect, Constraint, Layout, Flex},
     widgets::{Clear, Block, Paragraph, Padding},
     text::{Line, Span},
     style::{Style},
@@ -37,7 +37,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
-    let old_v_str = app.old_version.as_deref().unwrap_or("unknown");
     let new_v_str = self_update::cargo_crate_version!();
 
     let text_content = vec![

@@ -2,7 +2,6 @@ use log::info;
 use self_update::{cargo_crate_version, restart};
 // Add these imports:
 use std::fs;
-use std::path::PathBuf;
 use crate::storage::config_location; // Assuming this helps get directory
 
 pub fn check_for_updates() -> bool {
