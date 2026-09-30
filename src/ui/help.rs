@@ -117,6 +117,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Copy inbox item", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
+            Span::styled("  / -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Search", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete inbox item", Style::default().fg(gray_color())),
         ]),
@@ -136,6 +140,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(vec![
             Span::styled("  i -", Style::default().fg(Color::Yellow)),
             Span::styled(" Event information", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  / -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Search", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
             Span::styled("  l -", Style::default().fg(Color::Yellow)),
