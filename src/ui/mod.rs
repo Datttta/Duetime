@@ -1,9 +1,11 @@
 pub mod widgets;
 pub mod theme;
-pub mod help;
 
 use crate::{
-    app::{App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup, TimersPopup},
+    app::{
+        popups::help,
+        App, Popup, TasksTablePopup, Panel, InboxPopup, AgendaPopup, TimersPopup,
+    },
     
     tasks_table::{
         ui::draw_tasks_panel,

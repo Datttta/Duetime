@@ -20,8 +20,6 @@ curl -fL \
     "https://github.com/Datttta/Duetime/releases/latest/download/Duetime.png" \
     -o "$icon_dir/Duetime.png"
 
-curl -fL 
-
 curl -fL \
     "https://github.com/Datttta/Duetime/releases/latest/download/Duetime-x86_64-unknown-linux-gnu.tar.gz" \
     -o /tmp/Duetime.tar.gz

@@ -37,7 +37,7 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     storage::current_tasks,
-    ui::help,
+    app::popups::help,
     tasks_table, inbox, agenda, timers
 };
 
