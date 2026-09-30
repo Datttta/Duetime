@@ -37,7 +37,7 @@ use crate::{
 
     navigation::vim_navigation::NavigationMode,
     storage::current_tasks,
-    app::popups::help,
+    app::popups::{help, updated},
     tasks_table, inbox, agenda, timers
 };
 
@@ -71,6 +71,11 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 if matches!(app.popup, Popup::None) {
                     if key.code == KeyCode::Char('?') {
                         app.popup = Popup::Help;
+                        return Ok(());
+                    }
+                    
+                    if key.code == KeyCode::Char('*') {
+                        app.popup = Popup::Updated;
                         return Ok(());
                     }
 
@@ -170,6 +175,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
                     Popup::Help => {
                         help::handle_keys(app, key);
+                    }
+
+                    Popup::Updated => {
+                        updated::handle_keys(app, key);
                     }
 
                     // INBOX POPUPS
