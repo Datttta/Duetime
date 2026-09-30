@@ -1,9 +1,10 @@
 use crossterm::event::{KeyCode, KeyEvent};
 
 use ratatui::{
-    layout::{Rect, Constraint, Layout, Flex},
-    widgets::{Clear, Block, Paragraph, Padding, Wrap},
-    text::{Line},
+    layout::{Rect, Constraint, Layout, Flex, Alignment},
+    widgets::{Clear, Block, Paragraph, Padding},
+    text::{Line, Span},
+    style::{Style},
     Frame
 };
 
@@ -21,7 +22,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     fn centered_rect(frame: &mut Frame) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(12),
+            Constraint::Length(8),
         ])
         .flex(Flex::Center)
         .split(frame.area());
@@ -35,8 +36,35 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
+    let old_v_str = app.old_version.as_deref().unwrap_or("unknown");
+    let new_v_str = self_update::cargo_crate_version!();
+
+    let text_content = vec![
+        Line::from(""),
+        Line::from(""),
+        Line::from("Duetime has been updated!"),
+        Line::from(vec![
+            Span::styled(" v", Style::default()),
+            Span::styled(old_v_str, Style::default()),
+            Span::styled(" -> ", Style::default()),
+            Span::styled(" v", Style::default()),
+            Span::styled(new_v_str, Style::default()),
+            Span::styled(" ", Style::default()), // Subtle spacer
+        ]),
+    ];
+
+    let text_paragraph = Paragraph::new(text_content)
+        .alignment(Alignment::Center);
+
     let inner = block.inner(area);
-    frame.render_widget(block, area);
+
+    let vertical_center = Layout::vertical([
+        Constraint::Length(6), // Height of our text block
+    ])
+    .flex(Flex::Center)
+    .split(inner);
+
+    frame.render_widget(text_paragraph, vertical_center[0]);
 }
 
 pub fn handle_keys (app: &mut App, key: KeyEvent) {

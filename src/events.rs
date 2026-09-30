@@ -74,11 +74,6 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         return Ok(());
                     }
                     
-                    if key.code == KeyCode::Char('*') {
-                        app.popup = Popup::Updated;
-                        return Ok(());
-                    }
-
                     match key.code {
                         KeyCode::Char('L') => {
                             if app.focused_panel == TOP_LEFT_PANEL {
