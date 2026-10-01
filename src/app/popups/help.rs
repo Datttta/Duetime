@@ -188,6 +188,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         Line::from(""),
 
         Line::from(vec![
+            Span::styled("  I -", Style::default().fg(Color::Yellow)),
+            Span::styled(" App info", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
+            Span::styled("  ? -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Help", Style::default().fg(gray_color())),
+        ]),
+        Line::from(vec![
             Span::styled("  q -", Style::default().fg(Color::Yellow)),
             Span::styled(" Quit", Style::default().fg(gray_color())),
         ]),
