@@ -228,7 +228,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     }
     
     if let Popup::Info = app.popup {
-        info::draw(frame, app);
+        info::draw(frame);
     }
 
     // TasksTable-panel popups

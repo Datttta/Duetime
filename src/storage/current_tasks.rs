@@ -1,17 +1,14 @@
 use std::fs;
-use std::path::PathBuf;
 
 use crate::{
     tasks_table::ui::{TaskInfo, TaskInfoData},
+    storage::config_location::config_dir,
 };
 
 const FILE_NAME: &str = "current_tasks.json";
 
 fn current_tasks_path() -> std::path::PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("src")
-        .join("storage")
-        .join(FILE_NAME)
+    config_dir().join(FILE_NAME)
 }
 
 pub fn save_current_tasks(

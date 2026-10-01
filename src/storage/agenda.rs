@@ -1,8 +1,9 @@
 use std::fs;
 
-use crate::agenda::ui::{AgendaEventData, AgendaEvent};
-
-use crate::storage::config_location::config_dir;
+use crate::{
+    agenda::ui::{AgendaEventData, AgendaEvent},
+    storage::config_location::config_dir,
+};
 
 const FILE_NAME: &str = "Agenda.json";
 

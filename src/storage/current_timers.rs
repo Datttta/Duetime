@@ -1,15 +1,17 @@
-use std::fs;
-use std::path::PathBuf;
+use std::{
+    path::PathBuf,
+    fs,
+};
 
-use crate::timers::ui::{TimerInfo, TimerInfoData};
+use crate::{
+    timers::ui::{TimerInfo, TimerInfoData},
+    storage::config_location::config_dir,
+};
 
 const FILE_NAME: &str = "current_timers.json";
 
 fn current_timers_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("src")
-        .join("storage")
-        .join(FILE_NAME)
+    config_dir().join(FILE_NAME)
 }
 
 pub fn save_current_timers(

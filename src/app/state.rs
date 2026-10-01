@@ -13,7 +13,7 @@ use crate::{
         TimerSelectedInput,
     },
 
-    storage::{current_tasks, known_tasks, preset, inbox, agenda, current_timers},
+    storage::{current_tasks, known_tasks, preset, inbox, agenda, current_timers, detect_and_clean_update_flag},
     vim_text::{InputState, InputMode},
     navigation::vim_navigation::NavigationMode,
     tasks_table::ui::TaskInfo,
@@ -179,11 +179,19 @@ impl App {
             editable_positions: &DATE_EDITABLE_POSITIONS,
         };
 
+        let old_version = detect_and_clean_update_flag();
+
+        let popup = if old_version.is_some() {
+            Popup::Updated
+        } else {
+            Popup::None
+        };
+
         Self {
             // Core
             running: true,
             search_panel: None,
-            popup: Popup::None,
+            popup,
             pending_command: None,
             last_popup: Popup::None,
 

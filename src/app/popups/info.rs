@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::app::{App, Popup};
 
-pub fn draw(frame: &mut Frame, app: &mut App) {
+pub fn draw(frame: &mut Frame) {
     let area = centered_rect(frame);
 
     frame.render_widget(Clear, area);
