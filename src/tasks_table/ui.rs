@@ -2,7 +2,7 @@ use crate::{
     app::{App, Popup, Panel},
     tasks_table::stopwatch::{Stopwatch, StopwatchData},
     ui::{
-        theme::{task_selection_color, unfocused_panel},
+        colors::{task_selection_color, unfocused_panel},
         widgets::{
             input::ellipsize,
             duration::format_duration,

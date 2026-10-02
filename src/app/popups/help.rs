@@ -12,7 +12,7 @@ use ratatui::{
 
 use crate::{
     app::{App, Popup},
-    ui::theme::gray_color,
+    ui::colors::gray_color,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {

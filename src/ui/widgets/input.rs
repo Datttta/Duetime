@@ -5,14 +5,14 @@ use crossterm::{
 
 use crate::{
     input::vim_text::{InputMode, InputState},
-    ui::theme::placeholder_color,
+    ui::colors::{placeholder_color, text_selection_color},
 };
 
 use ratatui::{
-    layout::Rect,
-    style::{Modifier, Style},
-    text::{Line, Span},
     widgets::{Block, Paragraph, Padding},
+    style::{Style, Color},
+    text::{Line, Span},
+    layout::Rect,
     Frame,
 };
 
@@ -67,7 +67,9 @@ pub fn draw(
                 if selected {
                     Span::styled(
                         c.to_string(),
-                        Style::default().add_modifier(Modifier::REVERSED),
+                        Style::default()
+                            .fg(Color::Black)
+                            .bg(text_selection_color()),
                     )
                 } else {
                     Span::raw(c.to_string())

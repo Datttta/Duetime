@@ -15,3 +15,7 @@ pub fn gray_color() -> Color {
 pub fn unfocused_panel() -> Color {
     Color::Rgb(150, 150, 150)
 }
+
+pub fn text_selection_color() -> Color {
+    Color::Rgb(115, 115, 115)
+}

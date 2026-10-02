@@ -15,7 +15,7 @@ use ratatui::{
 use crate::{
     app::{App, Panel, Popup},
     ui::{
-        theme::unfocused_panel,
+        colors::unfocused_panel,
         widgets::input::ellipsize,
     },
     input::vim_navigation::NavigationMode,

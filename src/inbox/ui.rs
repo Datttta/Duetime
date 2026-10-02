@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     ui::{
         widgets::input::ellipsize,
-        theme::{task_selection_color, unfocused_panel},
+        colors::{task_selection_color, unfocused_panel},
     },
     app::{App, Popup, Panel, Priority},
     input::vim_navigation::NavigationMode,

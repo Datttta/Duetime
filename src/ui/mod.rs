@@ -1,5 +1,5 @@
 pub mod widgets;
-pub mod theme;
+pub mod colors;
 
 use crate::{
     app::{

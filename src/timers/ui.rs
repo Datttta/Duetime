@@ -4,7 +4,7 @@ use crate::{
             input::ellipsize,
             duration::format_duration,
         },
-        theme::{unfocused_panel},
+        colors::{unfocused_panel},
     },
     app::{App, Panel},
     timers::countdown::Countdown,
