@@ -21,7 +21,7 @@ pub enum Panel {
 pub enum Popup {
     None,
     Help,
-    Updated,
+    Updated(String),
     Info,
     TasksTable(TasksTablePopup),
     Inbox(InboxPopup),

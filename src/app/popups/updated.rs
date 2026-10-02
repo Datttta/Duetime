@@ -36,7 +36,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         horizontal[0]
     }
 
-    let old_v_str = app.old_version.as_deref().unwrap_or("unknown");
+    let old_v_str = match &app.popup { Popup::Updated(v) => v.as_str(), _ => "unknown" };
     let new_v_str = self_update::cargo_crate_version!();
 
     let text_content = vec![
