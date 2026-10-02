@@ -1,8 +1,7 @@
 use crossterm::cursor::SetCursorStyle;
 use crossterm::execute;
 
-use crate::vim_text::InputState;
-use crate::vim_text::InputMode;
+use crate::input::vim_text::{InputMode, InputState};
 use crate::ui::theme::placeholder_color;
 
 use ratatui::{

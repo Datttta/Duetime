@@ -7,8 +7,10 @@ use crate::{
     },
     ui::widgets::duration::format_duration,
 
-    navigation::vim_navigation::NavigationMode,
-    vim_text::InputMode,
+    input::{
+        vim_navigation::NavigationMode,
+        vim_text::InputMode,
+    },
     storage,
 };
 

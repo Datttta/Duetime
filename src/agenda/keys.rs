@@ -1,7 +1,9 @@
 use crate::{
-    agenda::keys::vim_navigation::NavigationMode,
     app::App,
-    navigation::vim_navigation,
+    input::{
+        vim_navigation,
+        vim_navigation::NavigationMode,
+    },
     search,
     Panel,
 };

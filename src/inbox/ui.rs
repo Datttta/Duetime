@@ -7,7 +7,7 @@ use crate::{
         theme::{task_selection_color, unfocused_panel},
     },
     app::{App, Popup, Panel, Priority},
-    navigation::vim_navigation::NavigationMode,
+    input::vim_navigation::NavigationMode,
 };
 
 use ratatui::{

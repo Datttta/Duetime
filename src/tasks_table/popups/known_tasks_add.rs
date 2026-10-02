@@ -8,7 +8,7 @@ use ratatui::{
 
 use crate::{
     ui::widgets::{input, keys_help},
-    vim_text::{InputMode, InputResult},
+    input::vim_text::{InputMode, InputResult},
     app::{App, Popup, TasksTablePopup},
     models::KnownTask,
 };

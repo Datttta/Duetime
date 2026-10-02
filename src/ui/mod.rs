@@ -45,7 +45,7 @@ use crate::{
         },
     },
 
-    navigation::vim_navigation::NavigationMode,
+    input::vim_navigation::NavigationMode,
     ui::widgets::status_message::draw_status_message,
 };
 

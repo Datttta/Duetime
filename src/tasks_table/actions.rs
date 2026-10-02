@@ -8,9 +8,9 @@ use crate::{
     TasksTablePopup, 
     },
 
-    vim_text::InputMode,
     models::TaskTemplate,
-    navigation::{
+    input::{
+        vim_text::InputMode,
         move_items::MoveTarget,
         vim_navigation::NavigationMode,
         move_items,

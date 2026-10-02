@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::{
     ui::widgets::{input, keys_help},
-    vim_text::{InputResult, InputMode},
+    input::vim_text::{InputResult, InputMode},
     app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
     inbox::ui::InboxItemInfo,
 };

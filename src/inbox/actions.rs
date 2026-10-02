@@ -6,8 +6,10 @@ use crate::{
         InboxSelectedInput,
         Priority,
     },
-    navigation::vim_navigation::NavigationMode,
-    vim_text::InputMode,
+    input::{
+        vim_navigation::NavigationMode,
+        vim_text::InputMode,
+    },
     storage::inbox,
     search,
 };

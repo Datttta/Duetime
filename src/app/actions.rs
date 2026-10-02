@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    vim_text::{InputMode},
+    input::vim_text::InputMode,
     app::{NewPresetFocus, Popup, TasksTablePopup, TaskDestination, TaskSelectedInput, Priority},
     tasks_table::ui::TaskInfo,
     models::{TaskTemplate, Preset},

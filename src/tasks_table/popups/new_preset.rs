@@ -3,8 +3,8 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::{
     app::{App, Popup, TaskDestination, NewPresetFocus, TasksTablePopup},
     ui::widgets::{input, keys_help},
-    vim_text::InputMode,
-    navigation::{
+    input::{
+        vim_text::InputMode,
         vim_navigation::NavigationMode,
         move_items::MoveTarget,
         move_items,

@@ -10,7 +10,7 @@ use ratatui::{
 };
 
 use crate::{
-    navigation::{
+    input::{
         vim_navigation::NavigationMode,
         vim_navigation,
     },

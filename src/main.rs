@@ -29,7 +29,7 @@ use crossterm::{
 
 mod app;
 mod ui;
-mod navigation;
+mod input;
 mod storage;
 mod core;
 mod models;
@@ -40,7 +40,6 @@ mod agenda;
 mod timers;
 
 mod stopwatch;
-mod vim_text;
 mod suggestions;
 mod countdown;
 mod search;

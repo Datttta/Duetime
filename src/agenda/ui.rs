@@ -18,7 +18,7 @@ use crate::{
         theme::unfocused_panel,
         widgets::input::ellipsize,
     },
-    navigation::vim_navigation::NavigationMode,
+    input::vim_navigation::NavigationMode,
 };
 
 use chrono::{NaiveDate, NaiveTime, Local, Datelike, Duration};

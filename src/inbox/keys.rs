@@ -3,8 +3,10 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
     app::App,
-    navigation::vim_navigation,
-    inbox::keys::vim_navigation::NavigationMode,
+    input::{
+        vim_navigation,
+        vim_navigation::NavigationMode,
+    },
     Panel, search,
 };
 

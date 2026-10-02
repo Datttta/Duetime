@@ -12,7 +12,7 @@ use crate::{
         input,
         keys_help,
     },
-    vim_text::{InputResult, InputMode},
+    input::vim_text::{InputResult, InputMode},
     app::{App, Popup, AgendaPopup, AgendaSelectedInput},
     agenda::{
         ui::AgendaEvent,

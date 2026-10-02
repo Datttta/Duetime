@@ -14,14 +14,16 @@ use crate::{
     },
 
     storage::{current_tasks, known_tasks, preset, inbox, agenda, current_timers, detect_and_clean_update_flag},
-    vim_text::{InputState, InputMode},
-    navigation::vim_navigation::NavigationMode,
+    input::{
+        vim_text::{InputState, InputMode},
+        vim_navigation::NavigationMode,
+        move_items::MoveState,
+    },
     tasks_table::ui::TaskInfo,
     inbox::ui::InboxItemInfo,
     timers::ui::TimerInfo,
     agenda::ui::{AgendaEvent, TIME_EDITABLE_POSITIONS, DATE_EDITABLE_POSITIONS},
     models::{TaskTemplate, Preset, KnownTask},
-    navigation::move_items::MoveState,
     ui::widgets::date_time_input::DateTimeInput,
     search::SearchState,
 };

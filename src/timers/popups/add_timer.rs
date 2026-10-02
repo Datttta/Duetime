@@ -16,7 +16,7 @@ use crate::{
         ui::TimerInfo,
     },
     app::{App, Popup, TimersPopup, TimerSelectedInput},
-    vim_text::{InputResult, InputMode},
+    input::vim_text::{InputResult, InputMode},
     countdown::Countdown,
 };
 

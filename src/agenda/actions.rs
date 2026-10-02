@@ -9,9 +9,11 @@ use crate::{
     AgendaSelectedInput,
     },
 
-    navigation::vim_navigation::NavigationMode,
+    input::{
+        vim_navigation::NavigationMode,
+        vim_text::InputMode,
+    },
     agenda::ui::get_selected_global_index,
-    vim_text::InputMode,
     storage, search,
 };
 

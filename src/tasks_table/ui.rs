@@ -8,7 +8,7 @@ use crate::{
             duration::format_duration,
         },
     },
-    navigation::{
+    input::{
         move_items::MoveTarget,
         vim_navigation::NavigationMode,
     },

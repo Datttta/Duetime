@@ -5,7 +5,7 @@ use crate::{
     },
 
     storage::{current_tasks},
-    navigation::{
+    input::{
         vim_navigation::NavigationMode,
         vim_navigation,
         move_items,
