@@ -24,22 +24,22 @@ use crossterm::{
 };
 
 mod app;
-mod events;
 mod ui;
-mod vim_text;
 mod navigation;
-mod tasks_table;
-mod stopwatch;
 mod storage;
+mod core;
 mod models;
-mod suggestions;
+
+mod tasks_table;
 mod inbox;
 mod agenda;
 mod timers;
+
+mod stopwatch;
+mod vim_text;
+mod suggestions;
 mod countdown;
-mod sound;
 mod search;
-mod update;
 
 fn main() -> io::Result<()> {
     let _ = WriteLogger::init(
