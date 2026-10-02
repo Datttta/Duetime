@@ -223,7 +223,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         help::draw(frame, app);
     }
     
-    if let Popup::Updated = app.popup {
+    if let Popup::Updated(_) = app.popup {
         updated::draw(frame, app);
     }
     

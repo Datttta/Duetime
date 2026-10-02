@@ -32,10 +32,6 @@ pub fn check_for_updates() -> bool {
                     
                     let target_path = std::path::Path::new(clean_path);
                     log::info!("Executing process replacement on path: {:?}", target_path);
-                    log::info!("Waiting 3 seconds before restarting...");
-
-                    // --- ADD THE DELAY HERE ---
-                    std::thread::sleep(std::time::Duration::from_secs(3));
 
                     let err = std::process::Command::new(target_path)
                         .args(std::env::args().skip(1))

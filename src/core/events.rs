@@ -177,7 +177,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         help::handle_keys(app, key);
                     }
 
-                    Popup::Updated => {
+                    Popup::Updated(_) => {
                         updated::handle_keys(app, key);
                     }
                     

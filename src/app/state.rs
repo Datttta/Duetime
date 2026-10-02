@@ -120,7 +120,6 @@ pub struct App {
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
-    pub old_version: Option<String>,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,
@@ -181,7 +180,7 @@ impl App {
             editable_positions: &DATE_EDITABLE_POSITIONS,
         };
 
-        let popup = if let Some(prev_version) = crate::storage::update_flag::detect_and_clean_update_flag() {
+        let popup = if let Some(prev_version) = detect_and_clean_update_flag() {
             Popup::Updated(prev_version) 
         } else {
             Popup::None
@@ -267,7 +266,6 @@ impl App {
             next_id: 1,
             active_alarm: None,
             terminal_focus: true,
-            old_version: None,
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),
