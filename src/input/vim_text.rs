@@ -17,6 +17,7 @@ pub enum InputResult {
 pub struct InputState {
     pub text: String,
     pub cursor: usize,
+    pub visual_start: Option<usize>,
 }
 
 impl Default for InputState {
@@ -24,9 +25,9 @@ impl Default for InputState {
         Self {
             text: String::new(),
             cursor: 0,
+            visual_start: None,
         }
     }
-
 }
 
 impl InputState {
@@ -41,7 +42,23 @@ impl InputState {
     fn handle_normal(&mut self, key: KeyEvent, mode: &mut InputMode) -> InputResult {
         match key.code {
             KeyCode::Char('v') => {
+                if !self.text.is_empty() {
+                    *mode = InputMode::Visual;
+
+                    let last = self.text.chars().count() - 1;
+
+                    self.cursor = self.cursor.min(last);
+                    self.visual_start = Some(self.cursor);
+                }
+
+                InputResult::Consumed
+            }
+
+            KeyCode::Char('V') => {
                 *mode = InputMode::Visual;
+                self.visual_start = Some(0);
+                let count = self.text.chars().count();
+                self.cursor = if count > 0 { count - 1 } else { 0 };
                 InputResult::Consumed
             }
 
@@ -65,9 +82,29 @@ impl InputState {
             }
             
             KeyCode::Char('A') => {
-                self.cursor = self.text.len();
+                self.cursor = self.text.chars().count();
                 *mode = InputMode::Insert;
                 InputResult::Consumed
+            }
+
+            KeyCode::Char('x') => {
+                let mut chars: Vec<char> = self.text.chars().collect();
+                if self.cursor < chars.len() {
+                    let removed = chars.remove(self.cursor);
+
+                    if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                        let _ = clipboard.set_text(removed.to_string());
+                    }
+
+                    self.text = chars.clone().into_iter().collect();
+
+                    if self.cursor >= chars.len() && self.cursor > 0 {
+                        self.cursor -= 1;
+                    }
+                    InputResult::TextChanged
+                } else {
+                    InputResult::Consumed
+                }
             }
 
             KeyCode::Char('h') => {
@@ -78,7 +115,8 @@ impl InputState {
             }
 
             KeyCode::Char('l') => {
-                if self.cursor < self.text.len(){
+                let max_cursor = self.text.chars().count();
+                if self.cursor < max_cursor {
                     self.cursor += 1;
                 }
                 InputResult::Consumed
@@ -90,7 +128,8 @@ impl InputState {
             }
 
             KeyCode::Char('$') => {
-                self.cursor = self.text.chars().count();
+                let count = self.text.chars().count();
+                self.cursor = if count > 0 { count - 1 } else { 0 };
                 InputResult::Consumed
             }
             
@@ -138,8 +177,8 @@ impl InputState {
             }
             
             KeyCode::Delete => {
-                if self.cursor < self.text.len() {
-
+                let char_count = self.text.chars().count();
+                if self.cursor < char_count {
                     let byte_index = self
                         .text
                         .char_indices()
@@ -168,6 +207,7 @@ impl InputState {
         match key.code {
             KeyCode::Esc => {
                 *mode = InputMode::Normal;
+                self.visual_start = None;
                 InputResult::Consumed
             }
 
@@ -179,9 +219,44 @@ impl InputState {
             }
 
             KeyCode::Char('l') => {
-                if self.cursor < self.text.chars().count() {
+                let max_cursor = self.text.chars().count();
+                if self.cursor < max_cursor {
                     self.cursor += 1;
                 }
+                InputResult::Consumed
+            }
+
+            KeyCode::Char('x') => {
+                if let Some(start) = self.visual_start {
+                    let mut chars: Vec<char> = self.text.chars().collect();
+                    let min_idx = std::cmp::min(start, self.cursor);
+                    let max_idx = std::cmp::max(start, self.cursor);
+
+                    if max_idx < chars.len() {
+                        let selected: String = chars[min_idx..=max_idx].iter().collect();
+
+                        if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                            let _ = clipboard.set_text(selected);
+                        }
+
+                        chars.drain(min_idx..=max_idx);
+                        self.text = chars.into_iter().collect();
+                        self.cursor = min_idx;
+                        if self.cursor >= self.text.chars().count() && self.cursor > 0 {
+                            self.cursor -= 1;
+                        }
+                    }
+                }
+                *mode = InputMode::Normal;
+                self.visual_start = None;
+                InputResult::TextChanged
+            }
+
+            KeyCode::Char('V') => {
+                *mode = InputMode::Visual;
+                self.visual_start = Some(0);
+                let count = self.text.chars().count();
+                self.cursor = if count > 0 { count - 1 } else { 0 };
                 InputResult::Consumed
             }
 
@@ -192,7 +267,6 @@ impl InputState {
     pub fn clear(&mut self) {
         self.text.clear();
         self.cursor = 0;
+        self.visual_start = None;
     }
 }
-
-
