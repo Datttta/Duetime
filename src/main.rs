@@ -39,9 +39,7 @@ mod inbox;
 mod agenda;
 mod timers;
 
-mod stopwatch;
 mod suggestions;
-mod countdown;
 mod search;
 
 fn main() -> io::Result<()> {

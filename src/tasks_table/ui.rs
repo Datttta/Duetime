@@ -1,6 +1,6 @@
 use crate::{
     app::{App, Popup, Panel},
-    stopwatch::{Stopwatch, StopwatchData},
+    tasks_table::stopwatch::{Stopwatch, StopwatchData},
     ui::{
         theme::{task_selection_color, unfocused_panel},
         widgets::{

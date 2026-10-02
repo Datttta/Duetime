@@ -14,10 +14,10 @@ use crate::{
     },
     timers::{
         ui::TimerInfo,
+        countdown::Countdown,
     },
     app::{App, Popup, TimersPopup, TimerSelectedInput},
     input::vim_text::{InputResult, InputMode},
-    countdown::Countdown,
 };
 
 use std::time::Duration;

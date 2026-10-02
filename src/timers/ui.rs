@@ -7,7 +7,7 @@ use crate::{
         theme::{unfocused_panel},
     },
     app::{App, Panel},
-    countdown::Countdown,
+    timers::countdown::Countdown,
 };
 
 use ratatui::{
