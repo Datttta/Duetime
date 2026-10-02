@@ -15,7 +15,11 @@ use std::{
 use crate::{
     app::{App, Popup, TimersPopup, Panel},
     storage::{current_tasks, current_timers},
-    sound::alarm_sound,
+    core::{
+        events,
+        sounds::alarm_sound,
+        update,
+    },
 };
 
 use crossterm::{
