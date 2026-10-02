@@ -1,8 +1,6 @@
 use log::info;
 use self_update::cargo_crate_version;
-
 use std::os::unix::process::CommandExt;
-
 use crate::storage::update_flag;
 
 pub fn check_for_updates() -> bool {
@@ -24,11 +22,21 @@ pub fn check_for_updates() -> bool {
                 // Create the flag so the new process knows it was updated
                 update_flag::create_update_flag(cargo_crate_version!());
 
-                // Exec the newly updated binary to restart seamlessly in-place
+                info!("Attempting manual process replacement via exec()...");
+
+                // Use the exact same reliable exec approach from your test flag
                 if let Ok(current_exe) = std::env::current_exe() {
-                    let err = std::process::Command::new(current_exe).exec();
-                    // exec() only returns if it encounters an error (e.g., permission denied)
-                    log::error!("Failed to auto-restart after update: {}", err);
+                    log::info!("Executing process replacement on path: {:?}", current_exe);
+                    let err = std::process::Command::new(current_exe)
+                        .args(std::env::args().skip(1))
+                        .exec();
+                    
+                    // If exec() returns control here, it means an error occurred
+                    log::error!("Failed to auto-restart via exec: {}", err);
+                    eprintln!(
+                        "\n[Duetime] Updated successfully to v{}! Please restart the app manually.",
+                        status.version()
+                    );
                 } else {
                     log::error!("Failed to get current executable path for restart");
                 }
@@ -36,13 +44,12 @@ pub fn check_for_updates() -> bool {
                 true
             } else {
                 info!("Duetime is already up to date");
-                info!("Current Duetime version: {}", cargo_crate_version!());
                 false
             }
         }
 
         Err(error) => {
-            log::error!("Update failed: {:?}", error);
+            log::warn!("Could not check for updates (offline or network error): {:?}", error);
             false
         }
     }
