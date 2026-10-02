@@ -10,6 +10,7 @@ use crate::{
     ui::widgets::{
         date_time_input::draw_date_time_input,
         input,
+        keys_help,
     },
     timers::{
         ui::TimerInfo,
@@ -17,7 +18,6 @@ use crate::{
     app::{App, Popup, TimersPopup, TimerSelectedInput},
     vim_text::{InputResult, InputMode},
     countdown::Countdown,
-    keys_help,
 };
 
 use std::time::Duration;

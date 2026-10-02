@@ -9,11 +9,10 @@ use ratatui::{
 };
 
 use crate::{
-    ui::widgets::input,
+    ui::widgets::{input, keys_help},
     vim_text::{InputResult, InputMode},
     app::{App, Popup, InboxPopup, InboxSelectedInput, Priority},
     inbox::ui::InboxItemInfo,
-    keys_help,
 };
 
 //pub const INBOX_ITEM_INPUT_WIDTH: u16 = 34;

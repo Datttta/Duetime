@@ -7,9 +7,10 @@ use ratatui::{
 };
 
 use crate::{
-    ui::{
-        widgets::input,
-        widgets::date_time_input::draw_date_time_input,
+    ui::widgets::{
+        date_time_input::draw_date_time_input,
+        input,
+        keys_help,
     },
     vim_text::{InputResult, InputMode},
     app::{App, Popup, AgendaPopup, AgendaSelectedInput},
@@ -18,7 +19,6 @@ use crate::{
         ui,
     },
     storage,
-    keys_help,
 };
 
 use chrono::{NaiveDate, NaiveTime, Duration, Local};

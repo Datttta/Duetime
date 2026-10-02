@@ -7,9 +7,11 @@ use ratatui::{
 
 use crossterm::event::{KeyCode, KeyEvent};
 
-use crate::navigation::vim_navigation;
-use crate::keys_help;
-use crate::app::{App, Popup};
+use crate::{
+    navigation::vim_navigation,
+    ui::widgets::keys_help,
+    app::{App, Popup},
+};
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
     let area = centered_rect(frame, app);

@@ -2,9 +2,8 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 use crate::{
     app::{App, TaskSelectedInput},
-    ui::widgets::input,
+    ui::widgets::{input, keys_help},
     vim_text::{InputResult, InputMode},
-    keys_help,
     suggestions,
 };
 

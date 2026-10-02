@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 
 use crate::{
     app::{App, Popup, TaskDestination, NewPresetFocus, TasksTablePopup},
-    ui::widgets::{input},
+    ui::widgets::{input, keys_help},
     vim_text::InputMode,
     navigation::{
         vim_navigation::NavigationMode,
@@ -10,7 +10,6 @@ use crate::{
         move_items,
         vim_navigation,
     },
-    keys_help,
 };
 
 use ratatui::{

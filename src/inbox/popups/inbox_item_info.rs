@@ -9,7 +9,7 @@ use ratatui::{
 
 use crate::{
     app::{App, Popup},
-    keys_help,
+    ui::widgets::keys_help,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {

@@ -7,11 +7,10 @@ use ratatui::{
 };
 
 use crate::{
-    ui::widgets::input,
+    ui::widgets::{input, keys_help},
     vim_text::{InputMode, InputResult},
     app::{App, Popup, TasksTablePopup},
     models::KnownTask,
-    keys_help,
 };
 
 const KNOWN_TASK_NAME_WIDTH: u16 = 43;

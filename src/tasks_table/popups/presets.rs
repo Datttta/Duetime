@@ -6,8 +6,8 @@ use ratatui::{
 };
 
 use crate::{
+    ui::widgets::keys_help,
     app::{App, Popup},
-    keys_help,
     navigation,
 };
 

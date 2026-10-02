@@ -11,7 +11,8 @@ use ratatui::{
 
 use crate::{
     app::{App, Popup, TimersPopup}, 
-    keys_help, storage,
+    ui::widgets::keys_help,
+    storage,
 };
 pub fn draw(
     frame: &mut Frame,

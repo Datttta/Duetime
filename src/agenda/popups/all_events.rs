@@ -16,7 +16,8 @@ use crate::{
     },
     app::{App, Popup},
     agenda::actions,
-    keys_help, Panel, search,
+    ui::widgets::keys_help,
+    Panel, search,
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
