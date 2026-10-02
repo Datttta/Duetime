@@ -26,17 +26,18 @@ pub fn check_for_updates() -> bool {
 
                 // Use the exact same reliable exec approach from your test flag
                 if let Ok(current_exe) = std::env::current_exe() {
-                    log::info!("Executing process replacement on path: {:?}", current_exe);
-                    let err = std::process::Command::new(current_exe)
+                    let exe_path_str = current_exe.to_string_lossy();
+                    // Strip " (deleted)" if present in the path string
+                    let clean_path = exe_path_str.strip_suffix(" (deleted)").unwrap_or(&exe_path_str);
+                    
+                    let target_path = std::path::Path::new(clean_path);
+                    log::info!("Executing process replacement on path: {:?}", target_path);
+
+                    let err = std::process::Command::new(target_path)
                         .args(std::env::args().skip(1))
                         .exec();
-                    
-                    // If exec() returns control here, it means an error occurred
+
                     log::error!("Failed to auto-restart via exec: {}", err);
-                    eprintln!(
-                        "\n[Duetime] Updated successfully to v{}! Please restart the app manually.",
-                        status.version()
-                    );
                 } else {
                     log::error!("Failed to get current executable path for restart");
                 }
@@ -54,3 +55,4 @@ pub fn check_for_updates() -> bool {
         }
     }
 }
+
