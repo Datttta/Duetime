@@ -18,6 +18,7 @@ pub struct InputState {
     pub text: String,
     pub cursor: usize,
     pub visual_start: Option<usize>,
+    pub pending_command: Option<char>,
 }
 
 impl Default for InputState {
@@ -26,6 +27,7 @@ impl Default for InputState {
             text: String::new(),
             cursor: 0,
             visual_start: None,
+            pending_command: None,
         }
     }
 }
@@ -41,6 +43,23 @@ impl InputState {
 
     fn handle_normal(&mut self, key: KeyEvent, mode: &mut InputMode) -> InputResult {
         match key.code {
+            KeyCode::Char('h') => {
+                if self.cursor > 0 {
+                    self.cursor -= 1;
+                }
+                InputResult::Consumed
+            }
+
+            KeyCode::Char('l') => {
+                let max_cursor = self.text.chars().count().saturating_sub(1);
+
+                if self.cursor < max_cursor {
+                    self.cursor += 1;
+                }
+
+                InputResult::Consumed
+            }
+
             KeyCode::Char('v') => {
                 if !self.text.is_empty() {
                     *mode = InputMode::Visual;
@@ -87,6 +106,17 @@ impl InputState {
                 InputResult::Consumed
             }
 
+            KeyCode::Char('0') => {
+                self.cursor = 0;
+                InputResult::Consumed
+            }
+
+            KeyCode::Char('$') => {
+                let count = self.text.chars().count();
+                self.cursor = if count > 0 { count - 1 } else { 0 };
+                InputResult::Consumed
+            }
+
             KeyCode::Char('x') => {
                 let mut chars: Vec<char> = self.text.chars().collect();
                 if self.cursor < chars.len() {
@@ -107,34 +137,19 @@ impl InputState {
                 }
             }
 
-            KeyCode::Char('h') => {
-                if self.cursor > 0 {
-                    self.cursor -= 1;
+            KeyCode::Char('d') => {
+                if self.pending_command == Some('d') {
+                    self.text.clear();
+                    self.pending_command = None;
+                    self.cursor = 0;
+                    InputResult::TextChanged
+                } else {
+                    self.pending_command = Some('d');
+                    InputResult::Consumed
                 }
-                InputResult::Consumed
             }
 
-            KeyCode::Char('l') => {
-                let max_cursor = self.text.chars().count().saturating_sub(1);
 
-                if self.cursor < max_cursor {
-                    self.cursor += 1;
-                }
-
-                InputResult::Consumed
-            }
-
-            KeyCode::Char('0') => {
-                self.cursor = 0;
-                InputResult::Consumed
-            }
-
-            KeyCode::Char('$') => {
-                let count = self.text.chars().count();
-                self.cursor = if count > 0 { count - 1 } else { 0 };
-                InputResult::Consumed
-            }
-            
             _ => InputResult::Ignored,
         }
     }
@@ -235,8 +250,6 @@ impl InputState {
                     let max_idx = std::cmp::max(start, self.cursor);
 
                     if max_idx < chars.len() {
-                        let selected: String = chars[min_idx..=max_idx].iter().collect();
-
                         chars.drain(min_idx..=max_idx);
                         self.text = chars.into_iter().collect();
                         self.cursor = min_idx;
