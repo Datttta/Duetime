@@ -181,7 +181,7 @@ impl App {
             editable_positions: &DATE_EDITABLE_POSITIONS,
         };
 
-        let popup = if crate::storage::update_flag::detect_and_clean_update_flag().is_some() {
+        let popup = if detect_and_clean_update_flag().is_some() {
             // If the flag existed, it was deleted from /tmp, and we trigger the popup!
             Popup::Updated 
         } else {
