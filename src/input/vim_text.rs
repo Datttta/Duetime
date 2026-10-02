@@ -136,6 +136,20 @@ impl InputState {
                     InputResult::Consumed
                 }
             }
+            
+            KeyCode::Char('c') => {
+                if self.pending_command == Some('c') {
+                    self.text.clear();
+                    self.pending_command = None;
+                    self.cursor = 0;
+                
+                    *mode = InputMode::Insert;
+                    InputResult::TextChanged
+                } else {
+                    self.pending_command = Some('c');
+                    InputResult::Consumed
+                }
+            }
 
             KeyCode::Char('d') => {
                 if self.pending_command == Some('d') {
@@ -243,28 +257,7 @@ impl InputState {
                 InputResult::Consumed
             }
             
-            KeyCode::Char('d') => {
-                if let Some(start) = self.visual_start {
-                    let mut chars: Vec<char> = self.text.chars().collect();
-                    let min_idx = std::cmp::min(start, self.cursor);
-                    let max_idx = std::cmp::max(start, self.cursor);
-
-                    if max_idx < chars.len() {
-                        chars.drain(min_idx..=max_idx);
-                        self.text = chars.into_iter().collect();
-                        self.cursor = min_idx;
-                        if self.cursor >= self.text.chars().count() && self.cursor > 0 {
-                            self.cursor -= 1;
-                        }
-                    }
-                }
-
-                *mode = InputMode::Normal;
-                self.visual_start = None;
-                InputResult::TextChanged
-            }
-
-            KeyCode::Char('x') => {
+            KeyCode::Char(c) if c == 'x' || c == 'd' || c == 'c' => {
                 if let Some(start) = self.visual_start {
                     let mut chars: Vec<char> = self.text.chars().collect();
                     let min_idx = std::cmp::min(start, self.cursor);
@@ -273,7 +266,7 @@ impl InputState {
                     if max_idx < chars.len() {
                         let selected: String = chars[min_idx..=max_idx].iter().collect();
 
-                        if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                        if let Ok(mut clipboard) = arboard::Clipboard::new() && c == 'x' {
                             let _ = clipboard.set_text(selected);
                         }
 
@@ -285,7 +278,13 @@ impl InputState {
                         }
                     }
                 }
-                *mode = InputMode::Normal;
+                
+                if c == 'c' {
+                    *mode = InputMode::Insert;
+                } else {
+                    *mode = InputMode::Normal;
+                }
+
                 self.visual_start = None;
                 InputResult::TextChanged
             }
