@@ -227,6 +227,29 @@ impl InputState {
                 }
                 InputResult::Consumed
             }
+            
+            KeyCode::Char('d') => {
+                if let Some(start) = self.visual_start {
+                    let mut chars: Vec<char> = self.text.chars().collect();
+                    let min_idx = std::cmp::min(start, self.cursor);
+                    let max_idx = std::cmp::max(start, self.cursor);
+
+                    if max_idx < chars.len() {
+                        let selected: String = chars[min_idx..=max_idx].iter().collect();
+
+                        chars.drain(min_idx..=max_idx);
+                        self.text = chars.into_iter().collect();
+                        self.cursor = min_idx;
+                        if self.cursor >= self.text.chars().count() && self.cursor > 0 {
+                            self.cursor -= 1;
+                        }
+                    }
+                }
+
+                *mode = InputMode::Normal;
+                self.visual_start = None;
+                InputResult::TextChanged
+            }
 
             KeyCode::Char('x') => {
                 if let Some(start) = self.visual_start {
