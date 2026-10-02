@@ -19,10 +19,16 @@ pub fn check_for_updates() -> bool {
             if status.is_updated() {
                 info!("Duetime was updated to {}", status.version());
 
-                // Store current version string into flag file via storage module
+                // Create flag so the NEW process can detect it on startup
                 update_flag::create_update_flag(cargo_crate_version!());
 
-                let _ = restart::restart();
+                let err = restart::restart();
+                log::error!("Failed to auto-restart Duetime: {:?}", err);
+                eprintln!(
+                    "\n[Duetime] Updated successfully to v{}! Auto-restart failed, please launch the app manually.",
+                    status.version()
+                );
+
                 true
             } else {
                 info!("Duetime is already up to date");

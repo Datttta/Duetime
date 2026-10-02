@@ -32,7 +32,6 @@ mod tasks_table;
 mod stopwatch;
 mod storage;
 mod models;
-mod keys_help;
 mod suggestions;
 mod inbox;
 mod agenda;
