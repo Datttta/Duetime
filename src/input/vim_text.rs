@@ -115,10 +115,12 @@ impl InputState {
             }
 
             KeyCode::Char('l') => {
-                let max_cursor = self.text.chars().count();
+                let max_cursor = self.text.chars().count().saturating_sub(1);
+
                 if self.cursor < max_cursor {
                     self.cursor += 1;
                 }
+
                 InputResult::Consumed
             }
 
