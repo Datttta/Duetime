@@ -1,5 +1,7 @@
 use log::info;
-use self_update::{cargo_crate_version, restart};
+use self_update::cargo_crate_version;
+
+use std::os::unix::process::CommandExt;
 
 use crate::storage::update_flag;
 
@@ -19,15 +21,17 @@ pub fn check_for_updates() -> bool {
             if status.is_updated() {
                 info!("Duetime was updated to {}", status.version());
 
-                // Create flag so the NEW process can detect it on startup
+                // Create the flag so the new process knows it was updated
                 update_flag::create_update_flag(cargo_crate_version!());
 
-                let err = restart::restart();
-                log::error!("Failed to auto-restart Duetime: {:?}", err);
-                eprintln!(
-                    "\n[Duetime] Updated successfully to v{}! Auto-restart failed, please launch the app manually.",
-                    status.version()
-                );
+                // Exec the newly updated binary to restart seamlessly in-place
+                if let Ok(current_exe) = std::env::current_exe() {
+                    let err = std::process::Command::new(current_exe).exec();
+                    // exec() only returns if it encounters an error (e.g., permission denied)
+                    log::error!("Failed to auto-restart after update: {}", err);
+                } else {
+                    log::error!("Failed to get current executable path for restart");
+                }
 
                 true
             } else {
