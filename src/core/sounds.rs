@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::BufReader;
-use std::os::unix::io::AsRawFd;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
@@ -9,14 +8,18 @@ use log::info;
 
 pub fn alarm_sound(is_playing: Arc<AtomicBool>) {
     thread::spawn(move || {
-        // 1. Silences low-level ALSA/JACK C-library errors from spamming the screen
-        if let Ok(null_file) = File::create("/dev/null") {
-            unsafe {
-                libc::dup2(null_file.as_raw_fd(), 2);
+        // 1. Silences low-level ALSA/JACK C-library errors (Linux/Unix only)
+        #[cfg(unix)]
+        {
+            use std::os::unix::io::AsRawFd;
+            if let Ok(null_file) = File::create("/dev/null") {
+                unsafe {
+                    libc::dup2(null_file.as_raw_fd(), 2);
+                }
             }
         }
 
-        // 2. Try to open the default sink after silencing stderr
+        // 2. Try to open the default sink
         let Ok(mut stream_handle) = rodio::DeviceSinkBuilder::open_default_sink() else {
             info!("Failed to open default audio sink backend");
             return;
@@ -50,4 +53,3 @@ pub fn alarm_sound(is_playing: Arc<AtomicBool>) {
         }
     });
 }
-
