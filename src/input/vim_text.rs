@@ -1,4 +1,4 @@
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InputMode {
@@ -34,6 +34,13 @@ impl Default for InputState {
 
 impl InputState {
     pub fn handle_vim_mode(&mut self, key: KeyEvent, mode: &mut InputMode, max_len: usize) -> InputResult {
+        if key.modifiers.contains(KeyModifiers::CONTROL)
+            && key.code == KeyCode::Char('v')
+            && *mode != InputMode::Insert
+        {
+            return InputResult::Consumed;
+        }
+
         match *mode {
             InputMode::Normal => self.handle_normal(key, mode),
             InputMode::Insert => self.handle_insert(key, mode, max_len),
@@ -156,6 +163,7 @@ impl InputState {
                     self.text.clear();
                     self.pending_command = None;
                     self.cursor = 0;
+
                     InputResult::TextChanged
                 } else {
                     self.pending_command = Some('d');
@@ -226,7 +234,12 @@ impl InputState {
             }
 
             KeyCode::Esc => {
+                if self.cursor > 0 {
+                    self.cursor -= 1;
+                }
+
                 *mode = InputMode::Normal;
+                self.pending_command = None;
                 InputResult::Consumed
             }
 
@@ -237,8 +250,13 @@ impl InputState {
     fn handle_visual(&mut self, key: KeyEvent, mode: &mut InputMode) -> InputResult {
         match key.code {
             KeyCode::Esc => {
+                if self.cursor > 0 {
+                    self.cursor -= 1;
+                }
+
                 *mode = InputMode::Normal;
                 self.visual_start = None;
+                self.pending_command = None;
                 InputResult::Consumed
             }
 
@@ -299,6 +317,45 @@ impl InputState {
 
             _ => InputResult::Ignored,
         }
+    }
+
+    pub fn insert_str(&mut self, s: &str, max_len: usize) -> InputResult {
+        // Calculate the maximum number of characters allowed to be added
+        let current_len = self.text.len();
+        if current_len >= max_len {
+            return InputResult::Consumed;
+        }
+
+        // Limit the pasted text if it exceeds max_len
+        let available_space = max_len - current_len;
+        let text_to_insert = if s.len() > available_space {
+            // Find a safe UTF-8 boundary to truncate if needed
+            let mut end_idx = available_space;
+            while !s.is_char_boundary(end_idx) && end_idx > 0 {
+                end_idx -= 1;
+            }
+            &s[..end_idx]
+        } else {
+            s
+        };
+
+        if text_to_insert.is_empty() {
+            return InputResult::Consumed;
+        }
+
+        // Find the byte index matching the current character cursor position
+        let byte_index = self
+            .text
+            .char_indices()
+            .nth(self.cursor)
+            .map(|(i, _)| i)
+            .unwrap_or(self.text.len());
+
+        // Insert the string and advance the cursor by the number of characters inserted
+        self.text.insert_str(byte_index, text_to_insert);
+        self.cursor += text_to_insert.chars().count();
+
+        InputResult::TextChanged
     }
 
     pub fn clear(&mut self) {

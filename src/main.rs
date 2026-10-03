@@ -23,7 +23,7 @@ use crate::{
 };
 
 use crossterm::{
-    event::EnableFocusChange,
+    event::{EnableFocusChange, EnableBracketedPaste},
     execute,
 };
 
@@ -59,7 +59,7 @@ fn main() -> io::Result<()> {
     let mut first_render = true;
     let mut last_save = Instant::now();
 
-    execute!(io::stdout(), EnableFocusChange)?;
+    execute!(io::stdout(), EnableFocusChange, EnableBracketedPaste)?;
 
     while app.running {
         agenda::ui::remove_expired_events(&mut app.events);

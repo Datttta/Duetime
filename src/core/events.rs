@@ -66,6 +66,13 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                 app.focused_panel = app.previous_panel;
             }
 
+            Event::Paste(text) => {
+                let max_len = 255; // Adjust your maximum string length constraint here
+                if let Some(input_state) = app.get_active_input_mut() {
+                    input_state.insert_str(&text, max_len);
+                }
+            }
+
             Event::Key(key) => {
                 // Panel switching only when no popup is open
                 if matches!(app.popup, Popup::None) {

@@ -1,11 +1,16 @@
 use std::time::Duration;
 
 use crate::{
-    input::vim_text::InputMode,
-    app::{NewPresetFocus, Popup, TasksTablePopup, TaskDestination, TaskSelectedInput, Priority},
-    tasks_table::ui::TaskInfo,
-    models::{TaskTemplate, Preset},
+    app::{
+        NewPresetFocus, Popup, TasksTablePopup, 
+        TaskDestination, TaskSelectedInput, Priority,
+        InboxPopup, AgendaPopup, TimersPopup,
+        AgendaSelectedInput, TimerSelectedInput
+    },
+    input::vim_text::{InputMode, InputState},
     storage::{current_tasks, preset},
+    models::{TaskTemplate, Preset},
+    tasks_table::ui::TaskInfo,
     App,
 };
 
@@ -329,6 +334,48 @@ impl App {
                     format!("Copy failed: {}", error)
                 );
             }
+        }
+    }
+
+    pub fn get_active_input_mut(&mut self) -> Option<&mut InputState> {
+        match &self.popup {
+            // TasksTable Popups
+            Popup::TasksTable(TasksTablePopup::AddTask | TasksTablePopup::EditTask) => {
+                match self.tasks_selected_input {
+                    TaskSelectedInput::TaskName => Some(&mut self.task_name),
+                    TaskSelectedInput::PlannedStart => Some(&mut self.planned_start),
+                    TaskSelectedInput::PlannedEnd => Some(&mut self.planned_end),
+                }
+            }
+            Popup::TasksTable(TasksTablePopup::NewPreset) => {
+                Some(&mut self.preset_name)
+            }
+            Popup::TasksTable(TasksTablePopup::AddKnownTask | TasksTablePopup::EditKnownTask(_)) => {
+                Some(&mut self.known_task_name)
+            }
+
+            // Inbox Popups
+            Popup::Inbox(InboxPopup::AddInboxItem | InboxPopup::EditInboxItem) => {
+                Some(&mut self.inbox_item)
+            }
+
+            // Agenda Popups
+            Popup::Agenda(AgendaPopup::AddEvent | AgendaPopup::EditEvent) => {
+                match self.agenda_selected_input {
+                    AgendaSelectedInput::Name => Some(&mut self.event_name),
+                    _ => None, // Date and Time use DateTimeInput, Repeat is a bool
+                }
+            }
+
+            // Timers Popups
+            Popup::Timers(TimersPopup::AddTimer | TimersPopup::EditTimer) => {
+                match self.timer_selected_input {
+                    TimerSelectedInput::Name => Some(&mut self.timer_name),
+                    _ => None, // Duration uses DateTimeInput
+                }
+            }
+
+            _ => None,
         }
     }
 }
