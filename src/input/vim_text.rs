@@ -275,7 +275,7 @@ impl InputState {
                 InputResult::Consumed
             }
             
-            KeyCode::Char(c) if c == 'x' || c == 'd' || c == 'c' => {
+            KeyCode::Char(c) if c == 'x' || c == 'd' || c == 'c' || c == 'y' => {
                 if let Some(start) = self.visual_start {
                     let mut chars: Vec<char> = self.text.chars().collect();
                     let min_idx = std::cmp::min(start, self.cursor);
@@ -284,12 +284,14 @@ impl InputState {
                     if max_idx < chars.len() {
                         let selected: String = chars[min_idx..=max_idx].iter().collect();
 
-                        if let Ok(mut clipboard) = arboard::Clipboard::new() && c == 'x' {
+                        if let Ok(mut clipboard) = arboard::Clipboard::new() {
                             let _ = clipboard.set_text(selected);
                         }
-
-                        chars.drain(min_idx..=max_idx);
-                        self.text = chars.into_iter().collect();
+                        
+                        if c != 'y' {
+                            chars.drain(min_idx..=max_idx);
+                            self.text = chars.into_iter().collect();
+                        }
                         self.cursor = min_idx;
                         if self.cursor >= self.text.chars().count() && self.cursor > 0 {
                             self.cursor -= 1;
