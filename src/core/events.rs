@@ -51,7 +51,7 @@ const BOTTOM_LEFT_PANEL: Panel = Panel::Agenda;
 const BOTTOM_RIGHT_PANEL: Panel = Panel::Timers;
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
-    if event::poll(std::time::Duration::from_millis(16))? {
+    if event::poll(std::time::Duration::from_millis(100))? {
         let event = event::read()?;
 
         match event {

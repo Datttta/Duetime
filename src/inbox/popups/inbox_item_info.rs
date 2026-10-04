@@ -21,8 +21,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .title("Item info")
         .padding(Padding::new(1,1,0,0));
 
-    frame.render_widget(&block, area);
-
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
             Constraint::Length(23),
