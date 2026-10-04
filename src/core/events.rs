@@ -41,7 +41,7 @@ use crate::{
     tasks_table, inbox, agenda, timers
 };
 
-use crossterm::event::{self, Event, KeyCode};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use std::io;
 //use log::info;
 
@@ -74,6 +74,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
             }
 
             Event::Key(key) => {
+                if key.kind != KeyEventKind::Press {
+                    return Ok(());
+                }
+
                 // Panel switching only when no popup is open
                 if matches!(app.popup, Popup::None) {
                     if key.code == KeyCode::Char('?') {
