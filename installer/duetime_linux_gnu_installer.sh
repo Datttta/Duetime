@@ -21,15 +21,15 @@ while true; do
         mkdir -p $desktop_file_dir $icon_dir $bin_dir
 
         cat > $desktop_file_dir/Duetime.desktop <<EOF
-        [Desktop Entry]
-        Type=Application
-        Version=1.0
-        Name=Duetime
-        Comment=A terminal task and time management application
-        Exec=Duetime
-        Icon=Duetime
-        Terminal=true
-        Categories=Utility;ConsoleOnly;
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Duetime
+Comment=A terminal task and time management application
+Exec=Duetime
+Icon=Duetime
+Terminal=true
+Categories=Utility;ConsoleOnly;
 EOF
 
         curl -fL \
