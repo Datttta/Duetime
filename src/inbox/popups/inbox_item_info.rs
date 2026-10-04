@@ -29,17 +29,26 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .flex(Flex::Center)
         .split(frame.area());
 
-        let horizontal = Layout::horizontal([
+        let horizontal_box = Layout::horizontal([
             Constraint::Length(55),
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
 
-        let keys_help = Paragraph::new(keys_help::keys(app)) 
+        let horizontal_help = Layout::horizontal([
+            Constraint::Length(22)
+        ])
+        .flex(Flex::Center)
+        .split(vertical[1]);
+    
+        frame.render_widget(Clear, horizontal_help[0]);
+
+        let keys_help = Paragraph::new(keys_help::keys(app))
             .alignment(Alignment::Center);
-        frame.render_widget(keys_help, vertical[1]);
+            
+        frame.render_widget(keys_help, horizontal_help[0]);
         
-        horizontal[0]
+        horizontal_box[0]
     }
 
 
