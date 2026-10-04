@@ -106,4 +106,4 @@ try:
 except Exception as e:
     print(f"Warning: Could not register in Add/Remove Programs: {e}")
 
-print("Duetime installed")
+print("Duetime installed!")
