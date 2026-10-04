@@ -6,7 +6,6 @@ import zipfile
 import urllib.request
 from pathlib import Path
 
-# Tell the linter to ignore the missing Windows module
 try:
     import winreg  # type: ignore
 except ImportError:
