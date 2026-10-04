@@ -1,5 +1,5 @@
 desktop_file_dir="$HOME/.local/share/applications/"
-icon_dir="$HOME/.local/share/icons/hicolor/256x256/"
+icon_dir="$HOME/.local/share/icons/hicolor/256x256/apps"
 bin_dir="$HOME/.local/bin/"
 
 mkdir -p $desktop_file_dir $icon_dir $bin_dir
