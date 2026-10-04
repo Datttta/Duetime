@@ -252,10 +252,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             actions::event_info(app);
         }
         
-        KeyCode::Char('l') => {
-            actions::all_events(app);
-        }
-
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
                 actions::delete_event(app);

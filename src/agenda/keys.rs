@@ -156,6 +156,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('l') => {
+            app.last_popup = app.popup.clone();
             actions::all_events(app);
         }
 

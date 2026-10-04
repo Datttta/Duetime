@@ -36,15 +36,13 @@ pub fn add_event(app: &mut App) {
 }
 
 pub fn edit_event(app: &mut App) {
-    app.last_popup = app.popup.clone();
-
     let selected = if app.popup == Popup::None {
         get_selected_global_index(app)
     } else {
         app.all_events_table_state.selected()
     };
 
-    info!("Selected: {:?}", selected);
+    info!("Selected edit: {:?}", selected);
 
     if let Some(index) = selected {
         let event = &app.events[index];
@@ -80,7 +78,6 @@ pub fn all_events(app: &mut App) {
 }
 
 pub fn event_info(app: &mut App) {
-    app.last_popup = app.popup.clone();
     app.popup = Popup::Agenda(AgendaPopup::EventInfo);
 }
 

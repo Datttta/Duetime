@@ -46,11 +46,13 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     frame.render_widget(block, area);
     
-    let selected = if app.popup == Popup::None {
+    let selected = if app.last_popup == Popup::None {
         get_selected_global_index(app)
     } else {
         app.all_events_table_state.selected()
     };
+        
+    //info!("Selected info: {:?}", selected);
 
     if let Some(index) = selected {
         let event = &app.events[index];
@@ -61,7 +63,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             .unwrap_or_else(|| "no time".to_string());
 
         let countdown = format_countdown(event.date);
-        
+    
         let paragraph = Paragraph::new(vec![
             Line::from("Event name:"),
             Line::from(event.name.as_str()), 
