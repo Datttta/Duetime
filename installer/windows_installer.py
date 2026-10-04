@@ -36,8 +36,7 @@ exe_path = dest_folder / "Duetime.exe"
 icon_path = dest_folder / "Duetime.ico"
 
 print("Downloading latest Duetime release for Windows...")
-# Adjust the asset name if your GitHub release artifact has a different suffix (e.g., -windows-msvc.zip)
-zip_url = "https://github.com/Datttta/Duetime/releases/latest/download/Duetime-x86_64-pc-windows-msvc.zip"
+zip_url = "https://github.com/Datttta/Duetime/releases/latest/download/Duetime-x86_64-pc-windows-gnu.zip"
 zip_path = Path("Duetime.zip")
 
 try:
@@ -98,7 +97,6 @@ uninstall_key_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Dueti
 try:
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, uninstall_key_path) as key: # type: ignore
         winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Duetime") # type: ignore
-        winreg.SetValueEx(key, "DisplayVersion", 0, winreg.REG_SZ, "1.8.2") # type: ignore
         winreg.SetValueEx(key, "Publisher", 0, winreg.REG_SZ, "Datttta") # type: ignore
         winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, str(icon_path)) # type: ignore
         winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f'cmd /c rmdir /s /q "{dest_folder}"') # type: ignore
