@@ -206,7 +206,7 @@ pub fn save_event(app: &mut App) {
 
     ui::update_repeating_events(&mut app.events);
     storage::agenda::save_agenda(&app.events).unwrap();
-    app.popup = Popup::Agenda(AgendaPopup::AllEvents);
+    app.popup = app.last_popup.clone();
 }
 
 fn close_popup(app: &mut App) {
