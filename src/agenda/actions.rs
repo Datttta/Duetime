@@ -173,18 +173,27 @@ pub fn search_all_events(app: &mut App) {
 }
 
 pub fn delete_event(app: &mut App) {
-    if let Some(current) = get_selected_global_index(app) {
+    let selected = if app.popup == Popup::None {
+        get_selected_global_index(app)
+    } else {
+        app.all_events_table_state.selected()
+    };
+
+    info!("Selected edit: {:?}", selected);
+
+    if let Some(index) = selected {
+        info!("Current: {:?}", index);
         let (first, last) = if app.n_mode == NavigationMode::Visual {
             if let Some(start) = app.n_visual_start {
-                (start.min(current), start.max(current))
+                (start.min(index), start.max(index))
             } else {
-                (current, current)
+                (index, index)
             }
         } else {
-            (current, current)
+            (index, index)
         };
 
-        app.events.drain(first..=last);
+        app.events.drain(first.saturating_sub(1)..=last);
 
         let today = Local::now().date_naive();
         let max_date = today + Duration::days(30);
