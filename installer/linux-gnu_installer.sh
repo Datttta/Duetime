@@ -17,7 +17,7 @@ Categories=Utility;ConsoleOnly;
 EOF
 
 curl -fL \
-    "https://github.com/Datttta/Duetime/releases/latest/download/Duetime.png" \
+    "https://raw.githubusercontent.com/Datttta/Duetime/main/assets/Duetime.png" \
     -o "$icon_dir/Duetime.png"
 
 curl -fL \

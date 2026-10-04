@@ -71,7 +71,7 @@ shutil.move(str(extracted_exe), str(exe_path))
 
 # Optional: Download an icon if you publish one to your releases, otherwise fallback to exe
 try:
-    icon_url = "https://github.com/Datttta/Duetime/releases/latest/download/Duetime.ico"
+    icon_url = "https://raw.githubusercontent.com/Datttta/Duetime/main/assets/Duetime.ico"
     urllib.request.urlretrieve(icon_url, icon_path)
 except Exception:
     icon_path = exe_path  # Fallback to embedding/using the exe icon
