@@ -26,23 +26,33 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(18),
-            Constraint::Length(1), // keys_help
+            Constraint::Length(18), // Presets box height
+            Constraint::Length(1),  // Keys help box height 
         ])
         .flex(Flex::Center)
         .split(frame.area());
 
-        let horizontal = Layout::horizontal([
+        // Horizontal width for the main Presets box
+        let horizontal_presets = Layout::horizontal([
             Constraint::Length(40)
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
-        
+
+        let horizontal_help = Layout::horizontal([
+            Constraint::Length(70)
+        ])
+        .flex(Flex::Center)
+        .split(vertical[1]);
+    
+        frame.render_widget(Clear, horizontal_help[0]);
+
         let keys_help = Paragraph::new(keys_help::keys(app))
             .alignment(Alignment::Center);
-        frame.render_widget(keys_help, vertical[1]);
+            
+        frame.render_widget(keys_help, horizontal_help[0]);
         
-        horizontal[0]
+        horizontal_presets[0]
     }
 
     let presets: Vec<ListItem> = app
