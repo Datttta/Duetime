@@ -1,0 +1,35 @@
+name: Build Windows Installer
+
+on:
+  push:
+    tags:
+      - "v*" # Triggers whenever you push a tag like v1.8.3
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Windows Binary
+        run: cargo build --release
+
+      - name: Install NSIS
+        run: winget install Nullsoft.NSIS --accept-source-agreements --accept-package-agreements
+
+      - name: Compile NSIS Installer
+        run: |
+          # Calls makensis from its default installation path on Windows runners
+          & "C:\Program Files (x86)\NSIS\makensis.exe" installer/install.nsi
+
+      - name: Upload Setup to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Duetime-Setup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
