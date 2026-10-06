@@ -113,7 +113,7 @@ impl InputState {
                 InputResult::Consumed
             }
 
-            KeyCode::Char('0') => {
+            KeyCode::Char('0') | KeyCode::Char('_') => {
                 self.cursor = 0;
                 InputResult::Consumed
             }
@@ -272,6 +272,11 @@ impl InputState {
                 if self.cursor < max_cursor {
                     self.cursor += 1;
                 }
+                InputResult::Consumed
+            }
+            
+            KeyCode::Char('0') | KeyCode::Char('_') => {
+                self.cursor = 0;
                 InputResult::Consumed
             }
             
