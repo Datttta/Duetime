@@ -1,4 +1,12 @@
 use ratatui::widgets::{TableState, ListState};
+use chrono::Local;
+//use log::info;
+
+use std::{
+    sync::atomic::{AtomicBool},
+    time::{Duration, Instant},
+    sync::Arc,
+};
 
 use crate::{
     app::{
@@ -27,14 +35,6 @@ use crate::{
     ui::widgets::date_time_input::DateTimeInput,
     search::SearchState,
 };
-
-use std::{
-    sync::atomic::{AtomicBool},
-    sync::Arc,
-    time::{Duration, Instant},
-};
-
-use chrono::Local;
 
 pub struct App {
     // Core
@@ -152,7 +152,14 @@ impl App {
         inbox_tasks_table_state.select(Some(0));
 
         let mut agenda_table_state = TableState::default();
-        agenda_table_state.select(Some(1));
+        let today = Local::now().date_naive();
+        let events = agenda::load_agenda();
+        let has_today_events = events.iter().any(|event| event.date == today);
+        if has_today_events {
+            agenda_table_state.select(Some(1)); 
+        } else if !events.is_empty() {
+            agenda_table_state.select(Some(3)); 
+        }
         
         let mut all_events_table_state = TableState::default();
         all_events_table_state.select(Some(0));
