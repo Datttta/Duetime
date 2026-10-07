@@ -47,7 +47,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" v", Style::default()),
             Span::styled(old_v_str, Style::default()),
             Span::styled(" -> ", Style::default()),
-            Span::styled(" v", Style::default()),
+            Span::styled("v", Style::default()),
             Span::styled(new_v_str, Style::default()),
             Span::styled(" ", Style::default()), // Subtle spacer
         ]),
