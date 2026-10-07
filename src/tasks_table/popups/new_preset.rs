@@ -221,7 +221,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     if app.mode == InputMode::Normal {
                         match key.code {
 
-                            KeyCode::Esc => {
+                            KeyCode::Esc | KeyCode::Char('q')=> {
                                 app.popup = Popup::TasksTable(TasksTablePopup::Presets);
                             }
 

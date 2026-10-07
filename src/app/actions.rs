@@ -49,6 +49,8 @@ impl App {
 
             self.preset_tasks = preset.tasks.clone();
 
+            self.preset_task_state.select(Some(0));
+
             self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             self.mode = InputMode::Normal;
             self.new_preset_focus = NewPresetFocus::Name;
