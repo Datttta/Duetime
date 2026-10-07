@@ -220,10 +220,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 NewPresetFocus::Name => {
                     if app.mode == InputMode::Normal {
                         match key.code {
-                            KeyCode::Char('a') => {
-                                app.task_add(TaskDestination::Preset);
-                                return;
-                            }
 
                             KeyCode::Esc => {
                                 app.popup = Popup::TasksTable(TasksTablePopup::Presets);

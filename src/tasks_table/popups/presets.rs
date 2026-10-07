@@ -110,7 +110,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.apply_preset();
         }
 
-        KeyCode::Char('q') => {
+        KeyCode::Char('q') | KeyCode::Esc => {
             app.popup = Popup::None
         }
 
