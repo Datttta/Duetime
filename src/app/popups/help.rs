@@ -200,12 +200,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Help", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("  q -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Quit", Style::default().fg(gray_color())),
-        ]),
-        Line::from(vec![
-            Span::styled("  Esc -", Style::default().fg(Color::Yellow)),
-            Span::styled(" Close / cancel", Style::default().fg(gray_color())),
+            Span::styled("  q / esc -", Style::default().fg(Color::Yellow)),
+            Span::styled(" Close/cancel", Style::default().fg(gray_color())),
         ]),
     ];
 
