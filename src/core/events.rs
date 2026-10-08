@@ -35,7 +35,11 @@ use crate::{
         timer_info,
     },
 
-    input::vim_navigation::NavigationMode,
+    input::{
+        vim_navigation::NavigationMode,
+        vim_text::InputMode,
+    },
+
     app::popups::{help, updated, info},
     storage::current_tasks,
     tasks_table, inbox, agenda, timers
@@ -69,7 +73,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
             Event::Paste(text) => {
                 let max_len = 255; // Adjust your maximum string length constraint here
                 if let Some(input_state) = app.get_active_input_mut() {
-                    input_state.insert_str(&text, max_len);
+                    input_state.insert_str(&text, max_len); 
+                    if app.mode == InputMode::Visual {
+                        app.mode = InputMode::Normal;
+                    }
                 }
             }
 

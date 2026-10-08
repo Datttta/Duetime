@@ -1,4 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use log::info;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InputMode {
@@ -289,7 +290,8 @@ impl InputState {
                     if max_idx < chars.len() {
                         let selected: String = chars[min_idx..=max_idx].iter().collect();
 
-                        if let Ok(mut clipboard) = arboard::Clipboard::new() {
+
+                        if let Ok(mut clipboard) = arboard::Clipboard::new() && (c == 'x' || c == 'y') {
                             let _ = clipboard.set_text(selected);
                         }
                         
@@ -327,6 +329,18 @@ impl InputState {
     }
 
     pub fn insert_str(&mut self, s: &str, max_len: usize) -> InputResult {
+
+        if let Some(start) = self.visual_start {
+            let mut chars: Vec<char> = self.text.chars().collect();
+            let min_idx = std::cmp::min(start, self.cursor);
+            let max_idx = std::cmp::max(start, self.cursor);
+
+            if max_idx < chars.len() {
+                chars.drain(min_idx..=max_idx);
+                self.text = chars.into_iter().collect();
+            }
+        }
+
         // Calculate the maximum number of characters allowed to be added
         let current_len = self.text.len();
         if current_len >= max_len {
@@ -360,7 +374,14 @@ impl InputState {
 
         // Insert the string and advance the cursor by the number of characters inserted
         self.text.insert_str(byte_index, text_to_insert);
-        self.cursor += text_to_insert.chars().count();
+        self.cursor += text_to_insert.chars().count() - 1;
+        info!("self cursor before: {:?}", self.cursor);
+        
+        if self.cursor > self.text.chars().count() {
+            self.cursor = self.text.chars().count() - 1;
+        }
+
+        info!("self cursor after: {:?}", self.cursor);
 
         InputResult::TextChanged
     }
