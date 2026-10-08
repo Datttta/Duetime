@@ -92,14 +92,46 @@ shortcut.WorkingDirectory = str(dest_folder)
 shortcut.IconLocation = f"{icon_path},0"
 shortcut.save()
 
-# 3. Register for "Add or Remove Programs" (User level, no admin required)
+# 3. Create an internal uninstall script inside the Duetime folder
+uninstall_script_path = dest_folder / "uninstall.py"
+uninstall_code = f'''
+import os
+import shutil
+import winreg
+from pathlib import Path
+
+# 1. Remove installation folder
+dest_folder = Path(r"{dest_folder}")
+if dest_folder.exists():
+    shutil.rmtree(dest_folder, ignore_errors=True)
+
+# 2. Remove Start Menu shortcut
+appdata = os.getenv("APPDATA")
+if appdata:
+    shortcut_path = Path(appdata) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Duetime.lnk"
+    if shortcut_path.exists():
+        shortcut_path.unlink()
+
+# 3. Remove Registry entry so it disappears cleanly from Add/Remove Programs
+try:
+    winreg.DeleteKey(winreg.HKEY_CURRENT_USER, r"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Duetime")
+except Exception:
+    pass
+'''
+
+with open(uninstall_script_path, "w", encoding="utf-8") as f:
+    f.write(uninstall_code)
+
+# 4. Register for "Add or Remove Programs" pointing to the uninstall script
+uninstall_string = f'pythonw "{uninstall_script_path}"'
 uninstall_key_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Duetime"
+
 try:
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, uninstall_key_path) as key: # type: ignore
         winreg.SetValueEx(key, "DisplayName", 0, winreg.REG_SZ, "Duetime") # type: ignore
         winreg.SetValueEx(key, "Publisher", 0, winreg.REG_SZ, "Datttta") # type: ignore
         winreg.SetValueEx(key, "DisplayIcon", 0, winreg.REG_SZ, str(icon_path)) # type: ignore
-        winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, f'cmd /c rmdir /s /q "{dest_folder}"') # type: ignore
+        winreg.SetValueEx(key, "UninstallString", 0, winreg.REG_SZ, uninstall_string) # type: ignore
         winreg.SetValueEx(key, "NoModify", 0, winreg.REG_DWORD, 1) # type: ignore
         winreg.SetValueEx(key, "NoRepair", 0, winreg.REG_DWORD, 1) # type: ignore
     print("Registered successfully in Add/Remove Programs.")
