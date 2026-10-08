@@ -178,20 +178,6 @@ pub fn draw_tasks(
 
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open || app.focused_panel != Panel::TasksTable {
-        Style::default()
-    } else if app.move_state.is_moving() {
-        Style::default()
-    } else if visual_mode {
-        Style::default()
-            .fg(Color::Black)
-            .bg(Color::White)
-    } else {
-        Style::default()
-            .bg(task_selection_color())
-            .fg(Color::Black)
-    };
-
     let mut rows = Vec::new();
 
     for (index, task) in app.tasks.iter().enumerate() {
@@ -259,6 +245,24 @@ pub fn draw_tasks(
             Cell::from(""),
         ]));
     }
+
+    let highlight_style = if popup_open || !app.terminal_focus {
+        Style::default()
+            .bg(unfocused_panel())
+            .fg(Color::Black)
+    } else if app.focused_panel != Panel::TasksTable {
+        Style::default()
+    } else if app.move_state.is_moving() {
+        Style::default()
+    } else if visual_mode {
+        Style::default()
+            .fg(Color::Black)
+            .bg(Color::White)
+    } else {
+        Style::default()
+            .bg(task_selection_color())
+            .fg(Color::Black)
+    };
 
     let table = Table::new(rows, columns)
         //.highlight_symbol("> ");

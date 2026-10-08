@@ -201,7 +201,11 @@ pub fn draw_items (
 
     let popup_open = !matches!(app.popup, Popup::None);
 
-    let highlight_style = if popup_open || app.focused_panel != Panel::Inbox {
+    let highlight_style = if popup_open || !app.terminal_focus {
+        Style::default()
+            .bg(unfocused_panel())
+            .fg(Color::Black)
+    } else if app.focused_panel != Panel::Inbox {
         Style::default()
     } else if app.move_state.is_moving() {
         Style::default()
