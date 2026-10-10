@@ -96,7 +96,7 @@ pub fn refresh_app_icon() {
     {
         if let Ok(home) = std::env::var("HOME") {
             let icon_path = PathBuf::from(home)
-                .join(".local/share/icons/hicolor/256x256/Duetime.png");
+                .join(".local/share/icons/hicolor/256x256/apps/Duetime.png");
             let icon_url = "https://raw.githubusercontent.com/Datttta/Duetime/main/assets/Duetime.png";
             download_and_overwrite(icon_url, &icon_path);
         }
