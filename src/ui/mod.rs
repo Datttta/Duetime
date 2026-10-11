@@ -135,10 +135,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
-        if app.previous_area != area {
+        if app.layout_number != 1 {
             app.previous_panel = app.focused_panel;
             
-            app.previous_area = area;
+            app.layout_number = 1;
         }
         
         if app.terminal_focus == true {
@@ -149,15 +149,19 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
 
-        if app.previous_area != area {
-            if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) && app.terminal_focus == true {
+        if app.layout_number != 3 {
+            if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) 
+                && !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable)
+                && app.terminal_focus == true 
+            {
                 app.focused_panel = app.previous_panel
-            } else if app.terminal_focus == true {
+            } else if app.focused_panel != Panel::Inbox && app.terminal_focus == true {
                 app.focused_panel = Panel::TasksTable
             }
             
+            
             app.n_mode = NavigationMode::Normal;
-            app.previous_area = area;
+            app.layout_number = 3;
         }
 
         if matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable) {
@@ -175,15 +179,18 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     } else if area.width < 140 && area.height > 40 {
         // ======== HALF LENGTH PANELS ========
 
-        if app.previous_area != area {
-            if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) && app.terminal_focus == true {
+        if app.layout_number != 2 {
+            if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) 
+                && !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable)
+                && app.terminal_focus == true 
+            {
                 app.focused_panel = app.previous_panel
-            } else if app.terminal_focus == true {
+            } else if app.focused_panel != Panel::Agenda && app.terminal_focus == true {
                 app.focused_panel = Panel::TasksTable
             }
             
             app.n_mode = NavigationMode::Normal;
-            app.previous_area = area;
+            app.layout_number = 2;
         }
 
         if matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable) {
@@ -200,19 +207,29 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     } else {
         // ======== ALL PANELS ========
-
-        if app.previous_area != area {
+        
+        if app.layout_number == 1{
             app.focused_panel = app.previous_panel;
-            
-            app.previous_area = area;
         }
+        
+        if app.layout_number == 2 {
+            if !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable) {
+                app.focused_panel = app.previous_panel;
+            }
+        }
+
+        if app.layout_number == 3 {
+            if !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable) {
+                app.focused_panel = app.previous_panel;
+            }
+        }
+
+        app.layout_number = 4;
 
         if app.focused_panel == Panel::None {
             app.focused_panel = Panel::TasksTable;
         }
 
-        //app.previous_panel = app.focused_panel;
-        
         // Show all panels if in fullscreen
         let layout = draw_layout(frame);
         
