@@ -426,7 +426,7 @@ fn build_agenda_row(
     let countdown = format_countdown(event.date);
 
     let is_selected = current_row == Some(row_idx);
-    let prefix = if is_selected { "> " } else { "  " };
+    let prefix = if is_selected && (app.focused_panel == Panel::Agenda || app.previous_running_panel == Panel::Agenda) { "> " } else { "  " };
 
     let mut row = Row::new(vec![
         Cell::from(format!("{}{}", prefix, ellipsize(&event.name, (EVENT_NAME_LENGTH - 2).into()))),

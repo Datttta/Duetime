@@ -47,7 +47,7 @@ use crate::{
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use std::io;
-//use log::info;
+use log::info;
 
 const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
 const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;
@@ -99,6 +99,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     
                     match key.code {
                         KeyCode::Char('L') => {
+                            app.previous_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = TOP_RIGHT_PANEL;
                             } else if app.focused_panel == BOTTOM_LEFT_PANEL {
@@ -108,6 +109,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         }
 
                         KeyCode::Char('H') => {
+                            app.previous_panel = app.focused_panel;
                             if app.focused_panel == TOP_RIGHT_PANEL {
                                 app.focused_panel = TOP_LEFT_PANEL;
                             } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
@@ -117,6 +119,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         }
                         
                         KeyCode::Char('J') => {
+                            app.previous_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = BOTTOM_LEFT_PANEL;
                             } else if app.focused_panel == TOP_RIGHT_PANEL {
@@ -126,6 +129,7 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         }
                         
                         KeyCode::Char('K') => {
+                            app.previous_panel = app.focused_panel;
                             if app.focused_panel == BOTTOM_LEFT_PANEL {
                                 app.focused_panel = TOP_LEFT_PANEL;
                             } else if app.focused_panel == BOTTOM_RIGHT_PANEL {

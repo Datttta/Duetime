@@ -211,7 +211,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.focused_panel = Panel::TasksTable;
         }
 
-        app.previous_panel = app.focused_panel;
+        //app.previous_panel = app.focused_panel;
         
         // Show all panels if in fullscreen
         let layout = draw_layout(frame);
