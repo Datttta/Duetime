@@ -150,6 +150,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         // ======== HALF HEIGHT PANELS ========
 
         if app.layout_number != 3 {
+            app.previous_panel = app.focused_panel;
+            info!("number 3 previous_panel: {:?}", app.previous_panel);
             if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable)
                 && app.terminal_focus == true 
@@ -180,6 +182,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         // ======== HALF LENGTH PANELS ========
 
         if app.layout_number != 2 {
+            app.previous_panel = app.focused_panel;
             if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable)
                 && app.terminal_focus == true 
@@ -208,18 +211,19 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     } else {
         // ======== ALL PANELS ========
         
-        if app.layout_number == 1{
+        if app.layout_number == 1 {
             app.focused_panel = app.previous_panel;
         }
         
         if app.layout_number == 2 {
-            if !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable) {
+            info!("4 from half length previous_panel: {:?}", app.previous_panel);
+            if !matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) {
                 app.focused_panel = app.previous_panel;
             }
         }
 
         if app.layout_number == 3 {
-            if !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable) {
+            if !matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) {
                 app.focused_panel = app.previous_panel;
             }
         }

@@ -61,7 +61,6 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
         match event {
             Event::FocusLost => {
                 app.terminal_focus = false;
-                app.previous_panel = app.focused_panel;
                 app.focused_panel = Panel::None;
             }
 
