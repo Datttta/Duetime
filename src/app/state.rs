@@ -1,7 +1,4 @@
-use ratatui::{
-    widgets::{TableState, ListState},
-    layout::Rect,
-};
+use ratatui::widgets::{TableState, ListState};
 
 use chrono::Local;
 //use log::info;
@@ -57,6 +54,7 @@ pub struct App {
     pub focused_panel: Panel,
     pub previous_panel: Panel,
     pub previous_running_panel: Panel,
+    pub previous_selected_panel: Panel,
 
     // TasksTable
     pub tasks: Vec<TaskInfo>,
@@ -269,6 +267,7 @@ impl App {
             focused_panel: Panel::TasksTable,
             previous_panel: Panel::TasksTable,
             previous_running_panel: Panel::TasksTable,
+            previous_selected_panel: Panel::TasksTable,
 
             // Misc
             move_state: MoveState::default(),

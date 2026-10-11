@@ -54,7 +54,7 @@ use ratatui::{
     Frame,
 };
 
-use log::info;
+//use log::info;
 
 struct MainLayout {
     tasks: Rect,
@@ -151,12 +151,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         if app.layout_number != 3 {
             app.previous_panel = app.focused_panel;
-            info!("number 3 previous_panel: {:?}", app.previous_panel);
-            if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) 
+            if matches!(app.previous_selected_panel, Panel::Inbox | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable)
                 && app.terminal_focus == true 
             {
-                app.focused_panel = app.previous_panel
+                app.focused_panel = app.previous_selected_panel
             } else if app.focused_panel != Panel::Inbox && app.terminal_focus == true {
                 app.focused_panel = Panel::TasksTable
             }
@@ -183,11 +182,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         if app.layout_number != 2 {
             app.previous_panel = app.focused_panel;
-            if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) 
+            if matches!(app.previous_selected_panel, Panel::Agenda | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable)
                 && app.terminal_focus == true 
             {
-                app.focused_panel = app.previous_panel
+                app.focused_panel = app.previous_selected_panel
             } else if app.focused_panel != Panel::Agenda && app.terminal_focus == true {
                 app.focused_panel = Panel::TasksTable
             }
@@ -216,7 +215,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
         
         if app.layout_number == 2 {
-            info!("4 from half length previous_panel: {:?}", app.previous_panel);
             if !matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) {
                 app.focused_panel = app.previous_panel;
             }
