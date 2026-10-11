@@ -25,6 +25,7 @@ use ratatui::{
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime};
+//use log::info;
 
 #[derive(Default)]
 pub struct TaskInfo {
@@ -246,7 +247,7 @@ pub fn draw_tasks(
         ]));
     }
 
-    let highlight_style = if popup_open || !app.terminal_focus {
+    let highlight_style = if (popup_open || !app.terminal_focus) && app.focused_panel == Panel::TasksTable {
         Style::default()
             .bg(unfocused_panel())
             .fg(Color::Black)
