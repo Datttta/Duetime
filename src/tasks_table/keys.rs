@@ -105,26 +105,32 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('s') => {
+            app.previous_panel = app.focused_panel;
             actions::start_stop(app);
         }
         
         KeyCode::Char('c') => {
+            app.previous_panel = app.focused_panel;
             actions::complete_task(app);
         }
 
         KeyCode::Char('r') => {
+            app.previous_panel = app.focused_panel;
             actions::reset_task(app);
         }
         
         KeyCode::Char('R') => {
+            app.previous_panel = app.focused_panel;
             actions::hard_reset_task(app);
         }
 
         KeyCode::Char('P') => {
-           actions::open_presets_popup(app); 
+            app.previous_panel = app.focused_panel;
+            actions::open_presets_popup(app); 
         }
 
         KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+            app.previous_panel = app.focused_panel;
            actions::open_known_tasks(app); 
         }
 

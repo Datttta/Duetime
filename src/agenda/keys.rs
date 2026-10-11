@@ -131,6 +131,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.agenda_table_state.select(selected);
 
     if handled {
+        app.previous_panel = app.focused_panel;
         snap_agenda_selection(
             app,
             total_rows,
@@ -141,27 +142,32 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
+            app.previous_panel = app.focused_panel;
             app.last_popup = app.popup.clone();
             actions::add_event(app);
         }
 
         KeyCode::Char('e') => {
+            app.previous_panel = app.focused_panel;
             app.last_popup = app.popup.clone();
             actions::edit_event(app);
         }
 
         KeyCode::Char('i') => {
+            app.previous_panel = app.focused_panel;
             app.last_popup = app.popup.clone();
             actions::event_info(app);
         }
 
         KeyCode::Char('l') => {
+            app.previous_panel = app.focused_panel;
             app.last_popup = app.popup.clone();
             actions::all_events(app);
         }
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
+                app.previous_panel = app.focused_panel;
                 actions::delete_event(app);
                 app.pending_command = None;
             } else {

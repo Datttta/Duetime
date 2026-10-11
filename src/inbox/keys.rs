@@ -103,6 +103,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.inbox_tasks_table_state.select(selected);
 
     if handled {
+        app.previous_panel = app.focused_panel;
         return;
     }
 
@@ -112,23 +113,28 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
     match key.code {
         KeyCode::Char('a') => {
+            app.previous_panel = app.focused_panel;
             actions::inbox_item_add_popup(app);
         }
 
         KeyCode::Char('i') => {
+            app.previous_panel = app.focused_panel;
             actions::inbox_item_info(app);
         }
 
         KeyCode::Char('e') => {
+            app.previous_panel = app.focused_panel;
             actions::edit_inbox_item(app);
         }
 
         KeyCode::Char('y') => {
+            app.previous_panel = app.focused_panel;
             app.copy_inbox_input();
         }
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
+                app.previous_panel = app.focused_panel;
                 actions::delete_inbox_item(app);
                 app.pending_command = None;
             } else {
