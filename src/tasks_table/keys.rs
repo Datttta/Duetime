@@ -53,6 +53,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     app.tasks_table_state.select(selected);
 
     if handled {
+        app.previous_panel = app.focused_panel;
         return;
     }
 
@@ -63,6 +64,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('p') => {
             if app.pending_command == Some('a') {
+                app.previous_panel = app.focused_panel;
                 actions::add_tasks_to_preset(app);
                 app.pending_command = None;
             } 
@@ -70,17 +72,20 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('t') => {
             if app.pending_command == Some('a') {
+                app.previous_panel = app.focused_panel;
                 app.task_add(TaskDestination::AddTask);
                 app.pending_command = None;
             }
         }
 
         KeyCode::Char('e') => {
+            app.previous_panel = app.focused_panel;
             actions::edit_task(app);
         }
 
         KeyCode::Char('d') => {
             if app.pending_command == Some('d') {
+                app.previous_panel = app.focused_panel;
                 actions::delete_task(app);
                 app.pending_command = None;
             } else {
@@ -90,10 +95,12 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('x') => {
             actions::move_tasks(app);
+            app.previous_panel = app.focused_panel;
             return;
         }
 
         KeyCode::Char('i') => {
+            app.previous_panel = app.focused_panel;
             actions::task_info(app);
         }
 

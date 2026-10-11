@@ -56,8 +56,7 @@ pub struct App {
     // Panels
     pub focused_panel: Panel,
     pub previous_panel: Panel,
-    pub already_focused_on_previous: bool,
-    pub already_set_previous: bool,
+    pub previous_running_panel: Panel,
 
     // TasksTable
     pub tasks: Vec<TaskInfo>,
@@ -269,8 +268,7 @@ impl App {
             // Panel
             focused_panel: Panel::TasksTable,
             previous_panel: Panel::TasksTable,
-            already_set_previous: false,
-            already_focused_on_previous: false,
+            previous_running_panel: Panel::TasksTable,
 
             // Misc
             move_state: MoveState::default(),

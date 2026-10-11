@@ -135,10 +135,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
-        info!("area: {:?}", area);
-        info!("previous_area: {:?}", app.previous_area);
-        info!("======================== task table panel ===============================");
-
         if app.previous_area != area {
             app.previous_panel = app.focused_panel;
             
@@ -152,9 +148,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
-        info!("area: {:?}", area);
-        info!("previous_area: {:?}", app.previous_area);
-        info!("======================== half hight panel ===============================");
 
         if app.previous_area != area {
             if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) && app.terminal_focus == true {
@@ -167,11 +160,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.previous_area = area;
         }
 
-        if app.focused_panel == Panel::Inbox && app.terminal_focus == true {
-            app.focused_panel = Panel::Inbox;
+        if matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable) {
+            app.previous_running_panel = app.focused_panel;
         } else if app.terminal_focus == true {
-            app.focused_panel = Panel::TasksTable;
-        }
+            app.focused_panel = app.previous_running_panel;
+        };
 
         let layout = draw_half_height_layout(frame);
         
@@ -181,10 +174,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     } else if area.width < 140 && area.height > 40 {
         // ======== HALF LENGTH PANELS ========
-        info!("area: {:?}", area);
-        info!("previous_area: {:?}", app.previous_area);
-        info!("======================== half length panel ===============================");
-
 
         if app.previous_area != area {
             if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) && app.terminal_focus == true {
@@ -197,12 +186,12 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             app.previous_area = area;
         }
 
-        if app.focused_panel == Panel::Agenda && app.terminal_focus == true {
-            app.focused_panel = Panel::Agenda;
+        if matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable) {
+            app.previous_running_panel = app.focused_panel;
         } else if app.terminal_focus == true {
-            app.focused_panel = Panel::TasksTable;
-        }
-        
+            app.focused_panel = app.previous_running_panel;
+        };
+
         let layout = draw_half_length_layout(frame);
        
         // draw panels
@@ -211,9 +200,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     } else {
         // ======== ALL PANELS ========
-        info!("area: {:?}", area);
-        info!("previous_area: {:?}", app.previous_area);
-        info!("======================== all panels ===============================");
 
         if app.previous_area != area {
             app.focused_panel = app.previous_panel;

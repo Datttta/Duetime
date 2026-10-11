@@ -247,7 +247,7 @@ pub fn draw_tasks(
         ]));
     }
 
-    let highlight_style = if (popup_open || !app.terminal_focus) && app.focused_panel == Panel::TasksTable {
+    let highlight_style = if (popup_open || !app.terminal_focus) && app.previous_running_panel == Panel::TasksTable {
         Style::default()
             .bg(unfocused_panel())
             .fg(Color::Black)
