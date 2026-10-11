@@ -1,4 +1,8 @@
-use ratatui::widgets::{TableState, ListState};
+use ratatui::{
+    widgets::{TableState, ListState},
+    layout::Rect,
+};
+
 use chrono::Local;
 //use log::info;
 
@@ -120,6 +124,7 @@ pub struct App {
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
+    pub previous_area: Rect,
 
     // Clipboard / notifications
     pub clipboard: Option<arboard::Clipboard>,
@@ -151,6 +156,12 @@ impl App {
         let mut inbox_tasks_table_state = TableState::default();
         inbox_tasks_table_state.select(Some(0));
 
+        let mut all_events_table_state = TableState::default();
+        all_events_table_state.select(Some(0));
+        
+        let mut timers_list_state = ListState::default();
+        timers_list_state.select(Some(0));
+
         let mut agenda_table_state = TableState::default();
         let today = Local::now().date_naive();
         let events = agenda::load_agenda();
@@ -160,12 +171,6 @@ impl App {
         } else if !events.is_empty() {
             agenda_table_state.select(Some(3)); 
         }
-        
-        let mut all_events_table_state = TableState::default();
-        all_events_table_state.select(Some(0));
-        
-        let mut timers_list_state = ListState::default();
-        timers_list_state.select(Some(0));
 
         let today = Local::now().date_naive();
 
@@ -273,6 +278,7 @@ impl App {
             next_id: 1,
             active_alarm: None,
             terminal_focus: true,
+            previous_area: Rect::default(),
 
             // Clipboard / status
             clipboard: arboard::Clipboard::new().ok(),

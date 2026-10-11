@@ -54,7 +54,7 @@ use ratatui::{
     Frame,
 };
 
-//use log::info;
+use log::info;
 
 struct MainLayout {
     tasks: Rect,
@@ -135,14 +135,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
-        // check the previous focused panel
-        if !app.already_set_previous {
+        info!("area: {:?}", area);
+        info!("previous_area: {:?}", app.previous_area);
+        info!("======================== task table panel ===============================");
+
+        if app.previous_area != area {
             app.previous_panel = app.focused_panel;
             
-            app.already_focused_on_previous = false;
-            app.already_set_previous = true;
-
-            app.n_mode = NavigationMode::Normal;
+            app.previous_area = area;
         }
         
         if app.terminal_focus == true {
@@ -152,13 +152,20 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         draw_tasks_panel(frame, area, app);
     } else if area.width > 200 && area.height < 45{
         // ======== HALF HEIGHT PANELS ========
+        info!("area: {:?}", area);
+        info!("previous_area: {:?}", app.previous_area);
+        info!("======================== half hight panel ===============================");
 
-        if !app.already_focused_on_previous {
-            app.focused_panel = app.previous_panel;
-            app.already_focused_on_previous = true;
-            app.already_set_previous = false;
+        if app.previous_area != area {
+            if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) && app.terminal_focus == true {
+                app.focused_panel = app.previous_panel
+            } else if app.terminal_focus == true {
+                app.focused_panel = Panel::TasksTable
+            }
+            
             app.n_mode = NavigationMode::Normal;
-        } 
+            app.previous_area = area;
+        }
 
         if app.focused_panel == Panel::Inbox && app.terminal_focus == true {
             app.focused_panel = Panel::Inbox;
@@ -174,20 +181,28 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     } else if area.width < 140 && area.height > 40 {
         // ======== HALF LENGTH PANELS ========
+        info!("area: {:?}", area);
+        info!("previous_area: {:?}", app.previous_area);
+        info!("======================== half length panel ===============================");
 
-        if !app.already_focused_on_previous {
-            app.focused_panel = app.previous_panel;
-            app.already_focused_on_previous = true;
-            app.already_set_previous = false;
+
+        if app.previous_area != area {
+            if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) && app.terminal_focus == true {
+                app.focused_panel = app.previous_panel
+            } else if app.terminal_focus == true {
+                app.focused_panel = Panel::TasksTable
+            }
+            
             app.n_mode = NavigationMode::Normal;
-        } 
+            app.previous_area = area;
+        }
 
         if app.focused_panel == Panel::Agenda && app.terminal_focus == true {
             app.focused_panel = Panel::Agenda;
         } else if app.terminal_focus == true {
             app.focused_panel = Panel::TasksTable;
         }
-
+        
         let layout = draw_half_length_layout(frame);
        
         // draw panels
@@ -196,18 +211,22 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     } else {
         // ======== ALL PANELS ========
+        info!("area: {:?}", area);
+        info!("previous_area: {:?}", app.previous_area);
+        info!("======================== all panels ===============================");
 
-        //focus on previous panel
-        if !app.already_focused_on_previous {
+        if app.previous_area != area {
             app.focused_panel = app.previous_panel;
-            app.already_focused_on_previous = true;
-            app.already_set_previous = false;
+            
+            app.previous_area = area;
         }
 
         if app.focused_panel == Panel::None {
             app.focused_panel = Panel::TasksTable;
         }
 
+        app.previous_panel = app.focused_panel;
+        
         // Show all panels if in fullscreen
         let layout = draw_layout(frame);
         
