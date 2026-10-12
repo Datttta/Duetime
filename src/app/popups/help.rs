@@ -265,6 +265,18 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
             app.help_scroll = app.help_scroll.saturating_sub(1);
         }
 
+        KeyCode::Char('g') => {
+            if app.pending_command == Some('g') {
+                app.help_scroll = 0;
+            } else {
+                app.pending_command = Some('g')
+            }
+        }
+
+        KeyCode::Char('G') => {
+            app.help_scroll = app.help_max_scroll;
+        }
+
         KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('h') | KeyCode::Char('?') => {
             app.help_scroll = 0;
             app.popup = Popup::None;
