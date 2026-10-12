@@ -22,6 +22,8 @@ pub fn handle (
         KeyCode::Char('j') => {
             if current + 1 < len {
                 *selected = Some(current + 1);
+            } else {
+                *selected = Some(0);
             }
             true
         }
@@ -29,6 +31,8 @@ pub fn handle (
         KeyCode::Char('k') => {
             if current > 0 {
                 *selected = Some(current - 1);
+            } else {
+                *selected = Some(len - 1);
             }
             true
         }

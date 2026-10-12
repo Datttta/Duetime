@@ -123,6 +123,9 @@ pub fn is_header_or_spacer(row_idx: usize, today_count: usize, app: &mut App) ->
 
 // Snaps the selection to the closest valid event row if it lands on a header/spacer
 pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usize, key: KeyEvent) {
+    if total_rows == 0 {
+        return;
+    }
     if let Some(current) = app.agenda_table_state.selected() {
         if !is_header_or_spacer(current, today_count, app) {
             return; // Already on a valid row
@@ -130,16 +133,13 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
 
         let mut found = None;
 
-        // Check which key/letter was typed to decide search direction
-        let search_down_first = match key.code {
-            KeyCode::Char('k') | KeyCode::Up => false, // Pressed up -> search upwards first
-            KeyCode::Char('j') | KeyCode::Down => true,  // Pressed down -> search downwards first
-            KeyCode::Char('G') => false,                 // Jumped to bottom -> search upwards
-            _ => true,                                   // Default fallback (e.g., 'gg' or jumps)
+        let search_down = match key.code {
+            KeyCode::Char('k') | KeyCode::Up => false, // Moving up -> search upwards first
+            _ => true,                                   // Moving down / default -> search downwards first
         };
 
-        if search_down_first {
-            // 1. Search downwards first
+        if search_down {
+            // 1. Search downwards from current
             let mut test_idx = current;
             while test_idx < total_rows {
                 if !is_header_or_spacer(test_idx, today_count, app) {
@@ -148,11 +148,9 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
                 }
                 test_idx += 1;
             }
-            // 2. Fallback to upwards if nothing found below
+            // 2. Wrap around to the top if nothing found below
             if found.is_none() {
-                let mut test_idx = current;
-                while test_idx > 0 {
-                    test_idx -= 1;
+                for test_idx in 0..total_rows {
                     if !is_header_or_spacer(test_idx, today_count, app) {
                         found = Some(test_idx);
                         break;
@@ -160,7 +158,7 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
                 }
             }
         } else {
-            // 1. Search upwards first
+            // 1. Search upwards from current
             let mut test_idx = current;
             while test_idx > 0 {
                 test_idx -= 1;
@@ -169,15 +167,19 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
                     break;
                 }
             }
-            // 2. Fallback to downwards if nothing found above
+            // Check index 0 explicitly
+            if found.is_none() && total_rows > 0 && !is_header_or_spacer(0, today_count, app) {
+                found = Some(0);
+            }
+            // 2. Wrap around to the bottom if nothing found above
             if found.is_none() {
-                let mut test_idx = current;
-                while test_idx < total_rows {
+                let mut test_idx = total_rows;
+                while test_idx > 0 {
+                    test_idx -= 1;
                     if !is_header_or_spacer(test_idx, today_count, app) {
                         found = Some(test_idx);
                         break;
                     }
-                    test_idx += 1;
                 }
             }
         }
