@@ -118,6 +118,7 @@ pub struct App {
     // Misc
     pub move_state: MoveState,
     pub help_scroll: u16,
+    pub help_max_scroll: u16,
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
@@ -272,6 +273,7 @@ impl App {
             // Misc
             move_state: MoveState::default(),
             help_scroll: 0,
+            help_max_scroll: 0,
             next_id: 1,
             active_alarm: None,
             terminal_focus: true,

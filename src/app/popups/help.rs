@@ -1,13 +1,12 @@
 use crossterm::event::{KeyCode, KeyEvent};
+use log::info;
+
 use ratatui::{
+    Frame,
     layout::{Alignment, Constraint, Flex, Layout, Rect},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{
-        Block, Clear, Paragraph, Padding,
-        Scrollbar, ScrollbarOrientation, ScrollbarState,
-    },
-    Frame,
+    widgets::{Block, Clear, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState},
 };
 
 use crate::{
@@ -58,11 +57,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  v / V -", Style::default().fg(Color::Yellow)),
             Span::styled(" Visual mode", Style::default().fg(gray_color())),
         ]),
-
         Line::from(""),
         Line::from("TasksTable"),
         Line::from(""),
-
         Line::from(vec![
             Span::styled("  t -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add task", Style::default().fg(gray_color())),
@@ -107,11 +104,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  R -", Style::default().fg(Color::Yellow)),
             Span::styled(" Hard reset task", Style::default().fg(gray_color())),
         ]),
-
         Line::from(""),
         Line::from("Inbox"),
         Line::from(""),
-
         Line::from(vec![
             Span::styled("  a -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add inbox item", Style::default().fg(gray_color())),
@@ -136,11 +131,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete inbox item", Style::default().fg(gray_color())),
         ]),
-        
         Line::from(""),
         Line::from("Agenda"),
         Line::from(""),
-
         Line::from(vec![
             Span::styled("  a -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add event", Style::default().fg(gray_color())),
@@ -165,11 +158,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete event", Style::default().fg(gray_color())),
         ]),
-        
         Line::from(""),
         Line::from("Timers"),
         Line::from(""),
-
         Line::from(vec![
             Span::styled("  a -", Style::default().fg(Color::Yellow)),
             Span::styled(" Add timer", Style::default().fg(gray_color())),
@@ -186,11 +177,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled("  dd -", Style::default().fg(Color::Yellow)),
             Span::styled(" Delete timer", Style::default().fg(gray_color())),
         ]),
-
         Line::from(""),
         Line::from("Others"),
         Line::from(""),
-
         Line::from(vec![
             Span::styled("  I -", Style::default().fg(Color::Yellow)),
             Span::styled(" App info", Style::default().fg(gray_color())),
@@ -209,14 +198,14 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     let visible_height = inner.height;
 
-    let max_scroll = lines
-        .len()
-        .saturating_sub(visible_height as usize);
+    let max_scroll = lines.len().saturating_sub(visible_height as usize);
+
+    app.help_max_scroll = max_scroll as u16;
 
     // Keep the scroll position valid even if the popup size changes.
     let scroll = app.help_scroll.min(max_scroll as u16);
 
-    let paragraph = Paragraph::new(lines)
+    let paragraph = Paragraph::new(lines.clone())
         .alignment(Alignment::Left)
         .scroll((scroll, 0));
 
@@ -224,27 +213,29 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     // Scrollbar
     if max_scroll > 0 {
-        let mut scrollbar_state = ScrollbarState::new(max_scroll + 1)
-            .position(scroll as usize);
+        let scrollbar_position =
+            (scroll as usize).saturating_mul(lines.len().saturating_sub(1)) / max_scroll;
+
+        let mut scrollbar_state = ScrollbarState::new(lines.len())
+            .viewport_content_length(visible_height as usize)
+            .position(scrollbar_position);
+
+        info!("scrollbar_state: {:?}", scrollbar_state);
 
         let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
-            .thumb_symbol("▊") // variations: "▉", "▊"(current), "▋"
+            .thumb_symbol("▊")
             .track_symbol(Some(""))
-            .begin_symbol(Some(""))
-            .end_symbol(Some(""));
+            .begin_symbol(None)
+            .end_symbol(None);
 
         let scrollbar_area = Rect {
             x: area.x + area.width - 3,
-            y: area.y + 1,
+            y: inner.y,
             width: 1,
-            height: area.height - 2,
+            height: inner.height,
         };
 
-        frame.render_stateful_widget(
-            scrollbar,
-            scrollbar_area,
-            &mut scrollbar_state,
-        );
+        frame.render_stateful_widget(scrollbar, scrollbar_area, &mut scrollbar_state);
     }
 }
 
@@ -263,17 +254,18 @@ fn centered_rect(frame: &Frame, width: u16, height: u16) -> Rect {
 pub fn handle_keys(app: &mut App, key: KeyEvent) {
     match key.code {
         KeyCode::Char('j') => {
-            app.help_scroll = app.help_scroll.saturating_add(1);
+            info!("help_scroll: {:?}", app.help_scroll);
+            info!("help_max_scroll: {:?}", app.help_max_scroll);
+            if app.help_scroll < app.help_max_scroll {
+                app.help_scroll += 1;
+            }
         }
 
         KeyCode::Char('k') => {
             app.help_scroll = app.help_scroll.saturating_sub(1);
         }
 
-        KeyCode::Esc
-        | KeyCode::Char('q')
-        | KeyCode::Char('h')
-        | KeyCode::Char('?') => {
+        KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('h') | KeyCode::Char('?') => {
             app.help_scroll = 0;
             app.popup = Popup::None;
         }
