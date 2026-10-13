@@ -1,5 +1,6 @@
 //use log::info;
 use simplelog::{LevelFilter, WriteLogger}; 
+use std::path::Path;
 
 use std::{
     sync::{
@@ -43,11 +44,17 @@ mod suggestions;
 mod search;
 
 fn main() -> io::Result<()> {
-    let _ = WriteLogger::init(
-        LevelFilter::Debug,
-        simplelog::Config::default(),
-        File::create("debug.log").unwrap(),
-    );
+    let log_dir = Path::new("src");
+
+    if log_dir.is_dir() {
+        if let Ok(file) = File::create(log_dir.join("debug.log")) {
+            let _ = WriteLogger::init(
+                LevelFilter::Debug,
+                simplelog::Config::default(),
+                file,
+            );
+        }
+    }
 
     if update::check_for_updates() {
         return Ok(());
