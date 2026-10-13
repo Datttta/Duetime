@@ -70,7 +70,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .alignment(Alignment::Center)
         .block(Block::default().padding(Padding::top(1)));
 
-    if app.mode == InputMode::Insert {
+    if app.mode == InputMode::Insert && app.tasks_selected_input == TaskSelectedInput::TaskName {
         let suggestions_area = Rect {
             x: tasks_colums[0].x,
             y: tasks_colums[0].bottom(),
