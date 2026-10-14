@@ -173,29 +173,72 @@ pub fn search_all_events(app: &mut App) {
     }
 }
 
-pub fn delete_event(app: &mut App) {
-    let selected = if app.popup == Popup::None {
-        get_selected_global_index(app)
+// Maps any agenda table row index back to its global event index in app.events
+pub fn get_global_index_for_row(app: &App, row_idx: usize) -> Option<usize> {
+    let today = Local::now().date_naive();
+    let max_date = today + Duration::days(30);
+
+    let visible_indices: Vec<usize> = (0..app.events.len())
+        .filter(|&i| {
+            let date = app.events[i].date;
+            date >= today && date <= max_date
+        })
+        .collect();
+
+    let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
+        visible_indices
+            .into_iter()
+            .partition(|&i| app.events[i].date == today);
+
+    let today_count = today_indices.len();
+
+    if row_idx >= 1 && row_idx <= today_count {
+        Some(today_indices[row_idx - 1])
+    } else if row_idx > today_count + 2 {
+        let upcoming_idx = row_idx - (today_count + 3);
+        Some(upcoming_indices.get(upcoming_idx).copied()?)
     } else {
-        app.all_events_table_state.selected()
-    };
+        None
+    }
+}
 
-    info!("Selected edit: {:?}", selected);
-
-    if let Some(index) = selected {
-        info!("Current: {:?}", index);
-        let (first, last) = if app.n_mode == NavigationMode::Visual {
-            if let Some(start) = app.n_visual_start {
-                (start.min(index), start.max(index))
-            } else {
-                (index, index)
+pub fn delete_event(app: &mut App) {
+    if app.popup == Popup::None {
+        let current_row = match app.agenda_table_state.selected() {
+            Some(r) => r,
+            None => {
+                app.pending_command = None;
+                return;
             }
-        } else {
-            (index, index)
         };
 
-        app.events.drain(first.saturating_sub(1)..=last);
+        // Get table row range (works for both single selection and visual mode)
+        let (min_row, max_row) = if app.n_mode == NavigationMode::Visual {
+            let start = app.n_visual_start.unwrap_or(current_row);
+            (start.min(current_row), start.max(current_row))
+        } else {
+            (current_row, current_row)
+        };
 
+        // Collect exact global event indices for the selected table rows
+        let mut global_indices_to_delete = Vec::new();
+        for r in min_row..=max_row {
+            if let Some(g_idx) = get_global_index_for_row(app, r) {
+                global_indices_to_delete.push(g_idx);
+            }
+        }
+
+        // Sort descending so removing higher indices doesn't shift lower indices
+        global_indices_to_delete.sort_unstable();
+        global_indices_to_delete.dedup();
+
+        for &g_idx in global_indices_to_delete.iter().rev() {
+            if g_idx < app.events.len() {
+                app.events.remove(g_idx);
+            }
+        }
+
+        // Recalculate table layout and snap cursor to a valid visible row
         let today = Local::now().date_naive();
         let max_date = today + Duration::days(30);
 
@@ -209,33 +252,81 @@ pub fn delete_event(app: &mut App) {
         if visible_indices.is_empty() {
             app.agenda_table_state.select(None);
         } else {
-            // Target the global event index that took the place of the deleted block, clamped to the new bounds
-            let target_global = first.min(app.events.len().saturating_sub(1));
-
             let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
                 visible_indices
                     .into_iter()
                     .partition(|&i| app.events[i].date == today);
 
             let today_count = today_indices.len();
+            let total_rows = 1 + today_count + 1 + 1 + upcoming_indices.len();
 
-            // Map target global index back to its proper table row index
-            if let Some(pos) = today_indices.iter().position(|&g| g == target_global) {
-                // Today event row (Header is row 0, so event is pos + 1)
-                app.agenda_table_state.select(Some(pos + 1));
-            } else if let Some(pos) = upcoming_indices.iter().position(|&g| g == target_global) {
-                // Upcoming event row (Account for Today header [1] + today events + spacer [1] + Upcoming header [1])
-                app.agenda_table_state.select(Some(today_count + 3 + pos));
-            } else {
-                // Fallback to the first available selectable row
-                app.agenda_table_state.select(Some(1));
+            let target = min_row.min(total_rows.saturating_sub(1));
+            let mut selected_row = None;
+
+            // Search downwards from target for a valid selectable event row
+            for r in target..total_rows {
+                if get_global_index_for_row(app, r).is_some() {
+                    selected_row = Some(r);
+                    break;
+                }
             }
+            // Search upwards from target if nothing found below
+            if selected_row.is_none() {
+                let mut r = target;
+                while r > 0 {
+                    r -= 1;
+                    if get_global_index_for_row(app, r).is_some() {
+                        selected_row = Some(r);
+                        break;
+                    }
+                }
+            }
+            // Fallback to first valid row
+            if selected_row.is_none() {
+                for r in 0..total_rows {
+                    if get_global_index_for_row(app, r).is_some() {
+                        selected_row = Some(r);
+                        break;
+                    }
+                }
+            }
+
+            app.agenda_table_state.select(selected_row);
         }
 
         app.n_mode = NavigationMode::Normal;
         app.n_visual_start = None;
 
-        storage::agenda::save_agenda(&app.events).unwrap();
+        let _ = storage::agenda::save_agenda(&app.events);
+    } else {
+        // Popup deletion logic (All Events popup)
+        if let Some(current_row) = app.all_events_table_state.selected() {
+            let (min_idx, max_idx) = if app.n_mode == NavigationMode::Visual {
+                let start = app.n_visual_start.unwrap_or(current_row);
+                (start.min(current_row), start.max(current_row))
+            } else {
+                (current_row, current_row)
+            };
+
+            let start_drain = min_idx.min(app.events.len());
+            let end_drain = (max_idx + 1).min(app.events.len());
+            
+            if start_drain < end_drain {
+                app.events.drain(start_drain..end_drain);
+            }
+
+            if app.events.is_empty() {
+                app.all_events_table_state.select(None);
+            } else {
+                let new_selected = min_idx.min(app.events.len() - 1);
+                app.all_events_table_state.select(Some(new_selected));
+            }
+
+            app.n_mode = NavigationMode::Normal;
+            app.n_visual_start = None;
+
+            let _ = storage::agenda::save_agenda(&app.events);
+        }
     }
 
     app.pending_command = None;
