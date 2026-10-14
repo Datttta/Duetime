@@ -1,4 +1,4 @@
-use log::info;
+//use log::info;
 use simplelog::{LevelFilter, WriteLogger};
 use std::env;
 
@@ -105,8 +105,6 @@ fn main() -> io::Result<()> {
         if !app.terminal_focus {
             app.focused_panel = Panel::None;
         }
-
-        info!("focused_panel: {:?}", app.focused_panel);
 
         events::handle_events(&mut app)?;
     }

@@ -47,7 +47,7 @@ use crate::{
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use std::io;
-use log::info;
+//use log::info;
 
 const TOP_LEFT_PANEL: Panel = Panel::TasksTable;
 const TOP_RIGHT_PANEL: Panel =  Panel::Inbox;
