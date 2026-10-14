@@ -1,59 +1,54 @@
 //use log::info;
-use simplelog::{LevelFilter, WriteLogger}; 
-use std::path::Path;
+use simplelog::{LevelFilter, WriteLogger};
+use std::env;
 
 use std::{
-    sync::{
-        atomic::AtomicBool,
-        Arc,
-    },
-
     fs::File,
-    time::{Instant, Duration},
     io,
+    sync::{Arc, atomic::AtomicBool},
+    time::{Duration, Instant},
 };
 
 use crate::{
-    app::{App, Popup, TimersPopup, Panel},
+    app::{App, Panel, Popup, TimersPopup},
+    core::{events, sounds::alarm_sound, update},
     storage::{current_tasks, current_timers},
-    core::{
-        events,
-        sounds::alarm_sound,
-        update,
-    },
 };
 
 use crossterm::{
-    event::{EnableFocusChange, EnableBracketedPaste},
+    event::{EnableBracketedPaste, EnableFocusChange},
     execute,
 };
 
 mod app;
-mod ui;
-mod input;
-mod storage;
 mod core;
+mod input;
 mod models;
+mod storage;
+mod ui;
 
-mod tasks_table;
-mod inbox;
 mod agenda;
+mod inbox;
+mod tasks_table;
 mod timers;
 
-mod suggestions;
 mod search;
+mod suggestions;
 
 fn main() -> io::Result<()> {
-    let log_dir = Path::new("src");
+    let current_dir = env::current_dir().expect("Failed to get current directory");
 
-    if log_dir.is_dir() {
-        if let Ok(file) = File::create(log_dir.join("debug.log")) {
-            let _ = WriteLogger::init(
-                LevelFilter::Debug,
-                simplelog::Config::default(),
-                file,
-            );
-        }
+    let cargo_toml_exists = match current_dir.parent() {
+        Some(parent_dir) => parent_dir.join("Cargo.toml").try_exists().unwrap_or(false),
+        None => false,
+    };
+
+    if cargo_toml_exists {
+        let _ = WriteLogger::init(
+            LevelFilter::Debug,
+            simplelog::Config::default(),
+            File::create("debug.log").unwrap(),
+        );
     }
 
     if update::check_for_updates() {
@@ -73,25 +68,25 @@ fn main() -> io::Result<()> {
         agenda::ui::update_repeating_events(&mut app.events);
 
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
-        
+
         // set tasks table stopwatch to stopped if the app was closed while IN PROGRESS
         if first_render {
             for i in 0..app.tasks.len() {
                 let task = &mut app.tasks[i];
-                
+
                 if task.status == "IN PROGRESS" {
                     task.status = "STOPPED".into();
                 }
             }
-            
+
             first_render = false;
         }
-        
+
         // check finished timers
         for (index, timer) in app.timers.iter_mut().enumerate() {
-            if timer.countdown.remaining() == Duration::ZERO && app.active_alarm.is_none(){
+            if timer.countdown.remaining() == Duration::ZERO && app.active_alarm.is_none() {
                 app.popup = Popup::Timers(TimersPopup::TimerFinished(index));
-                
+
                 let is_playing = Arc::new(AtomicBool::new(true));
                 alarm_sound(Arc::clone(&is_playing));
 
