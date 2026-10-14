@@ -15,7 +15,7 @@ use crate::{
     input::vim_text::{InputResult, InputMode},
     app::{App, Popup, AgendaPopup, AgendaSelectedInput},
     agenda::{
-        ui::AgendaEvent,
+        ui::{AgendaEvent, get_selected_global_index},
         ui,
     },
     storage,
@@ -152,8 +152,16 @@ pub fn save_event(app: &mut App) {
             };
 
             // 2. Perform Add or Edit action using global indices correctly
-            if matches!(app.popup, Popup::Agenda(AgendaPopup::AddEvent)) {
+            if app.popup == Popup::Agenda(AgendaPopup::AddEvent) {
                 app.events.push(event);
+
+            } else if app.popup == Popup::Agenda(AgendaPopup::EditEvent) {
+                if let Some(global_index) = get_selected_global_index(app) {
+                    if let Some(existing_event) = app.events.get_mut(global_index) {
+                        *existing_event = event;
+                    }
+                }
+
             } else if let Some(global_index) = app.all_events_table_state.selected() {
                 if let Some(existing_event) = app.events.get_mut(global_index) {
                     *existing_event = event;

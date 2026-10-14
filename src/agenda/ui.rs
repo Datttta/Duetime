@@ -29,7 +29,7 @@ pub const TIME_EDITABLE_POSITIONS: &[usize] = &[0, 1, 3, 4];
 
 const EVENT_NAME_LENGTH: u16 = 55;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct AgendaEvent {
     pub name: String,
     pub date: NaiveDate,

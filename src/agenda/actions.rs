@@ -47,6 +47,7 @@ pub fn edit_event(app: &mut App) {
     if let Some(index) = selected {
         let event = &app.events[index];
 
+        info!("selected event name: {:?}", event.name.clone());
         // Load event data into inputs
         app.event_name.text = event.name.clone();
 
