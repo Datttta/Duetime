@@ -20,10 +20,7 @@ pub enum SearchInputResult {
     Cancel,
 }
 
-pub fn handle_search_navigation(
-    search: &mut SearchState,
-    key: KeyEvent,
-) -> SearchNavigationResult {
+pub fn handle_search_navigation(search: &mut SearchState, key: KeyEvent) -> SearchNavigationResult {
     match key.code {
         KeyCode::Char('n') => {
             next_match(search);
@@ -44,11 +41,8 @@ pub fn handle_search_navigation(
     }
 }
 
-pub fn search_items<T, F>(
-    search: &mut SearchState,
-    items: &[T],
-    matches: F,
-) where
+pub fn search_items<T, F>(search: &mut SearchState, items: &[T], matches: F)
+where
     F: Fn(&T, &str) -> bool,
 {
     let query = search.query.trim().to_lowercase();
@@ -68,10 +62,7 @@ pub fn search_items<T, F>(
         .collect();
 }
 
-pub fn handle_search_input(
-    search: &mut SearchState,
-    key: KeyEvent,
-) -> SearchInputResult {
+pub fn handle_search_input(search: &mut SearchState, key: KeyEvent) -> SearchInputResult {
     match key.code {
         KeyCode::Char(c) => {
             search.query.push(c);
@@ -102,8 +93,7 @@ pub fn next_match(search: &mut SearchState) {
         return;
     }
 
-    search.current_match =
-        (search.current_match + 1) % search.matches.len();
+    search.current_match = (search.current_match + 1) % search.matches.len();
 }
 
 pub fn previous_match(search: &mut SearchState) {

@@ -1,7 +1,9 @@
 *.txt
 *.log
 *.json
+*.vim
 __pycache__/
 
 target/
 Cargo.lock
+
