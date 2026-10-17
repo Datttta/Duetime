@@ -21,7 +21,19 @@ pub fn save_current_timers(
         timers.iter().map(TimerInfo::to_data).collect();
 
     let json = serde_json::to_string_pretty(&data)?;
-    fs::write(current_timers_path(), json)?;
+    let path = current_timers_path();
+
+    // Ensure the config directory exists
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    // Write to a temporary file first in the same directory
+    let temp_path = path.with_extension("tmp");
+    fs::write(&temp_path, &json)?;
+
+    // Atomically rename the temp file to the target file
+    fs::rename(&temp_path, &path)?;
 
     Ok(())
 }
@@ -33,7 +45,7 @@ pub fn load_current_timers() -> Vec<TimerInfo> {
         return Vec::new();
     }
 
-    let json = match fs::read_to_string(path) {
+    let json = match fs::read_to_string(&path) {
         Ok(s) => s,
         Err(_) => return Vec::new(),
     };
