@@ -1,5 +1,6 @@
 use crate::{
     app::App,
+    storage::agenda,
     input::{
         vim_navigation,
         vim_navigation::NavigationMode,
@@ -170,6 +171,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                 app.previous_panel = app.focused_panel;
                 actions::delete_event(app);
                 app.pending_command = None;
+
+                agenda::save_agenda(&app.events).unwrap();
             } else {
                 app.pending_command = Some('d');
             }

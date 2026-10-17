@@ -98,7 +98,6 @@ fn main() -> io::Result<()> {
         if last_save.elapsed() >= Duration::from_secs(1) {
             current_tasks::save_current_tasks(&app.tasks).unwrap();
             current_timers::save_current_timers(&app.timers).unwrap();
-            crate::storage::agenda::save_agenda(&app.events).unwrap();
             last_save = Instant::now();
         }
 
