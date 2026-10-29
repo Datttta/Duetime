@@ -30,9 +30,9 @@ pub fn handle (
 
         KeyCode::Char('k') => {
             if current > 0 {
-                *selected = Some(current - 1);
+                *selected = Some(current.saturating_sub(1));
             } else if *mode != NavigationMode::Visual {
-                *selected = Some(len - 1);
+                *selected = Some(len.saturating_sub(1));
             }
             true
         }
