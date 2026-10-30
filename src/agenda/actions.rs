@@ -198,11 +198,15 @@ pub fn delete_event(app: &mut App) {
         let total_rows = calculate_agenda_total_rows(app);
         let target = min_row.min(total_rows.saturating_sub(1));
 
-        let new_selection = (target..total_rows)
-            .find(|&r| get_global_index_for_row(app, r).is_some())
-            .or_else(|| (0..target).rev().find(|&r| get_global_index_for_row(app, r).is_some()));
+        let new_selection = if get_global_index_for_row(app, target).is_some() {
+            target
+        } else if get_global_index_for_row(app, target - 1).is_some() {
+            target - 1
+        } else {
+            target + 2
+        };
 
-        app.agenda_table_state.select(new_selection);
+        app.agenda_table_state.select(Some(new_selection));
     } else {
         // Popup deletion logic (All Events popup)
         if let Some(current_row) = app.all_events_table_state.selected() {
