@@ -40,6 +40,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let inner = block.inner(area);
     frame.render_widget(&block, area);
 
+    // Sort events chronologically by date first, then by time if available
+    app.events.sort_by(|a, b| {
+        a.date.cmp(&b.date).then(a.time.cmp(&b.time))
+    });
+
     let event_indices: Vec<usize> = (0..app.events.len()).collect();
     let is_visual = app.n_mode == NavigationMode::Visual;
     let name_length: u16 = 45;
