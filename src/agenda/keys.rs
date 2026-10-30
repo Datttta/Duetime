@@ -105,14 +105,14 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
     let visible_indices: Vec<usize> = (0..app.events.len())
         .filter(|&i| {
             let date = app.events[i].date;
-            date >= today && date <= max_date
+            date <= max_date
         })
         .collect();
 
     let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
         visible_indices
             .into_iter()
-            .partition(|&i| app.events[i].date == today);
+            .partition(|&i| app.events[i].date <= today);
 
     let today_count = today_indices.len();
     let upcoming_count = upcoming_indices.len();

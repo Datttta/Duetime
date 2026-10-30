@@ -91,7 +91,7 @@ pub fn search_agenda(app: &mut App) {
         .iter()
         .enumerate()
         .filter(|(_, event)| {
-            event.date >= today && event.date <= max_date
+            event.date <= max_date
         })
         .map(|(index, _)| index)
         .collect();
@@ -127,7 +127,7 @@ pub fn select_agenda_event(app: &mut App, event_index: usize) {
         .events
         .iter()
         .enumerate()
-        .filter(|(_, event)| event.date == today)
+        .filter(|(_, event)| event.date <= today)
         .map(|(index, _)| index)
         .collect();
 
@@ -173,161 +173,91 @@ pub fn search_all_events(app: &mut App) {
     }
 }
 
-// Maps any agenda table row index back to its global event index in app.events
-pub fn get_global_index_for_row(app: &App, row_idx: usize) -> Option<usize> {
-    let today = Local::now().date_naive();
-    let max_date = today + Duration::days(30);
-
-    let visible_indices: Vec<usize> = (0..app.events.len())
-        .filter(|&i| {
-            let date = app.events[i].date;
-            date >= today && date <= max_date
-        })
-        .collect();
-
-    let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
-        visible_indices
-            .into_iter()
-            .partition(|&i| app.events[i].date == today);
-
-    let today_count = today_indices.len();
-
-    if row_idx >= 1 && row_idx <= today_count {
-        Some(today_indices[row_idx - 1])
-    } else if row_idx > today_count + 2 {
-        let upcoming_idx = row_idx - (today_count + 3);
-        Some(upcoming_indices.get(upcoming_idx).copied()?)
-    } else {
-        None
-    }
-}
+pub use crate::agenda::ui::get_global_index_for_row;
 
 pub fn delete_event(app: &mut App) {
     if app.popup == Popup::None {
-        let current_row = match app.agenda_table_state.selected() {
-            Some(r) => r,
-            None => {
-                app.pending_command = None;
-                return;
-            }
+        let Some(current_row) = app.agenda_table_state.selected() else {
+            return reset_and_clear(app);
         };
 
-        // Get table row range (works for both single selection and visual mode)
-        let (min_row, max_row) = if app.n_mode == NavigationMode::Visual {
-            let start = app.n_visual_start.unwrap_or(current_row);
-            (start.min(current_row), start.max(current_row))
-        } else {
-            (current_row, current_row)
-        };
+        let (min_row, max_row) = get_selection_range(app, current_row);
 
-        // Collect exact global event indices for the selected table rows
-        let mut global_indices_to_delete = Vec::new();
-        for r in min_row..=max_row {
-            if let Some(g_idx) = get_global_index_for_row(app, r) {
-                global_indices_to_delete.push(g_idx);
-            }
-        }
-
-        // Sort descending so removing higher indices doesn't shift lower indices
-        global_indices_to_delete.sort_unstable();
-        global_indices_to_delete.dedup();
-
-        for &g_idx in global_indices_to_delete.iter().rev() {
-            if g_idx < app.events.len() {
-                app.events.remove(g_idx);
-            }
-        }
-
-        // Recalculate table layout and snap cursor to a valid visible row
-        let today = Local::now().date_naive();
-        let max_date = today + Duration::days(30);
-
-        let visible_indices: Vec<usize> = (0..app.events.len())
-            .filter(|&i| {
-                let date = app.events[i].date;
-                date >= today && date <= max_date
-            })
+        // Collect valid global indices, sort descending, and remove
+        let mut indices: Vec<usize> = (min_row..=max_row)
+            .filter_map(|r| get_global_index_for_row(app, r))
             .collect();
+        
+        indices.sort_unstable();
+        indices.dedup();
+        indices.iter().rev().for_each(|&idx| {
+            app.events.remove(idx);
+        });
 
-        if visible_indices.is_empty() {
-            app.agenda_table_state.select(None);
-        } else {
-            let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
-                visible_indices
-                    .into_iter()
-                    .partition(|&i| app.events[i].date == today);
+        // Recalculate total table rows and snap cursor to nearest valid row
+        let total_rows = calculate_agenda_total_rows(app);
+        let target = min_row.min(total_rows.saturating_sub(1));
 
-            let today_count = today_indices.len();
-            let total_rows = 1 + today_count + 1 + 1 + upcoming_indices.len();
+        let new_selection = (target..total_rows)
+            .find(|&r| get_global_index_for_row(app, r).is_some())
+            .or_else(|| (0..target).rev().find(|&r| get_global_index_for_row(app, r).is_some()));
 
-            let target = min_row.min(total_rows.saturating_sub(1));
-            let mut selected_row = None;
-
-            // Search downwards from target for a valid selectable event row
-            for r in target..total_rows {
-                if get_global_index_for_row(app, r).is_some() {
-                    selected_row = Some(r);
-                    break;
-                }
-            }
-            // Search upwards from target if nothing found below
-            if selected_row.is_none() {
-                let mut r = target;
-                while r > 0 {
-                    r -= 1;
-                    if get_global_index_for_row(app, r).is_some() {
-                        selected_row = Some(r);
-                        break;
-                    }
-                }
-            }
-            // Fallback to first valid row
-            if selected_row.is_none() {
-                for r in 0..total_rows {
-                    if get_global_index_for_row(app, r).is_some() {
-                        selected_row = Some(r);
-                        break;
-                    }
-                }
-            }
-
-            app.agenda_table_state.select(selected_row);
-        }
-
-        app.n_mode = NavigationMode::Normal;
-        app.n_visual_start = None;
-
-        let _ = storage::agenda::save_agenda(&app.events);
+        app.agenda_table_state.select(new_selection);
     } else {
         // Popup deletion logic (All Events popup)
         if let Some(current_row) = app.all_events_table_state.selected() {
-            let (min_idx, max_idx) = if app.n_mode == NavigationMode::Visual {
-                let start = app.n_visual_start.unwrap_or(current_row);
-                (start.min(current_row), start.max(current_row))
-            } else {
-                (current_row, current_row)
-            };
-
-            let start_drain = min_idx.min(app.events.len());
-            let end_drain = (max_idx + 1).min(app.events.len());
+            let (min_row, max_row) = get_selection_range(app, current_row);
+            let end_drain = (max_row + 1).min(app.events.len());
             
-            if start_drain < end_drain {
-                app.events.drain(start_drain..end_drain);
+            if min_row < end_drain {
+                app.events.drain(min_row..end_drain);
             }
 
-            if app.events.is_empty() {
-                app.all_events_table_state.select(None);
+            let new_sel = if app.events.is_empty() {
+                None
             } else {
-                let new_selected = min_idx.min(app.events.len() - 1);
-                app.all_events_table_state.select(Some(new_selected));
-            }
-
-            app.n_mode = NavigationMode::Normal;
-            app.n_visual_start = None;
-
-            let _ = storage::agenda::save_agenda(&app.events);
+                Some(min_row.min(app.events.len() - 1))
+            };
+            app.all_events_table_state.select(new_sel);
         }
     }
 
+    reset_and_clear(app);
+    let _ = storage::agenda::save_agenda(&app.events);
+}
+
+// Helper: Gets min/max range for normal or Visual mode
+fn get_selection_range(app: &App, current: usize) -> (usize, usize) {
+    if app.n_mode == NavigationMode::Visual {
+        let start = app.n_visual_start.unwrap_or(current);
+        (start.min(current), start.max(current))
+    } else {
+        (current, current)
+    }
+}
+
+// Helper: Computes total rows in the main agenda table
+fn calculate_agenda_total_rows(app: &App) -> usize {
+    let today = Local::now().date_naive();
+    let max_date = today + Duration::days(30);
+
+    let visible_count = app.events.iter()
+        .filter(|e| e.date <= max_date)
+        .count();
+    
+    let today_count = app.events.iter()
+        .filter(|e| e.date <= today && e.date <= max_date)
+        .count();
+
+    let upcoming_count = visible_count - today_count;
+    
+    // Today header + today events + spacer + upcoming header + upcoming events
+    today_count + upcoming_count + 3
+}
+
+// Helper: Resets navigation mode and pending command
+fn reset_and_clear(app: &mut App) {
+    app.n_mode = NavigationMode::Normal;
+    app.n_visual_start = None;
     app.pending_command = None;
 }

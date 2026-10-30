@@ -188,44 +188,48 @@ pub fn snap_agenda_selection(app: &mut App, total_rows: usize, today_count: usiz
     }
 }
 
-// Helper to map the currently selected table row back to the actual event index in app.events
-pub fn get_selected_global_index(app: &App) -> Option<usize> {
-    let selected_row = app.agenda_table_state.selected()?;
-    
+// Maps any agenda table row index back to its global event index in app.events
+pub fn get_global_index_for_row(app: &App, row_idx: usize) -> Option<usize> {
     let today = Local::now().date_naive();
     let max_date = today + Duration::days(30);
 
     let visible_indices: Vec<usize> = (0..app.events.len())
         .filter(|&i| {
             let date = app.events[i].date;
-            date >= today && date <= max_date
+            date <= max_date
         })
         .collect();
 
     let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
         visible_indices
             .into_iter()
-            .partition(|&i| app.events[i].date == today);
+            .partition(|&i| app.events[i].date <= today);
 
     let today_count = today_indices.len();
 
     // Map table row index back to the correct slice
-    if selected_row >= 1 && selected_row <= today_count {
+    if row_idx >= 1 && row_idx <= today_count {
         // Today event slice (Row 1 is the first event, since Row 0 is the "Today" header)
-        Some(today_indices[selected_row - 1])
-    } else if selected_row > today_count + 2 {
+        Some(today_indices[row_idx - 1])
+    } else if row_idx > today_count + 2 {
         // Upcoming event slice (Account for Today header [0], today events, spacer, and Upcoming header)
-        let upcoming_idx = selected_row - (today_count + 3);
+        let upcoming_idx = row_idx - (today_count + 3);
         Some(upcoming_indices.get(upcoming_idx).copied()?)
     } else {
         None // Safely ignored if it somehow lands on a header or spacer row
     }
 }
 
-pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
-    let today = Local::now().date_naive();
-    events.retain(|event| event.repeat || event.date >= today);
+// Helper to map the currently selected table row back to the actual event index in app.events
+pub fn get_selected_global_index(app: &App) -> Option<usize> {
+    let selected_row = app.agenda_table_state.selected()?;
+    get_global_index_for_row(app, selected_row)
 }
+
+//pub fn remove_expired_events(events: &mut Vec<AgendaEvent>) {
+//    let today = Local::now().date_naive();
+//    events.retain(|event| event.repeat || event.date >= today);
+//}
 
 pub fn draw_repeat_input(
     frame: &mut Frame,
@@ -285,14 +289,14 @@ pub fn draw_agenda_panel(
     let visible_indices: Vec<usize> = (0..app.events.len())
         .filter(|&i| {
             let date = app.events[i].date;
-            date >= today && date <= max_date
+            date <= max_date
         })
         .collect();
 
     let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
         visible_indices
             .into_iter()
-            .partition(|&i| app.events[i].date == today);
+            .partition(|&i| app.events[i].date <= today);
 
     let is_visual = app.focused_panel == Panel::Agenda
         && app.n_mode == NavigationMode::Visual;

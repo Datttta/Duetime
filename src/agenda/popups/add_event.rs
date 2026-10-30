@@ -186,14 +186,14 @@ pub fn save_event(app: &mut App) {
                 let visible_indices: Vec<usize> = (0..app.events.len())
                     .filter(|&i| {
                         let date = app.events[i].date;
-                        date >= today && date <= max_date
+                        date <= max_date
                     })
                     .collect();
 
                 let (today_indices, upcoming_indices): (Vec<usize>, Vec<usize>) =
                     visible_indices
                         .into_iter()
-                        .partition(|&i| app.events[i].date == today);
+                        .partition(|&i| app.events[i].date <= today);
 
                 let today_count = today_indices.len();
 

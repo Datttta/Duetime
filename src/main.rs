@@ -64,7 +64,6 @@ fn main() -> io::Result<()> {
     execute!(io::stdout(), EnableFocusChange, EnableBracketedPaste)?;
 
     while app.running {
-        agenda::ui::remove_expired_events(&mut app.events);
         agenda::ui::update_repeating_events(&mut app.events);
 
         terminal.draw(|frame| ui::draw(frame, &mut app))?;
