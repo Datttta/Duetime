@@ -81,10 +81,6 @@ pub fn open_known_tasks(app: &mut App) {
     app.popup = Popup::TasksTable(TasksTablePopup::KnownTasks);
 }
 
-pub fn confirmation(app: &mut App) {
-    app.popup = Popup::TasksTable(TasksTablePopup::KnownTasks);
-}
-
 pub fn delete_task(app: &mut App) {
     if let Some(current) = app.tasks_table_state.selected() {
         let (first, last) = if app.n_mode == NavigationMode::Visual {
