@@ -95,8 +95,14 @@ fn main() -> io::Result<()> {
 
         // save to files every second
         if last_save.elapsed() >= Duration::from_secs(1) {
-            current_tasks::save_current_tasks(&app.tasks).unwrap();
-            current_timers::save_current_timers(&app.timers).unwrap();
+            if let Err(err) = current_tasks::save_current_tasks(&app.tasks) {
+                log::error!("Failed to save current tasks: {}", err);
+            }
+
+            if let Err(err) = current_timers::save_current_timers(&app.timers) {
+                log::error!("Failed to save current timers: {}", err);
+            }
+
             last_save = Instant::now();
         }
 

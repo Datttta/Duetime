@@ -55,7 +55,7 @@ use ratatui::{
     Frame,
 };
 
-//use log::info;
+use log::info;
 
 struct MainLayout {
     tasks: Rect,
@@ -136,8 +136,12 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
+        info!("current panel: {:?}", app.focused_panel);
+        info!("previous panel: {:?}", app.focused_panel);
         if app.layout_number != 1 {
-            app.previous_panel = app.focused_panel;
+            if app.focused_panel != Panel::None {
+                app.previous_panel = app.focused_panel;
+            };
             
             app.layout_number = 1;
         }
@@ -151,7 +155,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         // ======== HALF HEIGHT PANELS ========
 
         if app.layout_number != 3 {
-            app.previous_panel = app.focused_panel;
+            if app.focused_panel != Panel::None {
+                app.previous_panel = app.focused_panel;
+            };
+
             if matches!(app.previous_selected_panel, Panel::Inbox | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Inbox | Panel::TasksTable)
                 && app.terminal_focus == true 
@@ -182,7 +189,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         // ======== HALF LENGTH PANELS ========
 
         if app.layout_number != 2 {
-            app.previous_panel = app.focused_panel;
+            if app.focused_panel != Panel::None {
+                app.previous_panel = app.focused_panel;
+            };
+
             if matches!(app.previous_selected_panel, Panel::Agenda | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable)
                 && app.terminal_focus == true 

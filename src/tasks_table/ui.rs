@@ -25,7 +25,7 @@ use ratatui::{
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime};
-//use log::info;
+use log::info;
 
 #[derive(Default)]
 pub struct TaskInfo {
