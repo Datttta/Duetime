@@ -16,6 +16,7 @@ use crate::{
             known_tasks_add, 
             presets,
             new_preset,
+            confirmation,
         }
     },
 
@@ -288,6 +289,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
             TasksTablePopup::TaskInfo => {
                 task_info::draw(frame, app);
+            }
+            
+            TasksTablePopup::Confirmation => {
+                confirmation::draw(frame, app);
             }
         }
     }

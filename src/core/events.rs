@@ -16,6 +16,7 @@ use crate::{
         known_tasks_add,
         presets,
         new_preset,
+        confirmation,
     },
 
     inbox::popups::{
@@ -197,6 +198,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
 
                     Popup::TasksTable(TasksTablePopup::TaskInfo) => {
                         task_info::handle_keys(app, key);
+                    }
+
+                    Popup::TasksTable(TasksTablePopup::Confirmation) => {
+                        confirmation::handle_keys(app, key);
                     }
 
                     Popup::Help => {

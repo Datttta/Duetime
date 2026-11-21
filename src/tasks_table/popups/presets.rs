@@ -7,7 +7,7 @@ use ratatui::{
 
 use crate::{
     ui::widgets::keys_help,
-    app::{App, Popup},
+    app::{App, Popup, TasksTablePopup},
     input::vim_navigation,
 };
 
@@ -107,7 +107,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Enter => {
-            app.apply_preset();
+            app.popup = Popup::TasksTable(TasksTablePopup::Confirmation);
         }
 
         KeyCode::Char('q') | KeyCode::Esc => {

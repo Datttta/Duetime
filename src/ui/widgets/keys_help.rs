@@ -52,7 +52,7 @@ pub fn keys(app: &App) -> Line<'static> {
                 Span::raw(" Cancel"),
             ])
         }
-
+        
         Popup::TasksTable(TasksTablePopup::KnownTasks) => {
             Line::from(vec![
                 Span::styled("a", bold),
@@ -63,6 +63,15 @@ pub fn keys(app: &App) -> Line<'static> {
                 Span::raw(" Delete Task  "),
                 Span::styled("q", bold),
                 Span::raw(" Close"),
+            ])
+        }
+
+        Popup::TasksTable(TasksTablePopup::Confirmation) => {
+            Line::from(vec![
+                Span::styled("y", bold),
+                Span::raw(" yes  "),
+                Span::styled("n", bold),
+                Span::raw(" no "),
             ])
         }
 

@@ -46,6 +46,7 @@ pub enum TasksTablePopup {
     AddKnownTask,
     EditKnownTask(usize),
     TaskInfo,
+    Confirmation,
 }
 
 #[derive(PartialEq, Debug, Clone)]
