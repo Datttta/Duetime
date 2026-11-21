@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-desktop_file_dir="$HOME/.local/share/applications/"
+desktop_file_dir="$HOME/.local/share/applications"
 icon_dir="$HOME/.local/share/icons/hicolor/256x256/apps"
-bin_dir="/bin"
+user_bin_dir="$HOME/.local/bin"
+link_bin_dir="/usr/local/bin"
 
 while true; do
     echo "
@@ -18,9 +19,9 @@ while true; do
 
     case $choice in
     1)
-        mkdir -p $desktop_file_dir $icon_dir $bin_dir
+        mkdir -p "$desktop_file_dir" "$icon_dir" "$user_bin_dir"
 
-        cat > $desktop_file_dir/Duetime.desktop <<EOF
+        cat > "$desktop_file_dir/Duetime.desktop" <<EOF
 [Desktop Entry]
 Type=Application
 Name=Duetime
@@ -39,19 +40,24 @@ EOF
             "https://github.com/Datttta/Duetime/releases/latest/download/Duetime-x86_64-unknown-linux-gnu.tar.gz" \
             -o /tmp/Duetime.tar.gz
 
-        tar -xzvf /tmp/Duetime.tar.gz -C /tmp
+        tar -xzf /tmp/Duetime.tar.gz -C /tmp
 
-        sudo install -Dm755 /tmp/Duetime "$bin_dir/Duetime"
+        install -Dm755 /tmp/Duetime "$user_bin_dir/Duetime"
+        sudo ln -sf "$user_bin_dir/Duetime" "$link_bin_dir/Duetime"
+        sudo rm -f /usr/bin/Duetime /bin/Duetime
 
-        rm /tmp/Duetime.tar.gz
+        rm -f /tmp/Duetime /tmp/Duetime.tar.gz
+        update-desktop-database "$desktop_file_dir" 2>/dev/null || true
 
         echo -e "\nDuetime installed!"
         break
         ;;
     2)
-        rm -f $desktop_file_dir/Duetime.desktop
-        rm -f $icon_dir/Duetime.png
-        rm -f $bin_dir/Duetime
+        rm -f "$desktop_file_dir/Duetime.desktop"
+        rm -f "$icon_dir/Duetime.png"
+        rm -f "$user_bin_dir/Duetime"
+        sudo rm -f "$link_bin_dir/Duetime" /usr/bin/Duetime /bin/Duetime
+        update-desktop-database "$desktop_file_dir" 2>/dev/null || true
 
         echo -e "\nDuetime uninstalled."
         break
@@ -62,4 +68,3 @@ EOF
     esac
 
 done
-

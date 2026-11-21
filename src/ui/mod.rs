@@ -55,7 +55,7 @@ use ratatui::{
     Frame,
 };
 
-use log::info;
+//use log::info;
 
 struct MainLayout {
     tasks: Rect,
@@ -136,8 +136,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     if area.width < 140 && area.height < 40{
         // ======== TASKS TABLE PANEL ========
 
-        info!("current panel: {:?}", app.focused_panel);
-        info!("previous panel: {:?}", app.focused_panel);
         if app.layout_number != 1 {
             if app.focused_panel != Panel::None {
                 app.previous_panel = app.focused_panel;
