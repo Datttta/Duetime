@@ -149,7 +149,7 @@ fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
     .split(vertical[0]);
     
     let horizontal_help = Layout::horizontal([
-        Constraint::Length(70)
+        Constraint::Length(85)
     ])
     .flex(Flex::Center)
     .split(vertical[1]);

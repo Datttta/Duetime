@@ -36,7 +36,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .split(vertical[0]);
 
         let horizontal_help = Layout::horizontal([
-            Constraint::Length(22)
+            Constraint::Length(55)
         ])
         .flex(Flex::Center)
         .split(vertical[1]);
