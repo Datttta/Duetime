@@ -188,10 +188,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         if app.layout_number != 2 {
             app.previous_panel = app.focused_panel;
-            info!("terminal_focus: {:?}", app.terminal_focus);
-            info!("previous panel: {:?}", app.previous_panel);
-            info!("focused panel: {:?}", app.focused_panel);
-            info!("previous running panel: {:?}", app.previous_running_panel);
             if matches!(app.previous_selected_panel, Panel::Agenda | Panel::TasksTable) 
                 && !matches!(app.focused_panel, Panel::Agenda | Panel::TasksTable)
                 && app.terminal_focus == true 
@@ -239,8 +235,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
 
         if app.layout_number == 3 {
-            if !matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) {
-                app.focused_panel = app.previous_panel;
+            if matches!(app.previous_running_panel, Panel::Inbox | Panel::TasksTable) {
+                if app.terminal_focus == false {
+                    app.focused_panel = app.previous_running_panel;
+                };
             }
         }
 
