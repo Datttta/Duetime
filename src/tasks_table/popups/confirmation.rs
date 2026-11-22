@@ -23,20 +23,20 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(4),
+            Constraint::Length(5),
             Constraint::Length(1), // keys help
         ])
         .flex(Flex::Center)
         .split(frame.area());
 
         let horizontal_box = Layout::horizontal([
-            Constraint::Length(33),
+            Constraint::Length(36),
         ])
         .flex(Flex::Center)
         .split(vertical[0]);
 
         let horizontal_help = Layout::horizontal([
-            Constraint::Length(15)
+            Constraint::Length(18)
         ])
         .flex(Flex::Center)
         .split(vertical[1]);
@@ -56,7 +56,8 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     frame.render_widget(block, area);
     
     let paragraph = Paragraph::new(vec![
-        Line::from("Overwrite the current tasks?"),
+        Line::from(""),
+        Line::from("Overwrite the current tasks?").centered(),
     ])
     .wrap(Wrap { trim: false });
 

@@ -68,9 +68,9 @@ pub fn keys(app: &App) -> Line<'static> {
 
         Popup::TasksTable(TasksTablePopup::Confirmation) => {
             Line::from(vec![
-                Span::styled("y", bold),
+                Span::styled("Y", bold),
                 Span::raw(" yes  "),
-                Span::styled("n", bold),
+                Span::styled("N", bold),
                 Span::raw(" no "),
             ])
         }

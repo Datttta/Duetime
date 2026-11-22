@@ -55,7 +55,7 @@ use ratatui::{
     Frame,
 };
 
-use log::info;
+//use log::info;
 
 struct MainLayout {
     tasks: Rect,
