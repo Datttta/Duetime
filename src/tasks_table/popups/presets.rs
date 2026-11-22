@@ -107,7 +107,11 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Enter => {
-            app.popup = Popup::TasksTable(TasksTablePopup::Confirmation);
+            if app.tasks.len() == 0 {
+                app.apply_preset();
+            } else {
+                app.popup = Popup::TasksTable(TasksTablePopup::Confirmation);
+            };
         }
 
         KeyCode::Char('q') | KeyCode::Esc => {
