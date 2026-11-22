@@ -224,20 +224,26 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         
         if app.layout_number == 1 {
             app.focused_panel = app.previous_panel;
+
+            if app.focused_panel == Panel::None {
+                app.focused_panel = Panel::TasksTable;
+            };
         }
         
         if app.layout_number == 2 {
-            if matches!(app.previous_running_panel, Panel::Agenda | Panel::TasksTable) {
+            app.focused_panel = app.previous_panel;
+            if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) {
                 if app.terminal_focus == false {
-                    app.focused_panel = app.previous_running_panel;
+                    app.focused_panel = app.previous_panel;
                 };
             }
         }
 
         if app.layout_number == 3 {
-            if matches!(app.previous_running_panel, Panel::Inbox | Panel::TasksTable) {
+            app.focused_panel = app.previous_panel;
+            if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) {
                 if app.terminal_focus == false {
-                    app.focused_panel = app.previous_running_panel;
+                    app.focused_panel = app.previous_panel;
                 };
             }
         }
