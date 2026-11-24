@@ -140,8 +140,8 @@ impl App {
                 };
                 
                 self.tasks.insert(position.min(self.tasks.len()), task);
-
                 self.tasks_table_state.select(Some(position.min(self.tasks.len() - 1)));
+                self.tasks_selected_input = TaskSelectedInput::TaskName;
             }
 
             TaskDestination::EditTask(index) => {
