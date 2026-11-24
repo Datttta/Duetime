@@ -73,7 +73,6 @@ pub enum NewPresetFocus {
 
 pub enum TaskDestination {
     AddTask,
-    AddTaskFromKnown,
     Preset,
     EditTask(usize),
     EditPresetTask(usize),

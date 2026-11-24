@@ -1,5 +1,5 @@
 use std::time::Duration;
-
+//use log::info;
 use crate::{
     app::{
         NewPresetFocus, Popup, TasksTablePopup, 
@@ -18,37 +18,31 @@ impl App {
     // =================== POPUPS =======================
 
     pub fn task_add (&mut self, destination: TaskDestination) {
-        match self.task_destination {
-            TaskDestination::AddTask => {
-                self.task_destination = destination;
-                self.task_name.clear();
-                self.planned_start.clear();
-                self.planned_end.clear();
 
-                self.tasks_selected_input = TaskSelectedInput::TaskName;
-                self.mode = InputMode::Insert;
-                self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
+        if self.popup == Popup::TasksTable(TasksTablePopup::KnownTasks) {
+            let selected = self.known_tasks_state.selected();
+
+            if let Some(index) = selected {
+                let known_task = &self.known_tasks[index];
+
+                self.task_name.text = known_task.name.clone();
+
+                self.tasks_selected_input = TaskSelectedInput::PlannedStart;
             }
+        } else {
+            self.task_name.clear();
+            self.tasks_selected_input = TaskSelectedInput::TaskName;
+        } 
 
-            TaskDestination::AddTaskFromKnown => {
-                let selected = self.known_tasks_state.selected();
+        self.planned_start.clear();
+        self.planned_end.clear();
         
-                if let Some(index) = selected {
-                    let known_task = &self.known_tasks[index];
+        self.task_destination = destination;
 
-                    self.task_destination = destination;
-                    self.task_name.text = known_task.name.clone();
-                    self.planned_start.clear();
-                    self.planned_end.clear();
+        self.mode = InputMode::Insert;
+        self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
 
-                    self.tasks_selected_input = TaskSelectedInput::PlannedStart;
-                    self.mode = InputMode::Insert;
-                    self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
-                }
-            }
 
-            _ => {}
-        }
     }
 
     pub fn create_preset(&mut self) {
@@ -165,6 +159,10 @@ impl App {
                 self.tasks.insert(position.min(self.tasks.len()), task);
                 self.tasks_table_state.select(Some(position.min(self.tasks.len() - 1)));
                 self.tasks_selected_input = TaskSelectedInput::TaskName;
+
+                if self.last_popup == Popup::TasksTable(TasksTablePopup::KnownTasks) {
+                    self.popup = self.last_popup.clone();
+                }
             }
 
             TaskDestination::EditTask(index) => {

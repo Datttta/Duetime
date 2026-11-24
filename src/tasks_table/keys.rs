@@ -131,7 +131,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
 
         KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
             app.previous_panel = app.focused_panel;
-           actions::open_known_tasks(app); 
+            actions::open_known_tasks(app); 
         }
 
         _ => {

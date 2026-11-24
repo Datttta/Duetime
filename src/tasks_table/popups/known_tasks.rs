@@ -92,7 +92,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Enter => {
-            app.task_add(TaskDestination::AddTaskFromKnown);
+            app.last_popup = app.popup.clone();
+            app.task_add(TaskDestination::AddTask);
         }
 
         KeyCode::Char('d') => {
