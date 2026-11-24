@@ -148,6 +148,18 @@ fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
         KeyCode::Char('j') if key.modifiers.contains(KeyModifiers::CONTROL) => {
             if app.selected_suggestion + 1 < app.suggestions.len() {
                 app.selected_suggestion += 1;
+            } else {
+                app.selected_suggestion = 0;
+            }
+            true
+        }
+
+
+        KeyCode::Tab => {
+            if app.selected_suggestion + 1 < app.suggestions.len() {
+                app.selected_suggestion += 1;
+            } else {
+                app.selected_suggestion = 0;
             }
             true
         }
@@ -155,6 +167,17 @@ fn handle_suggestion_keys(app: &mut App, key: KeyEvent) -> bool {
         KeyCode::Char('k') if key.modifiers.contains(KeyModifiers::CONTROL) => {
             if app.selected_suggestion > 0 {
                 app.selected_suggestion -= 1;
+            } else {
+                app.selected_suggestion = app.suggestions.len() - 1;
+            }
+            true
+        }
+        
+        KeyCode::BackTab => {
+            if app.selected_suggestion > 0 {
+                app.selected_suggestion -= 1;
+            } else {
+                app.selected_suggestion = app.suggestions.len() - 1;
             }
             true
         }
