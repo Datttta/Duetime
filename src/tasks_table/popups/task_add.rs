@@ -77,6 +77,13 @@ pub fn draw(frame: &mut Frame, app: &App) {
             width: TASK_NAME_WIDTH,
             height: app.suggestions.len().min(5) as u16,
         };
+        
+        let suggestions_space = Rect {
+            x: tasks_colums[0].x - 1,
+            y: tasks_colums[0].bottom(),
+            width: TASK_NAME_WIDTH + 2,
+            height: app.suggestions.len().min(5) as u16,
+        };
 
         let task_name_suggestions = suggestions::task_name_list(
             &app.known_tasks,
@@ -85,6 +92,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
             app.selected_suggestion,
         );
 
+        frame.render_widget(Clear, suggestions_space);
         frame.render_widget(task_name_suggestions, suggestions_area);
     }
 
