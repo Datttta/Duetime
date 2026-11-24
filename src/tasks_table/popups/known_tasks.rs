@@ -105,7 +105,8 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         }
 
         KeyCode::Char('q') => {
-            app.popup = Popup::None
+            app.popup = Popup::None;
+            app.last_popup = Popup::None
         }
 
         _ => {}

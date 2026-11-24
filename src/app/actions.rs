@@ -182,8 +182,6 @@ impl App {
                     self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
                 }
             }
-
-            _ => {}
         }
 
         self.task_name.clear();
@@ -237,8 +235,6 @@ impl App {
             TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
                 self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             }
-
-            _ => {}
         }
     }
 
