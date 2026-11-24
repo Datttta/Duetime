@@ -18,15 +18,37 @@ impl App {
     // =================== POPUPS =======================
 
     pub fn task_add (&mut self, destination: TaskDestination) {
-        self.task_destination = destination;
+        match self.task_destination {
+            TaskDestination::AddTask => {
+                self.task_destination = destination;
+                self.task_name.clear();
+                self.planned_start.clear();
+                self.planned_end.clear();
 
-        self.task_name.clear();
-        self.planned_start.clear();
-        self.planned_end.clear();
+                self.tasks_selected_input = TaskSelectedInput::TaskName;
+                self.mode = InputMode::Insert;
+                self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
+            }
 
-        self.tasks_selected_input = TaskSelectedInput::TaskName;
-        self.mode = InputMode::Insert;
-        self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
+            TaskDestination::AddTaskFromKnown => {
+                let selected = self.known_tasks_state.selected();
+        
+                if let Some(index) = selected {
+                    let known_task = &self.known_tasks[index];
+
+                    self.task_destination = destination;
+                    self.task_name.text = known_task.name.clone();
+                    self.planned_start.clear();
+                    self.planned_end.clear();
+
+                    self.tasks_selected_input = TaskSelectedInput::PlannedStart;
+                    self.mode = InputMode::Insert;
+                    self.popup = Popup::TasksTable(TasksTablePopup::AddTask);
+                }
+            }
+
+            _ => {}
+        }
     }
 
     pub fn create_preset(&mut self) {
@@ -88,10 +110,11 @@ impl App {
         let selected = self.known_tasks_state.selected();
         
         if let Some(index) = selected {
-            let suggestion = &self.known_tasks[index];
+            let known_task = &self.known_tasks[index];
 
-            self.known_task_name.text = suggestion.name.clone();
-            self.mode = InputMode::Insert;
+            self.known_task_name.text = known_task.name.clone();
+            self.known_task_name.cursor = self.known_task_name.text.len();
+            self.mode = InputMode::Normal;
             self.popup = Popup::TasksTable(TasksTablePopup::EditKnownTask(index))
         }
     }
@@ -161,6 +184,8 @@ impl App {
                     self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
                 }
             }
+
+            _ => {}
         }
 
         self.task_name.clear();
@@ -214,6 +239,8 @@ impl App {
             TaskDestination::Preset | TaskDestination::EditPresetTask(_) => {
                 self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
             }
+
+            _ => {}
         }
     }
 

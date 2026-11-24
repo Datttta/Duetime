@@ -10,7 +10,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use crate::{
     input::vim_navigation,
     ui::widgets::keys_help,
-    app::{App, Popup},
+    app::{App, Popup, TaskDestination},
 };
 
 pub fn draw(frame: &mut Frame, app: &mut App) {
@@ -89,6 +89,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
         KeyCode::Char('e') => {
             app.edit_known_task();
             return;
+        }
+
+        KeyCode::Enter => {
+            app.task_add(TaskDestination::AddTaskFromKnown);
         }
 
         KeyCode::Char('d') => {
