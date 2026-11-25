@@ -106,8 +106,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = TOP_RIGHT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             } else if app.focused_panel == BOTTOM_LEFT_PANEL {
                                 app.focused_panel = BOTTOM_RIGHT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             }
                             app.previous_panel = app.focused_panel;
                             return Ok(());
@@ -117,8 +119,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == TOP_RIGHT_PANEL {
                                 app.focused_panel = TOP_LEFT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
                                 app.focused_panel = BOTTOM_LEFT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             }
                             app.previous_panel = app.focused_panel;
 
@@ -133,8 +137,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = BOTTOM_LEFT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             } else if app.focused_panel == TOP_RIGHT_PANEL {
                                 app.focused_panel = BOTTOM_RIGHT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             }
                             app.previous_panel = app.focused_panel;
                             return Ok(());
@@ -144,8 +150,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == BOTTOM_LEFT_PANEL {
                                 app.focused_panel = TOP_LEFT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             } else if app.focused_panel == BOTTOM_RIGHT_PANEL {
                                 app.focused_panel = TOP_RIGHT_PANEL;
+                                app.n_mode = NavigationMode::Normal;
                             }
                             app.previous_panel = app.focused_panel;
                             return Ok(());
