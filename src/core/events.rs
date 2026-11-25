@@ -99,6 +99,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                     
                     match key.code {
                         KeyCode::Char('L') => {
+                            if app.layout_number == 1 {
+                                return Ok(());
+                            }
+
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = TOP_RIGHT_PANEL;
@@ -122,6 +126,10 @@ pub fn handle_events(app: &mut App) -> io::Result<()> {
                         }
                         
                         KeyCode::Char('J') => {
+                            if app.layout_number == 1 || app.layout_number == 3 {
+                                return Ok(());
+                            }
+
                             app.previous_selected_panel = app.focused_panel;
                             if app.focused_panel == TOP_LEFT_PANEL {
                                 app.focused_panel = BOTTOM_LEFT_PANEL;
