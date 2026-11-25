@@ -135,10 +135,9 @@ pub fn draw_tasks_panel(
     frame.render_widget(Paragraph::new("Act start"), columns[5]);
     frame.render_widget(Paragraph::new("Act end"), columns[6]);
     frame.render_widget(Paragraph::new("Elapsed"), columns[7]);
-    ////
 
-    let is_visual = app.focused_panel == Panel::TasksTable 
-        || (app.previous_panel == Panel::TasksTable && app.focused_panel == Panel::None) 
+    let is_visual = (app.focused_panel == Panel::TasksTable 
+        || (app.previous_panel == Panel::TasksTable) && app.focused_panel == Panel::None) 
         && app.n_mode == NavigationMode::Visual;
 
     draw_tasks(frame, chunks[2], app, is_visual);
