@@ -137,7 +137,8 @@ pub fn draw_tasks_panel(
     frame.render_widget(Paragraph::new("Elapsed"), columns[7]);
     ////
 
-    let is_visual = app.focused_panel == Panel::TasksTable
+    let is_visual = app.focused_panel == Panel::TasksTable 
+        || (app.previous_panel == Panel::TasksTable && app.focused_panel == Panel::None) 
         && app.n_mode == NavigationMode::Visual;
 
     draw_tasks(frame, chunks[2], app, is_visual);
@@ -213,17 +214,26 @@ pub fn draw_tasks(
             Cell::from(task.stopwatch.formatted()),
         ]);
 
-        if !popup_open && visual_mode {
+        if visual_mode {
             if let (Some(start), Some(end)) = (visual_start, current) {
                 let first = start.min(end);
                 let last = start.max(end);
 
                 if index >= first && index <= last {
-                    row = row.style(
-                        Style::default()
-                            .fg(Color::Black)
-                            .bg(Color::White),
-                    );
+                    if popup_open || !app.terminal_focus {
+                        row = row.style(
+                            Style::default()
+                                .bg(unfocused_panel())
+                                .fg(Color::Black)
+                        );
+                    } else {
+                        row = row.style(
+                            Style::default()
+                                .fg(Color::Black)
+                                .bg(Color::White),
+                        );
+
+                    }
                 }
             }
         }
