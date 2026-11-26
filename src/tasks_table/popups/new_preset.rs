@@ -14,11 +14,13 @@ use crate::{
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
-    widgets::{Clear, Block, List, ListItem, Padding, Paragraph},
+    widgets::{Clear, Block, List, ListItem, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState },
     style::{Style, Color},
     text::Line,
     Frame
 };
+
+use log::info;
 
 const PRESET_NAME_WIDTH: u16 = 30;
 
@@ -143,6 +145,49 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let list = List::new(tasks)
         .highlight_style(highlight_style)
         .highlight_symbol(highlight_symbol);
+
+
+    let inner = block.inner(area);
+    let item_count = app.preset_tasks.len();
+
+    // Scrollbar
+    let visible_height = vertical_inner[1].height as usize;
+    let scroll_offset = app.preset_task_state.offset();
+    
+    info!("visible_height: {:?}", visible_height);
+    info!("preset_tasks: {:?}", item_count);
+
+    let mut table_area = vertical_inner[1];
+    if item_count > visible_height {
+        // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
+        table_area.width = table_area.width.saturating_sub(2);
+    }
+
+    if item_count > visible_height {
+        let max_scroll = item_count.saturating_sub(visible_height);
+        
+        let mut scrollbar_state = ScrollbarState::new(max_scroll + 2)
+            .position(scroll_offset);
+
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .thumb_symbol("▊")
+            .track_symbol(Some(""))
+            .begin_symbol(Some(""))
+            .end_symbol(Some(""));
+
+        let scrollbar_area = Rect {
+            x: area.x + area.width - 2,
+            y: vertical_inner[0].y,
+            width: 1,
+            height: vertical_inner[1].height + 3,
+        };
+
+        frame.render_stateful_widget(
+            scrollbar,
+            scrollbar_area,
+            &mut scrollbar_state,
+        );
+    }
 
 
     frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
