@@ -28,7 +28,7 @@ pub fn add_event(app: &mut App) {
 
     app.event_repeat = false;
 
-    app.event_name.cursor = app.event_name.text.len();
+    app.event_name.cursor = app.event_name.text.len().saturating_sub(1);
 
     app.mode = InputMode::Insert;
     app.agenda_selected_input = AgendaSelectedInput::Name;

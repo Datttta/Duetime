@@ -31,9 +31,9 @@ pub fn edit_task(app: &mut App) {
         app.planned_start.text = task.planned_start.clone();
         app.planned_end.text = task.planned_end.clone();
 
-        app.task_name.cursor = app.task_name.text.len();
-        app.planned_start.cursor = app.planned_start.text.len();
-        app.planned_end.cursor = app.planned_end.text.len();
+        app.task_name.cursor = app.task_name.text.len().saturating_sub(1);
+        app.planned_start.cursor = app.planned_start.text.len().saturating_sub(1);
+        app.planned_end.cursor = app.planned_end.text.len().saturating_sub(1);
 
         app.mode = InputMode::Normal;
         app.popup = Popup::TasksTable(TasksTablePopup::EditTask);

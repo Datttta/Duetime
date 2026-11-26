@@ -22,7 +22,7 @@ pub fn add_timer(app: &mut App) {
     app.timer_duration.cursor = 0;
     app.timer_duration.value = "00:00:00".to_string();
     
-    app.timer_name.cursor = app.timer_name.text.len();
+    app.timer_name.cursor = app.timer_name.text.len().saturating_sub(1);
 
     app.mode = InputMode::Insert;
     app.timer_selected_input = TimerSelectedInput::Name;
@@ -37,8 +37,8 @@ pub fn edit_timer(app: &mut App) {
         app.timer_name.text = timer.name.clone();
         app.timer_duration.value = format_duration(timer.duration);
 
-        app.timer_name.cursor = app.timer_name.text.len();
-        app.timer_duration.cursor = app.planned_start.text.len();
+        app.timer_name.cursor = app.timer_name.text.len().saturating_sub(1);
+        app.timer_duration.cursor = app.planned_start.text.len().saturating_sub(1);
 
         app.mode = InputMode::Normal;
         app.popup = Popup::Timers(TimersPopup::EditTimer);

@@ -61,7 +61,7 @@ impl App {
             self.edit_preset = Some(index);
 
             self.preset_name.text = preset.name.clone();
-            self.preset_name.cursor = self.preset_name.text.len();
+            self.preset_name.cursor = self.preset_name.text.len() - 1;
 
             self.preset_tasks = preset.tasks.clone();
 
@@ -85,9 +85,9 @@ impl App {
             self.planned_start.text = preset.planned_start.clone().unwrap_or_default();
             self.planned_end.text = preset.planned_end.clone().unwrap_or_default();
 
-            self.task_name.cursor = self.task_name.text.len();
-            self.planned_start.cursor = self.planned_start.text.len();
-            self.planned_end.cursor = self.planned_end.text.len();
+            self.task_name.cursor = self.task_name.text.len().saturating_sub(1);
+            self.planned_start.cursor = self.planned_start.text.len().saturating_sub(1);
+            self.planned_end.cursor = self.planned_end.text.len().saturating_sub(1);
 
             self.mode = InputMode::Normal;
             self.tasks_selected_input = TaskSelectedInput::TaskName;
@@ -107,7 +107,7 @@ impl App {
             let known_task = &self.known_tasks[index];
 
             self.known_task_name.text = known_task.name.clone();
-            self.known_task_name.cursor = self.known_task_name.text.len();
+            self.known_task_name.cursor = self.known_task_name.text.len().saturating_sub(1);
             self.mode = InputMode::Normal;
             self.popup = Popup::TasksTable(TasksTablePopup::EditKnownTask(index))
         }

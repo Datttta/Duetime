@@ -21,7 +21,7 @@ pub fn edit_inbox_item(app: &mut App) {
         // Load task data into inputs
         app.inbox_item.text = item.input.clone();
         app.priority = item.priority.clone();
-        app.inbox_item.cursor = app.inbox_item.text.len();
+        app.inbox_item.cursor = app.inbox_item.text.len().saturating_sub(1);
 
         app.mode = InputMode::Normal;
         app.popup = Popup::Inbox(InboxPopup::EditInboxItem);
