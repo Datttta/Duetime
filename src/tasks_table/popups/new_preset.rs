@@ -147,16 +147,12 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .highlight_symbol(highlight_symbol);
 
 
+    // Scrollbar
     let inner = block.inner(area);
     let item_count = app.preset_tasks.len();
-
-    // Scrollbar
     let visible_height = vertical_inner[1].height as usize;
     let scroll_offset = app.preset_task_state.offset();
     
-    info!("visible_height: {:?}", visible_height);
-    info!("preset_tasks: {:?}", item_count);
-
     let mut table_area = vertical_inner[1];
     if item_count > visible_height {
         // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
@@ -313,7 +309,7 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                             }
                         }
 
-                        KeyCode::Char('q') => {
+                        KeyCode::Char('q') | KeyCode::Esc => {
                             app.popup = Popup::TasksTable(TasksTablePopup::Presets);
                         }
 
