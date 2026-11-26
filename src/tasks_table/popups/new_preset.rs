@@ -20,7 +20,7 @@ use ratatui::{
     Frame
 };
 
-use log::info;
+//use log::info;
 
 const PRESET_NAME_WIDTH: u16 = 30;
 
@@ -146,19 +146,11 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         .highlight_style(highlight_style)
         .highlight_symbol(highlight_symbol);
 
-
     // Scrollbar
-    let inner = block.inner(area);
     let item_count = app.preset_tasks.len();
     let visible_height = vertical_inner[1].height as usize;
     let scroll_offset = app.preset_task_state.offset();
     
-    let mut table_area = vertical_inner[1];
-    if item_count > visible_height {
-        // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
-        table_area.width = table_area.width.saturating_sub(2);
-    }
-
     if item_count > visible_height {
         let max_scroll = item_count.saturating_sub(visible_height);
         
@@ -173,9 +165,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
         let scrollbar_area = Rect {
             x: area.x + area.width - 2,
-            y: vertical_inner[0].y,
+            y: vertical_inner[0].y.saturating_add(2),
             width: 1,
-            height: vertical_inner[1].height + 3,
+            height: vertical_inner[1].height + 1,
         };
 
         frame.render_stateful_widget(
