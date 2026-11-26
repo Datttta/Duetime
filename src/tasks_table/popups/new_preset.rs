@@ -37,7 +37,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
 
     fn centered_rect(frame: &mut Frame, app: &mut App) -> Rect {
         let vertical = Layout::vertical([
-            Constraint::Length(18),
+            Constraint::Length(21),
             Constraint::Length(1), // keys_help
         ])
         .flex(Flex::Center)
