@@ -13,6 +13,7 @@ use crate::{
     app::{App, Panel, Popup, TimersPopup},
     core::{events, sounds::alarm_sound, update},
     storage::{current_tasks, current_timers},
+    input::vim_navigation::NavigationMode,
 };
 
 use crossterm::{
@@ -60,6 +61,8 @@ fn main() -> io::Result<()> {
     let mut app = App::new();
     let mut first_render = true;
     let mut last_save = Instant::now();
+
+    let mut switch = false;
 
     execute!(io::stdout(), EnableFocusChange, EnableBracketedPaste)?;
 
@@ -113,6 +116,12 @@ fn main() -> io::Result<()> {
         
         // track open popups
         app.popup_open = !matches!(app.popup, Popup::None);
+        if app.popup_open && !switch {
+            app.n_mode = NavigationMode::Normal;
+            switch = true;
+        } else if !app.popup_open {
+            switch = false;
+        }
 
         events::handle_events(&mut app)?;
     }

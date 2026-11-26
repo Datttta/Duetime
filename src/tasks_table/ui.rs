@@ -251,7 +251,7 @@ pub fn draw_tasks(
             Cell::from(task.stopwatch.formatted()),
         ]);
 
-        if visual_mode {
+        if !app.popup_open && visual_mode {
             if let (Some(start), Some(end)) = (visual_start, current) {
                 let first = start.min(end);
                 let last = start.max(end);
