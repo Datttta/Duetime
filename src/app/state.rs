@@ -122,6 +122,7 @@ pub struct App {
     pub next_id: u64,
     pub active_alarm: Option<Arc<AtomicBool>>,
     pub terminal_focus: bool,
+    pub popup_open: bool,
     pub layout_number: usize,
 
     // Clipboard / notifications
@@ -277,6 +278,7 @@ impl App {
             next_id: 1,
             active_alarm: None,
             terminal_focus: true,
+            popup_open: false,
             layout_number: 0,
 
             // Clipboard / status

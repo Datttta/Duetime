@@ -217,8 +217,6 @@ pub fn draw_tasks(
     let visual_mode = is_visual; 
     let current = app.tasks_table_state.selected();
 
-    let popup_open = !matches!(app.popup, Popup::None);
-
     let mut rows = Vec::new();
 
     for (index, task) in app.tasks.iter().enumerate() {
@@ -259,7 +257,7 @@ pub fn draw_tasks(
                 let last = start.max(end);
 
                 if index >= first && index <= last {
-                    if popup_open || !app.terminal_focus {
+                    if app.popup_open || !app.terminal_focus {
                         row = row.style(
                             Style::default()
                                 .bg(unfocused_panel())
@@ -296,7 +294,7 @@ pub fn draw_tasks(
         ]));
     }
 
-    let highlight_style = if (popup_open && app.previous_panel == Panel::TasksTable) 
+    let highlight_style = if (app.popup_open && app.previous_panel == Panel::TasksTable) 
         || (!app.terminal_focus && app.previous_running_panel == Panel::TasksTable) 
     {
         Style::default()

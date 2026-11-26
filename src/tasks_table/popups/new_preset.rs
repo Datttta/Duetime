@@ -307,6 +307,10 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                         }
 
                         KeyCode::Char('q') | KeyCode::Esc => {
+                            if key.code == KeyCode::Char('q') {
+                                app.n_mode = NavigationMode::Normal;
+                            }
+
                             app.popup = Popup::TasksTable(TasksTablePopup::Presets);
                         }
 

@@ -105,10 +105,14 @@ fn main() -> io::Result<()> {
 
             last_save = Instant::now();
         }
-
+        
+        // track terminal focus
         if !app.terminal_focus {
             app.focused_panel = Panel::None;
         }
+        
+        // track open popups
+        app.popup_open = !matches!(app.popup, Popup::None);
 
         events::handle_events(&mut app)?;
     }
