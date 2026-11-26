@@ -17,7 +17,7 @@ use crate::{
 impl App {
     // =================== POPUPS =======================
 
-    pub fn task_add (&mut self, destination: TaskDestination) {
+    pub fn task_add(&mut self, destination: TaskDestination) {
 
         if self.popup == Popup::TasksTable(TasksTablePopup::KnownTasks) {
             let selected = self.known_tasks_state.selected();
@@ -134,12 +134,9 @@ impl App {
                 };
                 
                 self.preset_tasks.insert(position.min(self.preset_tasks.len()), preset_task);
-
                 self.preset_task_state.select(Some(position.min(self.preset_tasks.len() - 1)));
-
-
-                self.mode = InputMode::Normal;
                 self.popup = Popup::TasksTable(TasksTablePopup::NewPreset);
+                self.mode = InputMode::Normal;
             }
 
             TaskDestination::AddTask => {
@@ -213,7 +210,6 @@ impl App {
         }
 
         self.preset_name.clear();
-        self.popup = Popup::TasksTable(TasksTablePopup::Presets);
 
         self.task_name.clear();
         self.planned_start.clear();
@@ -224,6 +220,7 @@ impl App {
         }
 
         preset::save_preset(&self.presets).unwrap();
+        self.popup = Popup::TasksTable(TasksTablePopup::Presets);
     }
 
     pub fn close_popup(&mut self) {

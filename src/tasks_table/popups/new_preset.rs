@@ -275,7 +275,6 @@ pub fn handle_keys(app: &mut App, key: KeyEvent) {
                     match key.code {
                         KeyCode::Char('a') => {
                             app.task_add(TaskDestination::Preset);
-
                             return;
                         }
 

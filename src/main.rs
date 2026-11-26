@@ -119,9 +119,10 @@ fn main() -> io::Result<()> {
         if app.popup_open && !switch {
             app.n_mode = NavigationMode::Normal;
             switch = true;
-        } else if !app.popup_open {
+        } else if !app.popup_open && switch {
+            app.n_mode = NavigationMode::Normal;
             switch = false;
-        }
+        } 
 
         events::handle_events(&mut app)?;
     }

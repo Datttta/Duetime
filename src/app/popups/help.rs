@@ -73,7 +73,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             Span::styled(" Presets", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![
-            Span::styled("  p+a", Style::default().fg(Color::Yellow)),
+            Span::styled("  a+p", Style::default().fg(Color::Yellow)),
             Span::styled(" Add tasks as preset", Style::default().fg(gray_color())),
         ]),
         Line::from(vec![

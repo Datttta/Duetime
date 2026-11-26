@@ -25,7 +25,7 @@ use ratatui::{
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime};
-use log::info;
+//use log::info;
 
 #[derive(Default)]
 pub struct TaskInfo {
@@ -141,9 +141,7 @@ pub fn draw_tasks_panel(
         && app.n_mode == NavigationMode::Visual;
 
     // Scrollbar
-    info!("tasks_table: {:?}", app.tasks.len());
     let visible_height = chunks[2].height as usize;
-    info!("visible_height: {:?}", visible_height);
     let item_count = app.tasks.len();
     let scroll_offset = app.tasks_table_state.offset();
 
