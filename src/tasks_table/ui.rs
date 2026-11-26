@@ -16,7 +16,7 @@ use crate::{
 
 use ratatui::{
     layout::{Alignment, Constraint, Flex, Layout, Rect},
-    widgets::{Block, Cell, Padding, Paragraph, Row, Table},
+    widgets::{Block, Cell, Padding, Paragraph, Row, Table, Scrollbar, ScrollbarOrientation, ScrollbarState},
     style::{Color, Style},
     text::Line,
     Frame,
@@ -25,7 +25,7 @@ use ratatui::{
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime};
-//use log::info;
+use log::info;
 
 #[derive(Default)]
 pub struct TaskInfo {
@@ -153,6 +153,45 @@ pub fn draw_tasks_panel(
         );
 
         frame.render_widget(status, chunks[3]);
+    }
+    
+    // Scrollbar
+    info!("tasks_table: {:?}", app.tasks.len());
+    let visible_height = chunks[2].height as usize;
+    info!("visible_height: {:?}", visible_height);
+    let item_count = app.tasks.len();
+    let scroll_offset = app.tasks_table_state.offset();
+
+    let mut table_area = chunks[2];
+    if item_count > visible_height {
+        // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
+        table_area.width = table_area.width.saturating_sub(2);
+    }
+
+    if item_count > visible_height {
+        let max_scroll = item_count.saturating_sub(visible_height);
+        
+        let mut scrollbar_state = ScrollbarState::new(max_scroll + 2)
+            .position(scroll_offset);
+
+        let scrollbar = Scrollbar::new(ScrollbarOrientation::VerticalRight)
+            .thumb_symbol("▊")
+            .track_symbol(Some(""))
+            .begin_symbol(Some(""))
+            .end_symbol(Some(""));
+
+        let scrollbar_area = Rect {
+            x: area.x + area.width - 2,
+            y: chunks[1].y,
+            width: 1,
+            height: chunks[2].height + 1,
+        };
+
+        frame.render_stateful_widget(
+            scrollbar,
+            scrollbar_area,
+            &mut scrollbar_state,
+        );
     }
 }
 

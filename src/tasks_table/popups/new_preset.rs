@@ -14,7 +14,7 @@ use crate::{
 
 use ratatui::{
     layout::{Rect, Constraint, Layout, Flex, Alignment},
-    widgets::{Clear, Block, List, ListItem, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState },
+    widgets::{Clear, Block, List, ListItem, Padding, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState},
     style::{Style, Color},
     text::Line,
     Frame
@@ -176,7 +176,6 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
             &mut scrollbar_state,
         );
     }
-
 
     frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
 }
