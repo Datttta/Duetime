@@ -140,21 +140,6 @@ pub fn draw_tasks_panel(
         || (app.previous_panel == Panel::TasksTable) && app.focused_panel == Panel::None) 
         && app.n_mode == NavigationMode::Visual;
 
-    draw_tasks(frame, chunks[2], app, is_visual);
-
-    if let Popup::None = app.popup {
-        let status = Paragraph::new(format!(
-                " Total elapsed {}",
-                format_duration(app.total_elapsed())
-        ))
-        .block(
-            Block::default()
-                .padding(Padding::new(2, 0, 0, 0))
-        );
-
-        frame.render_widget(status, chunks[3]);
-    }
-    
     // Scrollbar
     info!("tasks_table: {:?}", app.tasks.len());
     let visible_height = chunks[2].height as usize;
@@ -193,6 +178,22 @@ pub fn draw_tasks_panel(
             &mut scrollbar_state,
         );
     }
+
+    draw_tasks(frame, table_area, app, is_visual);
+
+    if let Popup::None = app.popup {
+        let status = Paragraph::new(format!(
+                " Total elapsed {}",
+                format_duration(app.total_elapsed())
+        ))
+        .block(
+            Block::default()
+                .padding(Padding::new(2, 0, 0, 0))
+        );
+
+        frame.render_widget(status, chunks[3]);
+    }
+    
 }
 
 pub fn draw_tasks(

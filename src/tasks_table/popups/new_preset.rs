@@ -151,6 +151,12 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
     let visible_height = vertical_inner[1].height as usize;
     let scroll_offset = app.preset_task_state.offset();
     
+    let mut table_area = vertical_inner[1];
+    if item_count > visible_height {
+        // Leave a 2-column margin on the right so highlights don't bleed into the scrollbar
+        table_area.width = table_area.width.saturating_sub(1);
+    }
+    
     if item_count > visible_height {
         let max_scroll = item_count.saturating_sub(visible_height);
         
@@ -177,7 +183,7 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         );
     }
 
-    frame.render_stateful_widget(list, vertical_inner[1], &mut app.preset_task_state);
+    frame.render_stateful_widget(list, table_area, &mut app.preset_task_state);
 }
 
 fn delete_preset_task(app: &mut App) {
