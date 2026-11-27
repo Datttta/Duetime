@@ -231,7 +231,10 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
         
         if app.layout_number == 2 {
-            app.focused_panel = app.previous_panel;
+            if app.previous_panel != Panel::None {
+                app.focused_panel = app.previous_panel;
+            }
+
             if matches!(app.previous_panel, Panel::Agenda | Panel::TasksTable) {
                 if app.terminal_focus == false {
                     app.focused_panel = app.previous_panel;
@@ -240,7 +243,9 @@ pub fn draw(frame: &mut Frame, app: &mut App) {
         }
 
         if app.layout_number == 3 {
-            app.focused_panel = app.previous_panel;
+            if app.previous_panel != Panel::None {
+                app.focused_panel = app.previous_panel;
+            }
             if matches!(app.previous_panel, Panel::Inbox | Panel::TasksTable) {
                 if app.terminal_focus == false {
                     app.focused_panel = app.previous_panel;
