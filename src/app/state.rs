@@ -164,7 +164,7 @@ impl App {
         let mut agenda_table_state = TableState::default();
         let today = Local::now().date_naive();
         let events = agenda::load_agenda();
-        let has_today_events = events.iter().any(|event| event.date == today);
+        let has_today_events = events.iter().any(|event| event.date <= today);
         if has_today_events {
             agenda_table_state.select(Some(1)); 
         } else if !events.is_empty() {
